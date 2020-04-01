@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.3.23)  1 APR 2020 10:41
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.3.23)  1 APR 2020 18:53
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**frontline.tex
-(./frontline.tex
+**report.tex
+(./report.tex
 LaTeX2e <2020-02-02> patch level 5
 L3 programming layer <2020-02-25> (/home/jens/.TinyTeX/texmf-dist/tex/latex/apa
 7/apa7.cls
@@ -890,8 +890,8 @@ Package csquotes Info: Redefining alias 'default' -> 'english'.
 File: l3backend-pdfmode.def 2020-02-23 L3 backend support: PDF mode
 \l__kernel_color_stack_int=\count322
 \l__pdf_internal_box=\box74
-) (./frontline.aux)
-\openout1 = `frontline.aux'.
+) (./report.aux)
+\openout1 = `report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 131.
 LaTeX Font Info:    ... okay on input line 131.
@@ -974,9 +974,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 131.
 LaTeX Info: Redefining \pageref on input line 131.
 LaTeX Info: Redefining \nameref on input line 131.
-(./frontline.out) (./frontline.out)
+(./report.out) (./report.out)
 \@outlinefile=\write4
-\openout4 = `frontline.out'.
+\openout4 = `report.out'.
 
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/apa7/config/APA7english.txt
 File: APA7english.txt 2019/12/29 v1.00 apa7 configuration for non-American Engl
@@ -1036,44 +1036,54 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 132.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 132.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 139.
 [1{/home/jens/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 
-] [2] [3]
-<frontline_files/figure-latex/descriptives-1.pdf, id=85, 407.5225pt x 203.76125
-pt>
-File: frontline_files/figure-latex/descriptives-1.pdf Graphic file (type pdf)
-<use frontline_files/figure-latex/descriptives-1.pdf>
-Package pdftex.def Info: frontline_files/figure-latex/descriptives-1.pdf  used 
-on input line 242.
-(pdftex.def)             Requested size: 241.74202pt x 120.871pt.
-[4 <./frontline_files/figure-latex/descriptives-1.pdf>]
-<frontline_files/figure-latex/parameters-1.pdf, id=124, 424.58624pt x 415.5525p
-t>
-File: frontline_files/figure-latex/parameters-1.pdf Graphic file (type pdf)
-<use frontline_files/figure-latex/parameters-1.pdf>
-Package pdftex.def Info: frontline_files/figure-latex/parameters-1.pdf  used on
- input line 296.
-(pdftex.def)             Requested size: 241.74457pt x 236.60107pt.
-[5 <./frontline_files/figure-latex/parameters-1.pdf>] [6] [7]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 434.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 434.
-(./frontline.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 434.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 434.
-Package rerunfilecheck Info: File `frontline.out' has not changed.
-(rerunfilecheck)             Checksum: 6203AC90B70B96A51EACB84ACC31B34E;1593.
+]
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 143.
+[2] [3]
+<report_files/figure-latex/descriptives-1.pdf, id=93, 431.6125pt x 208.78pt>
+File: report_files/figure-latex/descriptives-1.pdf Graphic file (type pdf)
+<use report_files/figure-latex/descriptives-1.pdf>
+Package pdftex.def Info: report_files/figure-latex/descriptives-1.pdf  used on 
+input line 297.
+(pdftex.def)             Requested size: 241.74086pt x 116.9351pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+[4 <./report_files/figure-latex/descriptives-1.pdf>]
+<report_files/figure-latex/parameters-1.pdf, id=133, 424.58624pt x 451.6875pt>
+File: report_files/figure-latex/parameters-1.pdf Graphic file (type pdf)
+<use report_files/figure-latex/parameters-1.pdf>
+Package pdftex.def Info: report_files/figure-latex/parameters-1.pdf  used on in
+put line 351.
+(pdftex.def)             Requested size: 241.74457pt x 257.17506pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+[5]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+[6 <./report_files/figure-latex/parameters-1.pdf>] [7] [8
+
+]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 510.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 510.
+(./report.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 510.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 510.
+Package rerunfilecheck Info: File `report.out' has not changed.
+(rerunfilecheck)             Checksum: 2E708AAB594B9F3FCBA99C9C110FCA9C;1535.
  ) 
 Here is how much of TeX's memory you used:
- 24657 strings out of 482913
- 433725 string characters out of 5959408
- 688775 words of memory out of 5000000
- 39302 multiletter control sequences out of 15000+600000
+ 24671 strings out of 482913
+ 433815 string characters out of 5959408
+ 688543 words of memory out of 5000000
+ 39308 multiletter control sequences out of 15000+600000
  597497 words of font info for 130 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 68i,14n,68p,2110b,499s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 68i,14n,68p,1494b,499s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/home/jens/.TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}</home/jens/.Tiny
 TeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/jens/.TinyTeX/t
 exmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/jens/.TinyTeX/texmf-
@@ -1082,10 +1092,10 @@ onts/type1/public/amsfonts/cm/cmsy10.pfb></home/jens/.TinyTeX/texmf-dist/fonts/
 type1/urw/symbol/usyr.pfb></home/jens/.TinyTeX/texmf-dist/fonts/type1/urw/times
 /utmb8a.pfb></home/jens/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></
 home/jens/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on frontline.pdf (7 pages, 277582 bytes).
+Output written on report.pdf (8 pages, 280620 bytes).
 PDF statistics:
- 274 PDF objects out of 1000 (max. 8388607)
- 236 compressed objects within 3 object streams
- 75 named destinations out of 1000 (max. 500000)
+ 295 PDF objects out of 1000 (max. 8388607)
+ 256 compressed objects within 3 object streams
+ 83 named destinations out of 1000 (max. 500000)
  111 words of extra memory for PDF output out of 10000 (max. 10000000)
 
