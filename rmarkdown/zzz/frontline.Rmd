@@ -1,0 +1,398 @@
+---
+title             : "Copy-typing as auto-regressive mixture processes"
+shorttitle        : "Copy-typing as auto-regressive mixture processes"
+
+author: 
+  - name          : "Jens Roeser"
+    affiliation   : "1"
+    address       : "50 Shakespeare St, Nottingham NG1 4FQ"
+    corresponding : no    # Define only one corresponding author
+    email         : "jens.roeser@ntu.ac.uk"
+  - name          : "Sven De Maeyer"
+    affiliation   : "2"
+  - name          : "Mark Torrance"
+    affiliation   : "1"
+  - name          : "Luuk Van Waes"
+    affiliation   : "2"
+  - name          : "Mariëlle Leijten"
+    affiliation   : "2"
+
+affiliation:
+  - id            : "1"
+    institution   : "Department of Psychology, Nottingham Trent University, United Kingdom"
+
+  - id            : "2"
+    institution   : "Faculty of Social Sciences, University of Antwerp, Belgium"
+
+
+abstract: |
+   The analysis of keystroke data is typically performed on aggregates (mean, median). Aggregating data results in two basic problems. First, means are poor descriptives for non-normal distributed data. Second, using means artificially reduces information and adds bias to the estimates. We introduce autoregressive-mixture models to account for both autocorrelation and dysfluencies in keystroke data and compare these to a more traditional random effects treatment of individual bigrams. We used a random sampled data of 250 participants (age 18-25) from the Dutch subset of the copy-task corpus. Models were compared for a purely motoric and a cognitively demanding component of the copy task. A series of Bayesian models was implemented in Stan. Comparing the predictive performance of our models showed ... Our results suggest that the statistical treatment of keystroke data is to some extent task-dependent and not typing general.
+
+
+keywords: "Copy-task; keystroke modeling; autoregression; mixture models; Bayesian inference"
+
+
+bibliography      : ["ref.bib"]
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : 
+  papaja::apa6_pdf:
+    keep_tex: FALSE
+  
+  
+#output:
+#  word_document: papaja::apa6_word
+#    - reference_docx: template.docx
+#  pdf_document: papaja::apa6_pdf
+#  html_document:
+#    df_print: paged
+  
+figsintext        : yes
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+lineno            : no
+mask              : no
+
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{float}
+  - \usepackage{colortbl}
+  - \usepackage{threeparttable}
+  - \usepackage[normalem]{ulem}
+  - \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(#echo = TRUE, 
+                      warning = FALSE, 
+                      message = FALSE,
+                      cache.extra = R.version
+                      )
+```
+
+
+```{r load_packages}
+source("../functions/functions.R")
+source("../functions/get_data.R")
+library(magrittr)
+options(kableExtra.auto_format = FALSE)
+library(kableExtra)
+library(tidyverse)
+library(wesanderson)
+library(gridExtra)
+library(knitr)
+library(brms)
+library(citr)
+library(grid)
+library(rmdfiltr)
+library(gtable)
+library(papaja)
+library(ggthemes)
+library(ggExtra)
+dev.args = list(pdf = list(type = "cairo"))
+knitr::opts_chunk$set(dev = "cairo_pdf")
+```
+
+
+# Introduction
+
+Writing research has made extensive use of keystroke-logging can capture typing process data in a non-intrusive way. These data can provide detailed information about the writing process. The analysis of keystroke data is typically performed on the means, medians, standard deviations (SD) etc. of inter-keystroke intervals (the duration between two consecutive keystrokes), pause durations, within-word keystroke intervals and many other variables [for an overview see @conijn2019understanding]. @conijn2019understanding suggested that different types of aggregates are sensitive to processing difficulty that arises on different levels of mental representation. Longer keystroke-intervals, disfluencies, can be taken as indicator of process difficulty [@chukharev2019combined] which can arise on various levels of mental representation [@olive2014toward] when retrieving a lexical entry for a word, the spelling for a word etc.
+
+
+The aggregation of keystroke data as, e.g., means or SDs, in the majority of research poses a problem for statistical inference for two main reason. First, consecutive keystrokes are autocorrelated [@eltahir2004dynamic]. In other words, keystroke intervals are not independent, i.e. not exchangeable, but instead, the speed of a keystroke is to some extent dependent on the speed of the previous keystroke. Difficulty during the typing process can occur throughout the entire typing process and is frequently subjected to data removal of incorrect and extreme. Data removal reduces the autocorrelation to some extent and aggregation is ignoring the autocorrelation entirely. The latter is problematic, as variations throughout the production process are ignored. For example the mean and the SD function assume that, for the aggregate to be representative, keystroke intervals come from a normal distributed. This is not the case as keystroke intervals are zero-bound and therefore right-skewed. In fact, the minimum size of keystroke intervals is determined by the time it takes to plan and execute the motor programm. Hence, the aggregates are biased estimates of the typing process and therefore may lead to incorrect inference.
+
+
+Second, the underlying mental process that generates keystroke data involves cognitive processing on different levels mental representation. Process diffculty on any of these levels inhibits the acivation flow into lower levels of representation which then creates disfluencies [see @baaijen2012keystroke;@olive2014toward;@roeser2019advance]. For example, copying a sequence of letters involves visual encoding of the sequence of letters, buffering n-bigrams in memory, identifying the correct key(s) on the keyboard, and programming and executing the relevant motor codes. Difficulty at any of these levels of processing will inhibit processing lower levels of activation which results in typing disfluencies. The duration of the delay must, to some extent, depend on the level of activation that is causing the lag. Disfluencies such as pauses are typically defined as keystroke intervals that exceed a particular threshold [@alves2015progress; @chukharev2014pauses; @connelly2012predicting; @leijten2013keystroke; @torrance2016adolescent]. In other research trimming criteria were applied for extreme keystrokes [e.g. @hoaglin1987fine]. While these thresholds are to some extent arbitrary, it is important to not that important information about the mental process will be removed to force a roughly normal distribution. Planning the next keystroke may in some cases be more demanding, in particular when planning on phrase boundaries or due to the retrieval of the lexical form of a low frequent word. Also, long values are more likely for struggling writers. For incorrectly produced keystroke intervals, durations may or may not change depending on whether the error was noticed by the participant or create a dysfluency for a subsequent keystroke interval. Importantly, long keystrokes are not necessarily outliers and pauses are a central part of the writing process. 
+
+
+In this paper we present an analysis that accounts for both problems. We demonstrate that autoregressive models be used to account for autocorrelation in subsequent keystroke intervals [@eltahir2004dynamic]. Further we modelled keystroke-intervals as mixture process that accounts for the unknown proportion of slowdowns in the writing process. Crucially our analysis aims to by-pass any data removal. Instead we model the process that generates the data at hand with that expresses rare values in posterior probabilities. These models are compared to more traditional analyses using linear mixed effects models in which key intervals can be treated as random effects [@quene2004multi;@waes2019;@van2010reading].
+
+
+
+# Method
+
+```{r }
+# Load df
+path <- "../data/"
+d <- get_data(path = path)
+d.ppt <- d %>% select(subj, age, sex) %>% unique()
+d.sex <- d.ppt %>% count(sex) %>% pull(n) # femanle, male
+d.age <- d.ppt %>% summarise(M = median(age), min = min(age), max = max(age)) %>%  gather(p, value) %>% pull(value) %>% round(0) 
+d.cons <- d %>% filter(component == "Consonants")
+d.tap <- d %>% filter(component == "Tapping")
+
+#prop.table(table(d.cons$target))*100
+#prop.table(table(d.tap$target))*100
+
+```
+
+## Participants
+
+We used the Dutch subset of the Copy-Task corpus [@van2019multilingual;@waes2019]. From this corpus we took a random sample of `r nrow(d.ppt)` participants (`r d.sex[1]` female, `r d.sex[2]` male) in the age range between `r d.age[2]` and `r d.age[3]` years old (median age = `r d.age[1]` years). We used decided for this age range to keep the sample relatively homogeneous.
+
+
+## Design \& Materials
+
+For the present analysis we used a subset of the Dutch corpus of copy-task data [@waes2019;@van2019multilingual]. The dependent variable are the inter-keystroke intervals between subsequent letters. In this analysis we focus on the tapping and the consonant task. We chose these tasks because first, both tasks are non-lexical and second, while the consonant task is a highly demanding form of the copy-task, the tapping task is purely motoric. Therefore the comparison of both allows us to distinguish the contribution of cognitively demanding copy-typing to purely motoric responses.
+
+
+### Tapping task
+
+The tapping task is asking participants to type two keys with alternating left-right and right-left alternating hand combinations. Participants have to type 'd' and 'k' as fast as possible for 15 seconds [@salthouse1984effects]. These tapping tasks are used to measure the fastest possible responses allowed by the motor system [e.g. @witt2008functional]. 
+
+### Consonant task
+
+Participants copy-typed sequences of consonants that do not occur adjacently in Dutch. In particular participants saw and copied four blocks of six consonants one time. Each participant copy-typed "tjxgfl pgkfkq dtdrgt npwdvf". Spaces were excluded from analysis. The remaining data comprise a maximum of 20 bigrams per participant. The aim of this task is to measure typing skills in a environment that does not contain lexical information [@grabowski2010second].
+
+
+
+## Procedure
+
+Keystrokes are collected in Inputlog which is a Javascript-based web application and are part of the copy-task corpus. Both are freely available on \url{www.inputlog.net} [@leijten2013keystroke;@waes2019]. The logging precision is $\sim$ 8 msecs [@frid2012testing]. 
+
+
+# Results
+
+
+The density distributions of each component are visualized in Figure \ref{fig:densities} showing the raw IKIs (Panel A) and the log-scaled IKIs (Panel B). Vertical lines illustrate central tendency descriptives. All central tendency descriptives overlap with the center of the distribution for the tapping task, for both raw and log-scaled IKIs. However, in the consonants task, the central tendency descriptives represent different properties of the distribution but not necessarily the center. In particular the mean is affected by larger IKIs. Importantly, all central tendencies do not acknowledge the shape of the distributions which is wider for the consonants task compared to the tapping task.
+
+
+```{r densities, fig.pos="!ht", fig.height=3, fig.width=7, fig.align = "center", fig.cap="Density distribution of raw (Panel A) and log-tranformed (Panel B) IKI data by copy-task component. For visualisation, IKIs larger than 3,000 msecs were removed for the raw IKIs."}
+
+d %<>% select(subj, bg, bigram, IKI, component)
+
+d.raw <- d %>% 
+  mutate(component = paste0(component, " task")) %>%
+  group_by(component) %>% 
+  summarise(mean = mean(IKI), median = median(IKI), mode = dmode(IKI))
+
+p.raw <- d %>% mutate(component = paste0(component, " task")) %>%
+  filter(IKI < 3000) %>%
+  ggplot(aes( x = IKI, fill = component, color = component)) +
+  geom_density(alpha = .65) +
+  theme_few(base_size = 10) +
+  scale_fill_manual("", values=wes_palette(n=2, name="Moonrise2")) +
+  scale_colour_manual("", values=wes_palette(n=2, name="Moonrise2")) +
+  geom_vline(data=d.raw, aes(xintercept=mean, color=component), show.legend = F,
+             linetype="dashed") +
+  geom_vline(data=d.raw, aes(xintercept=median, color=component), show.legend = F,
+             linetype="dotted") +
+  geom_vline(data=d.raw, aes(xintercept=mode, color=component), show.legend = F,
+             linetype="longdash") +
+  scale_linetype_discrete("") +
+  labs(title = "A. Raw IKI", x = "", y = "") +
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+p.log <- d %>% mutate(component = paste0(component, " task")) %>%
+  ggplot(aes( x = IKI, fill = component, color = component)) +
+  geom_density(alpha = .65) +
+  scale_x_log10() +
+  theme_few(base_size = 10) +
+  scale_fill_manual("", values=wes_palette(n=2, name="Moonrise2"), 
+                        guide = guide_legend(reverse = TRUE)) +
+  scale_colour_manual("", values=wes_palette(n=2, name="Moonrise2"),
+                      guide = guide_legend(reverse = TRUE)) +
+  labs(title = "B. Log-scaled IKI", x = "", y = "") +
+  geom_vline(data=d.raw, aes(xintercept=mean, color=component, linetype="mean")) +
+  geom_vline(data=d.raw, aes(xintercept=median, color=component, linetype="median")) +
+  geom_vline(data=d.raw, aes(xintercept=mode, color=component, linetype="mode")) +
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = "bottom",
+        legend.justification = "right") +
+  scale_linetype_manual(name = "", values = c(median = "dotted", 
+                                              mean = "dashed", 
+                                              mode = "longdash"))
+
+mylegend <- g_legend(p.log)
+
+grid.arrange(arrangeGrob(p.raw + theme(legend.position="none"),
+                         p.log + theme(legend.position="none"),
+                         nrow=1), # bottom = "IKIs [msecs]",
+             mylegend, nrow=2,heights=c(10, 1))
+
+```
+
+Further, Figure \ref{fig:densities}, and central tendencies, ignore variations throughout the typing process. These are shown in Figure \ref{fig:descriptives}. This figure shows that variations in the IKIs are subject to the position of the bigram in the sequence rather and possibly the identity of the bigram itself in the consonants tasks. In consonants task IKIs tend to increase within each chunk of consonants, while in the tapping task we observe a change between shorter and longer IKIs for each bigram. For accurate inference it is important to acknowledge this variation throughout the typing process.
+
+
+```{r descriptives, fig.pos="!ht", fig.height = 3, fig.width =7, fig.align = "center", fig.cap="IKI data by copy-task component. Panel A and panel B show mode IKI (and standard error [SE]) as a function of bigram position. Vertical lines in Panel A indicate the position of SPACES in the consonants task. For visualisation and for comparison to the consonants task, bigram positions after 20 were truncated in the the tapping task."}
+
+d %>%
+  group_by(component,subj) %>%
+  mutate(bigram = 1:n()) %>%
+  arrange(component, subj, bigram) %>%
+  ungroup() %>%
+  select(subj, component, bigram, bg) %>%
+  pivot_wider(names_from = bigram, values_from = bg) %>% 
+  unite("sequence", `1`:`20`, na.rm = T, remove = F, sep = " ") %>%  
+  ungroup() %>%
+  mutate(sequence = trimws(sequence)) %>%
+  group_by(component, sequence) %>%
+  mutate(n = n()) %>%
+  mutate(p = n/500*100) -> d_wide
+
+d %>%
+  left_join(d_wide) %>%
+  select(-n) %>%
+  rename(p_seq = p) -> d2
+
+d2 %>%
+  ungroup() %>%
+  group_by(subj, component) %>%
+  mutate(bigram = 1:n()) %>%
+  ungroup() %>%
+  group_by(component, bigram) %>%
+  mutate(N = n()) %>%
+  filter(bigram < 21) %>% 
+  summarise(M = dmode(IKI),
+            SE = sd(IKI)/sqrt(n())) %>% 
+  ungroup %>%
+  mutate(group = ifelse(component == "Consonants", "A. ", "B. "),
+         component = paste0(group, component, " task")) -> d_summary
+
+#tjxgfl pgkfkq dtdrgt npwdvf
+d_summary %>%
+  ggplot(aes(y = M, x = bigram, colour = component)) +
+  geom_line(size  =.25, show.legend = F) +
+  geom_pointrange(aes(ymin = M - SE, ymax= M + SE), fatten = 2, alpha = .45, show.legend = F) +
+  geom_vline(data = filter(d_summary, component=="A. Consonants task"),
+             aes(xintercept = c(5.5)), linetype = "dotted", 
+             size = .25) +
+  geom_vline(data = filter(d_summary, component=="A. Consonants task"),
+             aes(xintercept = c(10.5)), linetype = "dotted", 
+             size = .25) +
+  geom_vline(data = filter(d_summary, component=="A. Consonants task"),
+             aes(xintercept = c(15.5)), linetype = "dotted", 
+             size = .25) +
+  scale_colour_manual("", values=wes_palette(n=2, name="Moonrise2")) +
+  theme_few(base_size = 10) +
+  facet_wrap(~component, scales = "free") +
+  labs(x = "Bigram position", y = "Mean IKIs with SE") +
+  theme(strip.text = element_text(size = 12, hjust=0))
+
+
+```
+
+
+
+## Data modeling
+
+Date were modeled in the Bayesian framework [see e.g. @gelman2014; @lambert2018student; @mcelreath2016statistical] and implemented using the probabilistic programming language Stan [@carpenter2016stan; @rstan; @rstan2; @hoffman2014no]. For reproducibility the \textit{R} and \textit{Stan} code is available on [GitHub](https://github.com/jensroes/Frontline). Models were fitted with weakly regulating priors and run with 30,000 iterations (15,000 warm-up) on 3 Markov chain Monte Carlo chains. Convergence was tested via the Rubin-Gelman statistic [@gelman1992], traceplots and cross-validation [@vehtari2015pareto; @vehtari2017practical].  All models assume that the inter-keystroke interval (IKI) data $y$ come from a log-normal distribution with a mean $\mu$ and an error variance $\sigma_e^2$. A log-normal distribution was assumed because IKIs are zero-bound and there right-skewed. Further all models assume that IKIs vary across participants $I$. In other words, some participants are faster typists as others. The variance associated with the $i$s participants is $u_i$ and is normal distributed around 0 with a between participants variance $\sigma_u^2$, i.e. $u_i \sim Normal(0, \sigma_u^2)$ with $i = 1, \dots, I$. 
+
+A standard approach to model the variation between individual bigram positions is to treat them as random intercepts [see @van2019multilingual]. We model bigram position $j$ with $j = 1, \dots, J$ has associated with a variance $w_j$ that is distributed around 0 with a between bigram variance $\sigma_w^2$, i.e. $w_j \sim Normal(0, \sigma_w^2)$. This was implemented in model M1 showing in equation \ref{eq:lmm}. 
+
+$$
+\tag{1}
+y_{i,j} \sim LogNormal(\mu + u_i + w_j, \sigma_e^2)
+(\#eq:lmm)
+$$
+
+An alternative approach is to predict IKIs using the preceding keystroke interval. This can be achieved in autoregressive models that account for autocorrelation between subsequent keystrokes. These models use a parameter, $\phi$, that captures how an IKI $y_j$ is predicted by the IKI preceding it $y_{j-1}$ as examplified in equation \@ref{eq:ark}. Note that this models includes a random intercepts term for participants but not bigrams as the latter is accounted for by the autocorrelation coefficient.
+
+$$
+\tag{2}
+y_{i,j} \sim LogNormal(\mu + \phi*log(y_{j-1,i}) + u_i, \sigma_e^2)
+(\#eq:ark)
+$$
+
+Model M3 is a finite mixture model (mixture of 2 log-Gaussian distribution) as an extension of the LMM M1. The rationale for using this model is to directly address the disfluencies in the typing process. We do not know how often participants slow down during the typing process. We can model a slowdown in the typing process by adding a new parameter $\delta$. Therefore a slowdown is associated with a variance $\sigma_e'^2$ that is larger than $\sigma_e^2$ [see @vasishth2017]. Larger latencies are known to be associated with a larger variances for both response-time data in particular [@wagenmakers2007linear] and human motor bahaviour in general [@wing1973response;@schoner2002timing]. Mixture models capture the probability of a value to be part of either distribution (normal tpying or slowdown) in a mixing proportion $\theta$. In other words, this mixing proportion $\theta$ represents the probability to slowdown. M3 is summarized in equation \ref{eq:mog}.
+
+$$
+\tag{3}
+	y_{i,j} \sim
+		\begin{cases} 
+		\theta \cdot LogNormal(\mu + \delta + u_i + w_j, \sigma_{e}'^2)\\
+		(1 - \theta) \cdot LogNormal(\mu + u_i + w_j, \sigma_{e}^2)
+		\end{cases}
+		(\#eq:mog)
+$$
+
+Finally, we replaced the bigram intercepts in M3 with the autoregressor $\phi$ as in M2. This model captures disfluencies in the typing process assuming that a slowdown in the typing process is not autocorrelated with the previous keystrokes but for normal typing subsequent keystrokes are autocorrelated. As before in M3 the slowdown in typing intervals is captured by $\delta$ and the probability to slowdown is captured by the mixing proportion $\theta$. M4 is summarized in equation \ref{eq:arkmog}. 
+
+$$
+\tag{4}
+	y_{i,j} \sim
+		\begin{cases} 
+		\theta \cdot LogNormal(\mu + \delta + u_i + w_j, \sigma_{e}'^2)\\
+		(1 - \theta) \cdot LogNormal(\mu + \phi*log(y_{j-1,i}) + u_i, \sigma_{e}^2)
+		\end{cases}
+		(\#eq:arkmog)
+$$
+
+
+An overview of all models can be found in Table \ref{tab:models}.
+
+
+```{r models, results = 'asis'}
+models <- tibble(Models = paste0("M",1:4),
+       Type = c("LMM", "AR", "MoG", "AR + MoG"),
+   #    Equation = paste0("\ \\ref{eq:", c("lmm", "lmmslopes", "ark", "arktarget", "arkmog", "arktargetmog"), "}"),
+       Description = c("Random intercepts for bigram order and ppts",
+                       "$\\phi$ for previous keystrokes (random intercepts for ppts only)",
+                       "Slowdown $\\delta$ with probability $\\theta$ (random intercepts as in M1)",
+                       "Combination of M2 and M3")
+                       ) 
+
+papaja::apa_table(models,
+                  align = c("l", "l", "l"), 
+                  escape = FALSE, 
+                  digits = 0,
+                  placement = "h",
+                  caption = "Model overview. All models were fitted with random intercepts for participants.",
+                  note = "LMM = linear mixed effects models; AR = Autoregressive model; MoG = Mixture of (log-)Gaussians"
+                  ) 
+```
+
+
+
+
+## Modeling outcome
+
+
+The predictive performance of the models was established using leave-one-out cross-validation which penalizes models with more parameters [see @farrell2018computational; @mcelreath2016statistical; @lambert2018student; @lee2014bayesian]. We determined this out-of-sample predictive performance via Pareto smoothed importance-sampling leave-one-out cross-validation [@vehtari2015pareto; @vehtari2017practical]. This predictive performance was estimated as the sum of the expected log predictive density ($\widehat{elpd}$) and used to compare the quality of our models. The model comparisons can be found in Table \ref{tab:modelcomparisons} for each task. 
+
+
+The process underlying each copy-task component can be assessed using the posterior distributions of the parameter values of the best fitting models. The model parameters are illustrated in Figure \ref{fig:parameters} comparing the copy-task and the tapping component. 
+
+
+```{r parameters, fig.pos="!ht", fig.height=3, fig.width=7, fig.align = "center", fig.cap="Posterior probability distribution of best fitting model. Model parameters are compared across copy-task component."}
+
+
+```
+
+
+
+# Discussion
+
+
+Our aim was to test alternative ways of modeling keystroke data that do not require data trimming and, importantly, does not require the aggregation of keystroke measures. We provided a series of Bayesian models that tested first, autoregressive models are a better way of accounting for individual bigrams rather than modeling keystrokes as random effects (intercepts and slopes). Secondly, we used mixture models as means to account for process dysfluencies. These models allow us to derive the unknown proportion and magnitude of dysfluencies in the copy-typing process. 
+
+Model comparisons showed the best fit for 
+
+
+This models allowed us to
+
+
+
+
+# References
+```{r create_r-references, echo=FALSE, include=FALSE}
+r_refs(file = "ref.bib")
+```
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+  
+<div id = "ref"></div>
+\endgroup
+  
+
+
