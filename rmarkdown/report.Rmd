@@ -217,7 +217,7 @@ The hyper-parameter $\theta$ captures the population disfluency probability (wit
 $$
 \tag{8}
 \begin{aligned}
-		\theta_i = InvLogit(\theta_i)\\
+		\theta_i = InvertedLogit(\theta_i)\\
 		\theta_i \sim Normal(\theta,\tau^2)\\
 		\theta \sim Normal(0,1)\\
 		\tau \sim Cauchy(0,1)\\
@@ -267,108 +267,8 @@ The raw data are visualized in Figure \ref{fig:descriptives}. Each grey line rep
 
 ```{r descriptives, fig.pos="!ht", fig.height = 3, fig.width = 6, fig.align = "center", fig.cap="IKI data by participant over bigrams position shown in order. Shown are the raw data, each line representing one participant, and different measures of central tendency (with 2$\\times$standard error [SE]). Vertical lines indicate the position of SPACES. The density distribution of IKI data is shown in the right margin."}
 
-Ms <- c("Median" = "dotted", "Mean" = "dashed", "Mode" = "longdash")
-Mcol <- c("Median" = "darkolivegreen4", "Mean" = "turquoise4", "Mode" = "darkred")
-
-d %<>% select(subj, bg, bigram, IKI)
-
-d %>% group_by(subj) %>%
-  mutate(bigram = 1:n()) %>%
-  arrange(subj, bigram) %>%
-  ungroup() %>%
-  select(subj, bigram, bg) %>%
-  pivot_wider(names_from = bigram, values_from = bg) %>% 
-  unite("sequence", `1`:`20`, na.rm = T, remove = F, sep = " ") %>%  
-  ungroup() %>%
-  mutate(sequence = trimws(sequence)) %>%
-  group_by(sequence) %>%
-  mutate(n = n()) %>%
-  mutate(p = n/500*100) -> d_wide
-
-d %>% left_join(d_wide) %>% select(-n) %>% rename(p_seq = p) -> d2
-
-d2 %>% ungroup() %>% group_by(subj) %>%
-  mutate(bigram = 1:n()) %>%
-  ungroup() %>%
-  group_by(bigram) %>%
-  mutate(N = n()) %>%
-  filter(bigram < 21) %>% 
-  summarise(Mode = dmode(IKI),
-            Mean = mean(IKI),
-            Median = median(IKI),
-            SE = 2*sd(IKI)/sqrt(n())) %>% 
-  ungroup() -> d_summary
-
-#tjxgfl pgkfkq dtdrgt npwdvf
-d_summary$bgs <- c("tj", "jx", "xg", "gf", "fl",
-                   "pg","gk", "kf", "fk",  "kq", 
-                   "dt", "td", "dr", "rg", "gt", 
-                   "np", "pw", "wd", "dv", "vf")
-
-d_summary %<>%
-  mutate(bgs = factor(bgs, levels = unique(bgs)[bigram], ordered = T))
-
-d2 %>% ungroup() %>% group_by(subj) %>% mutate(bigram = 1:n()) %>% 
-  filter(bigram < 21) %>% ungroup() %>%
-  left_join(d_summary[,c("bigram", "bgs")]) %>%
-  mutate(bgs = factor(bgs, levels = unique(bgs)[unique(bigram)], ordered = T)) %>% ggplot() +
-  geom_point(aes(y = IKI, x = bgs, group = factor(subj)), size =.5, show.legend = F, alpha = .1) +
-  geom_line(aes(y = IKI, x = bgs, group = factor(subj)), linetype = "dashed", show.legend = F, alpha = .05) +
-  geom_pointrange(data = d_summary, aes(y = Mode, x = bigram, ymin = Mode - SE, ymax= Mode + SE, color = "Mode"),fatten = 3) +
-  geom_pointrange(data = d_summary, aes(y = Mean, x = bigram, ymin = Mean - SE, ymax= Mean + SE, color = "Mean"), fatten = 3) +
-  geom_pointrange(data = d_summary, aes(y = Median, x = bigram, ymin = Median - SE, ymax= Median + SE, color = "Median"), fatten = 3) +
-  geom_line(data = d_summary, aes(y = Mode, x = bgs, group = 1, color = "Mode", linetype = "Mode")) +
-  geom_line(data = d_summary, aes(y = Median, x = bgs, group = 1, color = "Median", linetype = "Median")) +
-  geom_line(data = d_summary, aes(y = Mean, x = bgs, group = 1, color = "Mean", linetype = "Mean")) +
-  geom_vline(data = filter(d_summary), aes(xintercept = c(5.5)), linetype = "dotted", size = .25) +
-  geom_vline(data = filter(d_summary), aes(xintercept = c(10.5)), linetype = "dotted", size = .25) +
-  geom_vline(data = filter(d_summary), aes(xintercept = c(15.5)), linetype = "dotted", size = .25) +
-  theme_few(base_size = 10) + scale_y_log10() +
-  labs(x = "Bigram (in order)", y = "log-scaled IKIs [in msecs]") +
-  scale_linetype_manual(name = "", values = Ms) +
-  scale_color_manual(name = "", values = Mcol) +
-  theme(strip.text = element_text(size = 12, hjust=0),
-                axis.ticks = element_blank()) -> p.big
-
-d.raw <- d2 %>% ungroup() %>% 
-  group_by(subj) %>% mutate(bigram = 1:n()) %>% 
-  filter(bigram < 21) %>% ungroup() %>% summarise(mean = mean(IKI), 
-                         median = median(IKI), 
-                         mode = dmode(IKI))
-
-
-d2 %>% ungroup() %>% group_by(subj) %>% mutate(bigram = 1:n()) %>% filter(bigram < 21) %>% ungroup() %>%
-  ggplot(aes( x = IKI)) +
-  stat_density(size = .2, color = "black", fill = "white") +
-  scale_x_log10() +
-  theme_void(base_size = 10) +
-  labs(x = "", y = "") +
-  geom_segment(data=d.raw, aes(x=mean, y=0, yend = .75, xend = mean, linetype="Mean", color = "Mean")) +
-  geom_segment(data=d.raw, aes(x=median, y=0, yend = 1.1, xend = median, linetype="Median", color = "Median")) +
-  geom_segment(data=d.raw, aes(x=mode, y=0, yend = 1.25, xend = mode, linetype="Mode", color = "Mode")) +
-  theme(axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        legend.key.width = unit(1, "cm"),
-        legend.justification = "top") +
-  scale_linetype_manual(name = "", values = Ms) +
-  scale_color_manual(name = "", values = Mcol) +
-  coord_flip() -> p.log
-
-# theme(legend.position="none",
-#                 )
-
-pcol <- plot_grid(
-  p.big + theme(legend.position="none", plot.margin = unit(c(.1, 0, .1, .1), "cm")),
-  p.log + theme(legend.position="none", plot.margin = unit(c(.1, 0, .1, -.15), "cm")),
-  align = 'h', nrow = 1,
-  rel_widths = c(4,.5)
-)
-
-legend <- get_legend(p.log + theme(legend.position = "top", legend.justification = "right"))
-
-plot_grid(legend, pcol, ncol = 1, rel_heights = c(.1,1))
-
-
+source("scripts/get_descriptives_plot.R")
+plot_all
 ```
 
 
@@ -380,30 +280,7 @@ All models were implemented as Bayesian models [see e.g. @gelman2014; @lambert20
 The predictive performance of the models was established using leave-one-out cross-validation which penalizes models with more parameters [see @farrell2018computational; @mcelreath2016statistical; @lambert2018student; @lee2014bayesian]. The out-of-sample predictive performance was determined via Pareto smoothed importance-sampling [@vehtari2015pareto; @vehtari2017practical] and estimated as sum of the expected log predictive density ($\widehat{elpd}$). $\widehat{elpd}$ was used to compare the predictive quality of our models. Model comparisons can be found in Table \ref{tab:modelcomparisons}. The mixture model M4 (see equation \ref{eq:mog}) revealed the highest predictive performance.
 
 ```{r modelcomparisons, results = "asis"}
-looc <- read_csv("../results/loo_results_consonants.csv") %>%
-  mutate_if(is.numeric, round, 0) %>%
-  unite(col = "elpd_diff", elpd_diff, se_diff, sep = " (") %>%
-  unite(col = "elpd_loo", elpd_loo, se_elpd_loo, sep = " (") %>%
-  mutate(elpd_diff = paste0(elpd_diff, ")")) %>%
-  mutate(elpd_loo = paste0(elpd_loo, ")")) %>%
-  mutate(Model = recode(Model, ARK1ppt = "M3",
-                               LMMbigramintercepts = "M1",
-                               LMMbigramslopes = "M2",
-                               MoGpptsbigramintercepts = "M4",
-                               ARKMoGppt = "M5")) %>%
-  mutate(Type = recode(Model, M2 = "LMM",
-                              M1 = "LMM",
-                              M3 = "AR",
-                              M4 = "MoG",
-                              M5 = "AR + MoG")) %>%
-  mutate(Bigrams = recode(Model, M3 = "Autoregressor $\\phi$",
-                              M2 = "Random intercepts and slopes",
-                              M1 = "Random intercepts",
-                              M4 = "Random intercepts",
-                              M5 = "Autoregressor $\\phi$ or random intercepts")) %>%
-  select(Model, Type, elpd_diff, elpd_loo, Bigrams)
-
-names(looc)[c(3,4)] <- c("$\\Delta\\widehat{elpd}$", "$\\widehat{elpd}$")
+source("scripts/get_loo_table.R")
 
 papaja::apa_table(looc,
                   align =  "llrrl",#c("l", "l", "l", "r", "r"), 
@@ -413,70 +290,13 @@ papaja::apa_table(looc,
                   note = "LMM = linear mixed effects models; AR = Autoregressive model; MoG = Mixture of (log-)Gaussians"
 ) 
 
-mc <- read_csv("../results/loo_results_consonants_mog.csv") %>% filter(Model == "MoGpptsbigramintercepts") %>% mutate_if(is.numeric, round, 0)
 ```
 
 
 The second best performing model is the mixture model with the autoregressor $phi$ for fluent typing. In other words, adding the autoregressor instead of random bigram intercepts for fluent typing did not improve the predictive performance of the model. In fact, the autoregressive model was found to be the model with the lowest predictive performance. Modelling bigrams as random intercepts (with and without by-participant slope adjustments) was found to have a higher predictive performance compared to the autoregession model [@van2010reading;@waes2019]. 
 
 ```{r}
-ps <- read_csv("../results/consonants_posterior_MoG.csv")
-
-ps %>% select(starts_with("prob")) %>%
-  gather(Param, value) %>%
-  group_by(Param) %>%
-  summarise(M = mean(value),
-            lo = quantile(value, probs = .025),
-            up = quantile(value, probs = .975),
-            p = mean(value < .5)) %>%
-  ungroup() %>%
-  separate(Param, into = c("Param", "id"), sep = "\\[") %>%
-  mutate(id = gsub("\\]", "", id),
-         id = ifelse(is.na(id), 0, id)) %>%
-  arrange(M) %>%
-  mutate(id2 = ifelse(id == 0, 1, 0),
-         id2 = 1:n(),
-         id2 = factor(id2, levels = unique(id2)[id2], ordered = T)) -> d_theta
-
-d_theta %>% filter(id == 0) %>% pivot_longer(M:p) %>% pull(value) -> theta_sum
-
-ps %>% select(starts_with("beta")) %>%
-  select(-starts_with("beta2")) %>%
-  gather(Param, value) %>%
-  mutate(value = exp(value)) %>%
-  group_by(Param) %>%
-  summarise(M = mean(value),
-            lo = quantile(value, probs = .025),
-            up = quantile(value, probs = .975)) %>%
-  ungroup() %>%
-  separate(Param, into = c("Param", "id"), sep = "\\[") %>%
-  mutate(id = gsub("\\]", "", id),
-         id = ifelse(is.na(id), 0, id)) %>%
-  arrange(M) %>%
-  mutate(id2 = ifelse(id == 0, 1, 0),
-         id2 = 1:n(),
-         id2 = factor(id2, levels = unique(id2)[id2], ordered = T)) -> d_beta
-
-d_beta %>% filter(id == 0) %>% pivot_longer(M:up) %>% pull(value) -> beta_sum
-
-ps %>% select(starts_with("prob_s"), starts_with("beta_s")) %>%
-  mutate_at(vars(starts_with("beta_s")), exp) %>%
-  pivot_longer(everything()) %>%
-  separate(name, into = c("param", "subj"), sep = "_") %>%
-  group_by(param, subj) %>%
-  mutate(rep = 1:n()) %>%
-  group_by(subj, param) %>%
-  summarise(M = mean(value),
-            lo = quantile(value, probs = .025),
-            up = quantile(value, probs = .975)) %>%
-  pivot_wider(names_from = param, values_from = c(M, lo, up)) -> pss
-
-
-ps %>% select(beta, delta) %>%
-  transmute(delta = exp(beta+delta) - exp(beta)) %>%
-  summarise(mean(delta), quantile(delta, probs = .025), quantile(delta, probs = .975)) %>%
-  pivot_longer(everything()) %>% pull(value) %>% round(0) -> delta_sum
-
+source("scripts/get_posterior.R")
 ```
 
 
@@ -488,88 +308,10 @@ The y-axis in panel A and B are ordered by the average size of the respective va
 
 
 ```{r parameters, fig.pos="!ht", fig.height=6.5, fig.width=6, fig.align = "center", fig.cap="Posterior parameter values of the mixture model. Panel A shows by-participant IKIs and overall IKI value for fluent typing in red. Panel B shows by-participant disfluency probability (overall parameter value $\\theta$ in red). Panel C shows fluent IKIs plotted against disfluency probability (red triangle indicates overall parameter value). Panel D shows the posterior distribution of the disfluency slowdown. All error bars are 95\\% probability intervals."}
-
-ggplot(d_beta, aes(y = M, ymin = lo, ymax =up, x =id2, 
-                   color = Param, 
-                   shape = Param,
-                   size = Param)) +
-  geom_hline(yintercept = beta_sum[1], linetype = "dotted") +
-  geom_errorbar(alpha = .5, width = 0, size = .4, show.legend = F) +
-  geom_point(show.legend = F) +
-  scale_color_manual(values = c("darkred", "black")) +
-  scale_shape_manual(values = c(17, 19)) +
-  scale_size_manual(values = c(1.5, .1)) +
-  coord_flip() + theme_few(base_size = 10) +
-  labs(x = "Participants", 
-       y = bquote(atop("IKIs"~hat(beta)~"[in msecs]"))) +
-  theme(axis.text.y = element_blank(),
-        axis.ticks = element_blank()) -> p_beta
-
-ggplot(d_theta, 
-       aes(y = M, ymin = lo, ymax =up, x =id2, 
-           color = Param, shape = Param, size = Param)) +
-  geom_hline(yintercept = theta_sum[1], linetype = "dotted") +
-  geom_errorbar(alpha = .5, width = 0, size = .4, show.legend = F) +
-  geom_point(show.legend = F) +
-  scale_color_manual(values = c("darkred", "black")) +
-  scale_shape_manual(values = c(17, 19)) +
-  scale_size_manual(values = c(1.5, .1)) +
-  coord_flip() + theme_few(base_size = 10) +
-  labs(x = "Participants", 
-       y = bquote(atop("Disfluency probability"~hat(theta)))) +
-  theme(axis.text.y = element_blank(),
-        axis.ticks = element_blank()) -> p_theta
-
-
-ggplot(pss, aes(x = M_beta, y = M_prob)) +
-  geom_point(size = .5, alpha = .8) +
-  geom_errorbar(aes(ymin = lo_prob, ymax = up_prob), show.legend = F, size =.05, alpha =.15) +
-  geom_errorbarh(aes(xmin = lo_beta, xmax = up_beta), show.legend = F, size = .05, alpha =.15) +
-  geom_vline(xintercept=beta_sum[1], linetype="dashed", alpha = 0.4, colour = "darkred") +
-  geom_hline(yintercept=theta_sum[1], linetype="dashed", alpha = 0.4, colour = "darkred") +
-  geom_errorbar(inherit.aes = F, aes(ymin = theta_sum[2], ymax = theta_sum[3], x = beta_sum[1]), 
-                  colour = "darkred", size =.1, width = 0) +
-  geom_errorbarh(inherit.aes = F, aes(xmin = beta_sum[2], xmax = beta_sum[3], y = theta_sum[1]), 
-                  colour = "darkred", size =.1, height = 0) +
-  geom_point(inherit.aes =F, aes(x = beta_sum[1], y = theta_sum[1]), shape=17, colour = "darkred")+
-  theme_few(base_size = 10) +
-  labs(y = bquote("Disfluency probability"~hat(theta)),
-       x = bquote("IKIs"~hat(beta)~"[in msecs]")) +
-  theme(axis.ticks = element_blank()) -> p_scatter
-
-ps %>% select(beta, delta) %>%
-  transmute(delta = exp(beta+delta) - exp(beta)) %>%
-  ggplot(aes(x = delta)) +
-  geom_density(fill = "darkred", alpha = .45, colour = "darkred") +
-  geom_segment(aes(x = quantile(delta, probs = .025), 
-                   xend = quantile(delta, probs = .975), y=0, yend=0), size=1) +
-  geom_point(aes(x = mean(delta), y =0), size = 2, color = "darkred", shape = 17) +
-  labs(x = bquote("Disfluency slowdown"~hat(delta)~"[in msecs]"), 
-       y = "Posterior density") +
-  theme_few(base_size = 10) +
-  theme(axis.ticks = element_blank(),
-        axis.text.y = element_blank()) -> p_param
-
-cowplot::plot_grid(p_beta, p_theta, p_scatter, p_param, align = "vh", labels = c("A", "B", "C", "D"), ncol=2, nrow = 2)
+source("scripts/get_posterior_plot.R")
+plot_post
 ```
 
-
-
-
-```{r}
-#ytilde <- read_csv("../results/consonants_posterior_MoG_ytilde.csv")
-#y <- d %>% filter(bigram != 1)
-#ytilde %<>%
-#  mutate(samples = 1:n()) %>%
-#  filter(samples %in% sample(samples, 500)) %>%
-#  pivot_longer(cols = starts_with("y_tilde"), names_to = "id", values_to = "y_tilde") 
-#ggplot() +
-#  geom_density(data = ytilde, aes(x = y_tilde, group = samples, linetype = "y_tilde"), 
-#               alpha = .25, colour = "darkred") + 
-#  geom_density(data= y, aes(x = IKI, linetype = "y"), fill = "darkred", alpha = .25) +
-#  scale_x_log10() +
-#  scale_linetype_manual(values = c("y_tilde" = "dotted", "y" = "solid"))
-```
 
 
 
@@ -583,7 +325,7 @@ This model provides a) overall and by-participant keystroke intervals for fluent
 
 The central advantage of using mixture models to account for typing disfluencies is that we can by-pass the use of threshold values to define disfluencies. From the raw data it is not possible to know which data are disfluencies. Using threshold values ignores that some participants are generally slower typists and some tasks are more difficult. Mixture models allow us to capture disfluencies as a latent process in a principled way. This is important because the mixture model presented in this paper takes into account that a disfluency is relative to an individuals typing speed. Therefore, these models allow us to test predictions about typing disfluencies in certain population such as very young or old typists, language learners or individuals with genuine typing difficulty after account for individual differences in typing speed or vice versa. Further while we used copy-task data, other writing tasks will lead to other disfluency estimates. In other words, the presented model can be used to test hypothesis about psychological factors that might affect the ratio of disfluencies in the writing process. As an avenue for future research, mixture models as presented in this paper can be used for different types of writing tasks and particular populations.
 
-Writing involves processing on various cognitive levels, from generating an idea, retrieving lexical entries to the encoding of spelling. As activation between these levels cascades from higher to lower levels of representation, a delay at any of these levels causes disfluencies. While we distinguished between fluent and disfluent typing in a binary way, processing difficulty on different levels of activation might be associated with a different disfluency magnitude and might be cumulative. If the size of the disfluency is assumed to depend on the inhibited process upstream or a combination of two processes, this can be implemented as additional mixture component [see e.g. @baaijen2012keystroke] for address different types of disfluencies [@wengelin2001disfluencies]. In other words extensions of mixture models allow us to test different assumptions about the nature of the cascade of processes associated with writing in particular and language production in general. 
+Writing involves processing on various cognitive levels, from generating an idea, retrieving lexical entries to the encoding of spelling. As activation between these levels cascades from higher to lower levels of representation, a delay at any of these levels causes disfluencies. While we distinguished between fluent and disfluent typing in a binary way, processing difficulty on different levels of activation might be associated with a different disfluency magnitude and might be cumulative. If the size of the disfluency is assumed to depend on the inhibited process upstream or a combination of two processes, this can be implemented as additional mixture component [@baaijen2012keystroke] for address different types of disfluencies [@wengelin2001disfluencies]. In other words extensions of mixture models allow us to test different assumptions about the nature of the cascade of processes associated with writing in particular and language production in general. 
 
 
 
