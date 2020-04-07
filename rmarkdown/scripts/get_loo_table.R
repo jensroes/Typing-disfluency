@@ -14,13 +14,20 @@ looc <- read_csv("../results/loo_results_consonants.csv") %>%
                        M3 = "AR",
                        M4 = "MoG",
                        M5 = "AR + MoG")) %>%
-  mutate(Bigrams = recode(Model, M3 = "Autoregressor $\\phi$",
-                          M2 = "Random intercepts and slopes",
-                          M1 = "Random intercepts",
-                          M4 = "Random intercepts",
-                          M5 = "Autoregressor $\\phi$ or random intercepts")) %>%
-  select(Model, Type, elpd_diff, elpd_loo, Bigrams)
+#  mutate(Bigrams = recode(Model, M3 = "Autoregressor $\\phi$",
+#                          M2 = "Random intercepts and slopes",
+#                          M1 = "Random intercepts",
+#                          M4 = "Random intercepts",
+#                          M5 = "Autoregressor $\\phi$ or random intercepts")) %>%
+  select(Model, Type, elpd_diff, elpd_loo)
 
 names(looc)[c(3,4)] <- c("$\\Delta\\widehat{elpd}$", "$\\widehat{elpd}$")
 
-mc <- read_csv("../results/loo_results_consonants_mog.csv") %>% filter(Model == "MoGpptsbigramintercepts") %>% mutate_if(is.numeric, round, 0)
+mc <- read_csv("../results/loo_results_consonants_mog.csv") %>% 
+  filter(Model == "MoGpptsbigramintercepts - MoGpptsbigraminterceptsdelta") %>% 
+  mutate_if(is.numeric, round, 0)  %>% 
+  mutate_if(is.numeric, abs)
+
+mc2 <- read_csv("../results/loo_results_consonants_mog.csv") %>% 
+  filter(Model == "MoGpptsbigraminterceptsdelta2 - MoGpptsbigramintercepts") %>% 
+  mutate_if(is.numeric, round, 0)

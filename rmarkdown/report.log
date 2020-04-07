@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.3.23)  2 APR 2020 10:19
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.3.23)  7 APR 2020 14:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -10,8 +10,8 @@ L3 programming layer <2020-02-25> (/home/jens/.TinyTeX/texmf-dist/tex/latex/apa
 Document Class: apa7 2019/12/30 v1.04 APA formatting (7th edition)
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2019/12/20 v1.4l Standard LaTeX document class
-(/home/jens/.TinyTeX/texmf-dist/tex/latex/base/size10.clo
-File: size10.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
+(/home/jens/.TinyTeX/texmf-dist/tex/latex/base/size12.clo
+File: size12.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
 )
 \c@part=\count167
 \c@section=\count168
@@ -70,47 +70,7 @@ LaTeX Font Info:    Trying to load font information for T1+lmr on input line 11
 2.
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
-)) (/home/jens/.TinyTeX/texmf-dist/tex/latex/psnfss/times.sty
-Package: times 2005/04/12 PSNFSS-v9.2a (SPQR) 
-) (/home/jens/.TinyTeX/texmf-dist/tex/latex/psnfss/mathptm.sty
-Package: mathptm 2005/04/12 PSNFSS-v9.2a Times w/ Math (SPQR, WaS) 
-
-Package mathptm Warning: This package is to be regarded as obsolete.
-(mathptm)                See the PSNFSS documentation.
-
-LaTeX Font Info:    Redeclaring symbol font `operators' on input line 31.
-LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/lmr/m/n --> OT1/ptmcm/m/n on input line 31.
-LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/lmr/bx/n --> OT1/ptmcm/m/n on input line 31.
-LaTeX Font Info:    Redeclaring symbol font `letters' on input line 32.
-LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
-(Font)                  OML/lmm/m/it --> OML/ptmcm/m/it on input line 32.
-LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
-(Font)                  OML/lmm/b/it --> OML/ptmcm/m/it on input line 32.
-LaTeX Font Info:    Redeclaring symbol font `symbols' on input line 33.
-LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
-(Font)                  OMS/lmsy/m/n --> OMS/pzccm/m/n on input line 33.
-LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
-(Font)                  OMS/lmsy/b/n --> OMS/pzccm/m/n on input line 33.
-LaTeX Font Info:    Redeclaring symbol font `largesymbols' on input line 34.
-LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
-(Font)                  OMX/lmex/m/n --> OMX/psycm/m/n on input line 34.
-LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
-(Font)                  OMX/lmex/m/n --> OMX/psycm/m/n on input line 34.
-\symbold=\mathgroup4
-\symitalic=\mathgroup5
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 37.
-LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/lmr/bx/n --> OT1/ptm/bx/n on input line 37.
-LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/lmr/bx/n --> OT1/ptm/bx/n on input line 37.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 38.
-LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/lmr/m/it --> OT1/ptm/m/it on input line 38.
-LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/lmr/bx/it --> OT1/ptm/m/it on input line 38.
-) (/home/jens/.TinyTeX/texmf-dist/tex/latex/geometry/geometry.sty
+)) (/home/jens/.TinyTeX/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2020/01/02 v5.9 Page Geometry
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
@@ -639,82 +599,103 @@ Package caption Info: threeparttable package is loaded.
 \gr@boxheight=\skip72
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/tools/bm.sty
 Package: bm 2019/07/24 v1.2d Bold Symbol Support (DPC/FMi)
+\symboldoperators=\mathgroup4
+\symboldletters=\mathgroup5
+\symboldsymbols=\mathgroup6
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 141.
 LaTeX Info: Redefining \bm on input line 209.
 )
 \c@appendix=\count290
-(/home/jens/.TinyTeX/texmf-dist/tex/latex/tools/ftnright.sty
-Package: ftnright 2014/10/28 v1.1f footnote layout package (FMi)
-\rcol@footinsskip=\skip73
-\ftn@amount=\dimen281
-)
-\auone@box=\box58
-\autwo@box=\box59
-\autot@box=\box60
-\auone@boxwidth=\skip74
-\autwo@boxwidth=\skip75
-\autot@boxwidth=\skip76
-) (/home/jens/.TinyTeX/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/home/jens/.TinyTeX/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+Package: fancyhdr 2019/01/31 v3.10 Extensive control of page headers and footer
+s
+\f@nch@headwidth=\skip73
+\f@nch@O@elh=\skip74
+\f@nch@O@erh=\skip75
+\f@nch@O@olh=\skip76
+\f@nch@O@orh=\skip77
+\f@nch@O@elf=\skip78
+\f@nch@O@erf=\skip79
+\f@nch@O@olf=\skip80
+\f@nch@O@orf=\skip81
+) (/home/jens/.TinyTeX/texmf-dist/tex/latex/endfloat/endfloat.sty
+Package: endfloat 2019/04/15 v2.7 LaTeX2e package puts figures and tables at en
+d (jdm)
+\c@posttable=\count291
+\efloat@postttt=\write4
+\@ef@tttopen=\count292
+\c@postfigure=\count293
+\efloat@postfff=\write5
+\@ef@fffopen=\count294
+) (/home/jens/.TinyTeX/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count295
+\float@exts=\toks29
+\float@box=\box58
+\@float@everytoks=\toks30
+\@floatcapt=\box59
+)) (/home/jens/.TinyTeX/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/amsfonts/amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
-\@emptytoks=\toks29
-\symAMSa=\mathgroup6
-\symAMSb=\mathgroup7
+\@emptytoks=\toks31
+\symAMSa=\mathgroup7
+\symAMSb=\mathgroup8
 LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
 )) (/home/jens/.TinyTeX/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2020/01/20 v2.17e AMS math features
-\@mathmargin=\skip77
+\@mathmargin=\skip82
 For additional information on amsmath, use the `?' option.
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/amsmath/amstext.sty
 Package: amstext 2000/06/29 v2.01 AMS text
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
-\@emptytoks=\toks30
-\ex@=\dimen282
+\@emptytoks=\toks32
+\ex@=\dimen281
 )) (/home/jens/.TinyTeX/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 LaTeX Info: Redefining \boldsymbol on input line 28.
-\pmbraise@=\dimen283
+\pmbraise@=\dimen282
 ) (/home/jens/.TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2016/03/08 v2.02 operator names
 )
-\inf@bad=\count291
+\inf@bad=\count296
 LaTeX Info: Redefining \frac on input line 227.
-\uproot@=\count292
-\leftroot@=\count293
+\uproot@=\count297
+\leftroot@=\count298
 LaTeX Info: Redefining \overline on input line 389.
-\classnum@=\count294
-\DOTSCASE@=\count295
+\classnum@=\count299
+\DOTSCASE@=\count300
 LaTeX Info: Redefining \ldots on input line 486.
 LaTeX Info: Redefining \dots on input line 489.
 LaTeX Info: Redefining \cdots on input line 610.
-\Mathstrutbox@=\box61
-\strutbox@=\box62
-\big@size=\dimen284
+\Mathstrutbox@=\box60
+\strutbox@=\box61
+\big@size=\dimen283
 LaTeX Font Info:    Redeclaring font encoding OML on input line 733.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 734.
-\macc@depth=\count296
-\c@MaxMatrixCols=\count297
+\macc@depth=\count301
+\c@MaxMatrixCols=\count302
 \dotsspace@=\muskip17
-\c@parentequation=\count298
-\dspbrk@lvl=\count299
-\tag@help=\toks31
-\row@=\count300
-\column@=\count301
-\maxfields@=\count302
-\andhelp@=\toks32
-\eqnshift@=\dimen285
-\alignsep@=\dimen286
-\tagshift@=\dimen287
-\tagwidth@=\dimen288
-\totwidth@=\dimen289
-\lineht@=\dimen290
-\@envbody=\toks33
-\multlinegap=\skip78
-\multlinetaggap=\skip79
-\mathdisplay@stack=\toks34
+\c@parentequation=\count303
+\dspbrk@lvl=\count304
+\tag@help=\toks33
+\row@=\count305
+\column@=\count306
+\maxfields@=\count307
+\andhelp@=\toks34
+\eqnshift@=\dimen284
+\alignsep@=\dimen285
+\tagshift@=\dimen286
+\tagwidth@=\dimen287
+\totwidth@=\dimen288
+\lineht@=\dimen289
+\@envbody=\toks35
+\multlinegap=\skip83
+\multlinetaggap=\skip84
+\mathdisplay@stack=\toks36
 LaTeX Info: Redefining \[ on input line 2859.
 LaTeX Info: Redefining \] on input line 2860.
 ) (/home/jens/.TinyTeX/texmf-dist/tex/generic/iftex/ifxetex.sty
@@ -732,14 +713,10 @@ Package fixltx2e Warning: fixltx2e is not required with releases after 2015
 Already applied: [0000/00/00] Old fixltx2e package on input line 53.
 ) (/home/jens/.TinyTeX/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2020/02/11 v2.0o Standard LaTeX package
-LaTeX Font Info:    Trying to load font information for T1+ptm on input line 11
-2.
-(/home/jens/.TinyTeX/texmf-dist/tex/latex/psnfss/t1ptm.fd
-File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
-)) (/home/jens/.TinyTeX/texmf-dist/tex/latex/base/inputenc.sty
+) (/home/jens/.TinyTeX/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2018/08/11 v1.3c Input encoding file
-\inpenc@prehook=\toks35
-\inpenc@posthook=\toks36
+\inpenc@prehook=\toks37
+\inpenc@posthook=\toks38
 ) (/home/jens/.TinyTeX/texmf-dist/tex/latex/base/textcomp.sty
 Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
 ) (/home/jens/.TinyTeX/texmf-dist/tex/latex/upquote/upquote.sty
@@ -755,53 +732,53 @@ line 40.
 ) (/home/jens/.TinyTeX/texmf-dist/tex/latex/was/upgreek.sty
 Package: upgreek 2003/02/12 v2.0 (WaS)
 Package upgreek Info: Using Euler Roman for upright Greek on input line 31.
-\symugrf@m=\mathgroup8
+\symugrf@m=\mathgroup9
 LaTeX Font Info:    Overwriting symbol font `ugrf@m' in version `bold'
 (Font)                  U/eur/m/n --> U/eur/b/n on input line 38.
 ) (/home/jens/.TinyTeX/texmf-dist/tex/latex/tools/longtable.sty
 Package: longtable 2020/01/07 v4.13 Multi-page Table package (DPC)
-\LTleft=\skip80
-\LTright=\skip81
-\LTpre=\skip82
-\LTpost=\skip83
-\LTchunksize=\count303
-\LTcapwidth=\dimen291
-\LT@head=\box63
-\LT@firsthead=\box64
-\LT@foot=\box65
-\LT@lastfoot=\box66
-\LT@cols=\count304
-\LT@rows=\count305
-\c@LT@tables=\count306
-\c@LT@chunks=\count307
-\LT@p@ftn=\toks37
+\LTleft=\skip85
+\LTright=\skip86
+\LTpre=\skip87
+\LTpost=\skip88
+\LTchunksize=\count308
+\LTcapwidth=\dimen290
+\LT@head=\box62
+\LT@firsthead=\box63
+\LT@foot=\box64
+\LT@lastfoot=\box65
+\LT@cols=\count309
+\LT@rows=\count310
+\c@LT@tables=\count311
+\c@LT@chunks=\count312
+\LT@p@ftn=\toks39
 ) (/home/jens/.TinyTeX/texmf-dist/tex/latex/graphics/lscape.sty
 Package: lscape 2000/10/22 v3.01 Landscape Pages (DPC)
 ) (/home/jens/.TinyTeX/texmf-dist/tex/latex/multirow/multirow.sty
 Package: multirow 2019/05/31 v2.5 Span multiple rows of a table
-\multirow@colwidth=\skip84
-\multirow@cntb=\count308
-\multirow@dima=\skip85
-\bigstrutjot=\dimen292
+\multirow@colwidth=\skip89
+\multirow@cntb=\count313
+\multirow@dima=\skip90
+\bigstrutjot=\dimen291
 ) (/home/jens/.TinyTeX/texmf-dist/tex/latex/tools/tabularx.sty
 Package: tabularx 2020/01/15 v2.11c `tabularx' package (DPC)
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/tools/array.sty
 Package: array 2019/08/31 v2.4l Tabular extension package (FMi)
-\col@sep=\dimen293
-\ar@mcellbox=\box67
-\extrarowheight=\dimen294
-\NC@list=\toks38
-\extratabsurround=\skip86
-\backup@length=\skip87
-\ar@cellbox=\box68
+\col@sep=\dimen292
+\ar@mcellbox=\box66
+\extrarowheight=\dimen293
+\NC@list=\toks40
+\extratabsurround=\skip91
+\backup@length=\skip92
+\ar@cellbox=\box67
 )
-\TX@col@width=\dimen295
-\TX@old@table=\dimen296
-\TX@old@col=\dimen297
-\TX@target=\dimen298
-\TX@delta=\dimen299
-\TX@cols=\count309
-\TX@ftn=\toks39
+\TX@col@width=\dimen294
+\TX@old@table=\dimen295
+\TX@old@col=\dimen296
+\TX@target=\dimen297
+\TX@delta=\dimen298
+\TX@cols=\count314
+\TX@ftn=\toks41
 ) (/home/jens/.TinyTeX/texmf-dist/tex/latex/threeparttablex/threeparttablex.sty
 Package: threeparttablex 2013/07/23 v0.3 by daleif
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/environ/environ.sty
@@ -809,23 +786,19 @@ Package: environ 2014/05/04 v0.3 A new way to define environments
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/trimspaces/trimspaces.sty
 Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
 ))
-\TPTL@width=\skip88
+\TPTL@width=\skip93
 )
-\longtablewidth=\skip89
+\longtablewidth=\skip94
 Failed to patch abstract.
-(/home/jens/.TinyTeX/texmf-dist/tex/latex/dblfloatfix/dblfloatfix.sty
-Package: dblfloatfix 2012/12/31 v1.0a (JAW)
-\@dblbotnum=\count310
-\c@dblbotnumber=\count311
-) (/home/jens/.TinyTeX/texmf-dist/tex/latex/csquotes/csquotes.sty
+(/home/jens/.TinyTeX/texmf-dist/tex/latex/csquotes/csquotes.sty
 Package: csquotes 2019-12-06 v5.2j context-sensitive quotations (JAW)
-\csq@reset=\count312
-\csq@gtype=\count313
-\csq@glevel=\count314
-\csq@qlevel=\count315
-\csq@maxlvl=\count316
-\csq@tshold=\count317
-\csq@ltx@everypar=\toks40
+\csq@reset=\count315
+\csq@gtype=\count316
+\csq@glevel=\count317
+\csq@qlevel=\count318
+\csq@maxlvl=\count319
+\csq@tshold=\count320
+\csq@ltx@everypar=\toks42
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/csquotes/csquotes.def
 File: csquotes.def 2019-12-06 v5.2j csquotes generic definitions (JAW)
 )
@@ -833,28 +806,21 @@ Package csquotes Info: Trying to load configuration file 'csquotes.cfg'...
 Package csquotes Info: ... configuration file loaded successfully.
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/csquotes/csquotes.cfg
 File: csquotes.cfg 
-)) (/home/jens/.TinyTeX/texmf-dist/tex/latex/float/float.sty
-Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count318
-\float@exts=\toks41
-\float@box=\box69
-\@float@everytoks=\toks42
-\@floatcapt=\box70
-) (/home/jens/.TinyTeX/texmf-dist/tex/latex/colortbl/colortbl.sty
+)) (/home/jens/.TinyTeX/texmf-dist/tex/latex/colortbl/colortbl.sty
 Package: colortbl 2020/01/04 v1.0e Color table columns (DPC)
 \everycr=\toks43
-\minrowclearance=\skip90
+\minrowclearance=\skip95
 ) (/home/jens/.TinyTeX/texmf-dist/tex/generic/ulem/ulem.sty
-\UL@box=\box71
-\UL@hyphenbox=\box72
-\UL@skip=\skip91
+\UL@box=\box68
+\UL@hyphenbox=\box69
+\UL@skip=\skip96
 \UL@hook=\toks44
-\UL@height=\dimen300
-\UL@pe=\count319
-\UL@pixel=\dimen301
-\ULC@box=\box73
+\UL@height=\dimen299
+\UL@pe=\count321
+\UL@pixel=\dimen300
+\ULC@box=\box70
 Package: ulem 2019/11/18
-\ULdepth=\dimen302
+\ULdepth=\dimen301
 ) (/home/jens/.TinyTeX/texmf-dist/tex/generic/babel/babel.sty
 Package: babel 2020/02/28 3.41 The Babel package
 (/home/jens/.TinyTeX/texmf-dist/tex/generic/babel/switch.def
@@ -863,11 +829,11 @@ File: switch.def 2020/02/28 3.41 Babel switching mechanism
 Language: english 2017/06/06 v3.3r English support from the babel system
 (/home/jens/.TinyTeX/texmf-dist/tex/generic/babel/babel.def
 File: babel.def 2020/02/28 3.41 Babel common definitions
-\babel@savecnt=\count320
-\U@D=\dimen303
+\babel@savecnt=\count322
+\U@D=\dimen302
 (/home/jens/.TinyTeX/texmf-dist/tex/generic/babel/txtbabel.def)
 \bbl@readstream=\read3
-\bbl@dirlevel=\count321
+\bbl@dirlevel=\count323
 )
 Package babel Info: \l@british = using hyphenrules for english
 (babel)             (\language0) on input line 82.
@@ -888,29 +854,29 @@ Package csquotes Info: Adjusting default style.
 Package csquotes Info: Redefining alias 'default' -> 'english'.
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
 File: l3backend-pdfmode.def 2020-02-23 L3 backend support: PDF mode
-\l__kernel_color_stack_int=\count322
-\l__pdf_internal_box=\box74
+\l__kernel_color_stack_int=\count324
+\l__pdf_internal_box=\box71
 ) (./report.aux)
 \openout1 = `report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -923,19 +889,19 @@ LaTeX Font Info:    ... okay on input line 131.
 * v-part:(T,H,B)=(72.26999pt, 650.43001pt, 72.26999pt)
 * \paperwidth=614.295pt
 * \paperheight=794.96999pt
-* \textwidth=501.55397pt
-* \textheight=643.20255pt
-* \oddsidemargin=-18.06749pt
-* \evensidemargin=-18.06749pt
-* \topmargin=-19.8738pt
-* \headheight=13.4457pt
-* \headsep=13.72546pt
-* \topskip=10.0pt
+* \textwidth=469.75502pt
+* \textheight=650.43001pt
+* \oddsidemargin=0.0pt
+* \evensidemargin=0.0pt
+* \topmargin=-37.0pt
+* \headheight=15.2pt
+* \headsep=25.0pt
+* \topskip=12.0pt
 * \footskip=30.0pt
-* \marginparwidth=121.0pt
-* \marginparsep=11.0pt
-* \columnsep=18.06749pt
-* \skip\footins=10.0pt plus 5.0pt minus 3.0pt
+* \marginparwidth=95.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
 * \hoffset=0.0pt
 * \voffset=0.0pt
 * \mag=1000
@@ -960,8 +926,8 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 )) ABD: EveryShipout initializing macros
-\AtBeginShipoutBox=\box75
-Package hyperref Info: Link coloring OFF on input line 131.
+\AtBeginShipoutBox=\box72
+Package hyperref Info: Link coloring OFF on input line 128.
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty
@@ -969,14 +935,14 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 ) (/home/jens/.TinyTeX/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count323
+\c@section@level=\count325
 )
-LaTeX Info: Redefining \ref on input line 131.
-LaTeX Info: Redefining \pageref on input line 131.
-LaTeX Info: Redefining \nameref on input line 131.
+LaTeX Info: Redefining \ref on input line 128.
+LaTeX Info: Redefining \pageref on input line 128.
+LaTeX Info: Redefining \nameref on input line 128.
 (./report.out) (./report.out)
-\@outlinefile=\write4
-\openout4 = `report.out'.
+\@outlinefile=\write6
+\openout6 = `report.out'.
 
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/apa7/config/APA7english.txt
 File: APA7english.txt 2019/12/29 v1.00 apa7 configuration for non-American Engl
@@ -989,113 +955,116 @@ Package caption Info: longtable package is loaded.
 Package: ltcaption 2018/08/26 v1.4a longtable captions (AR)
 )
 Package caption Info: End \AtBeginDocument code.
-LaTeX Font Info:    Trying to load font information for OT1+ptmcm on input line
- 132.
-(/home/jens/.TinyTeX/texmf-dist/tex/latex/psnfss/ot1ptmcm.fd
-File: ot1ptmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ptmcm.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
+29.
+(/home/jens/.TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
+File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+ptmcm on input line
- 132.
-(/home/jens/.TinyTeX/texmf-dist/tex/latex/psnfss/omlptmcm.fd
-File: omlptmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ptmcm.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
+29.
+(/home/jens/.TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
+File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+pzccm on input line
- 132.
-(/home/jens/.TinyTeX/texmf-dist/tex/latex/psnfss/omspzccm.fd
-File: omspzccm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/pzccm.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
+129.
+(/home/jens/.TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
+File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+psycm on input line
- 132.
-(/home/jens/.TinyTeX/texmf-dist/tex/latex/psnfss/omxpsycm.fd
-File: omxpsycm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/psycm.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
+129.
+(/home/jens/.TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
+File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 1
-32.
-(/home/jens/.TinyTeX/texmf-dist/tex/latex/psnfss/ot1ptm.fd
-File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
-)
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 132.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 132.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 132.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 132
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <12> on input line 129.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <8> on input line 129.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6> on input line 129.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 129
 .
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 132
+LaTeX Font Info:    Trying to load font information for U+msb on input line 129
 .
 (/home/jens/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 132.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 132.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 132.
-[1{/home/jens/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+) [1{/home/jens/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
+] [2] [3]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 140.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 140.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 140.
+[4] [5] [6] [7] [8] [9]
+Overfull \hbox (6.43848pt too wide) in paragraph at lines 286--307
+ [] 
+ []
 
-]
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 143.
-[2] [3]
-<report_files/figure-latex/descriptives-1.pdf, id=93, 431.6125pt x 208.78pt>
+[10] [11]
+<report_files/figure-latex/descriptives-1.pdf, id=150, 431.6125pt x 208.78pt>
 File: report_files/figure-latex/descriptives-1.pdf Graphic file (type pdf)
 <use report_files/figure-latex/descriptives-1.pdf>
 Package pdftex.def Info: report_files/figure-latex/descriptives-1.pdf  used on 
-input line 297.
-(pdftex.def)             Requested size: 241.74086pt x 116.9351pt.
-
+input line 323.
+(pdftex.def)             Requested size: 431.6246pt x 208.78583pt.
+[12 <./report_files/figure-latex/descriptives-1.pdf>] [13]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-[4 <./report_files/figure-latex/descriptives-1.pdf>]
-<report_files/figure-latex/parameters-1.pdf, id=133, 424.58624pt x 451.6875pt>
+[14]
+<report_files/figure-latex/parameters-1.pdf, id=198, 424.58624pt x 451.6875pt>
 File: report_files/figure-latex/parameters-1.pdf Graphic file (type pdf)
 <use report_files/figure-latex/parameters-1.pdf>
 Package pdftex.def Info: report_files/figure-latex/parameters-1.pdf  used on in
-put line 351.
-(pdftex.def)             Requested size: 241.74457pt x 257.17506pt.
+put line 377.
+(pdftex.def)             Requested size: 424.60463pt x 451.70706pt.
+[15]
+
+LaTeX Warning: Text page 16 contains only floats.
+
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-[5]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-[6 <./report_files/figure-latex/parameters-1.pdf>] [7] [8
-
-]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 510.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 510.
+[16 <./report_files/figure-latex/parameters-1.pdf>] [17] [18] [19] [20] [21] AE
+D endfloat: Processing end Figures and Tables [22]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 548.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 548.
 (./report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 510.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 510.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 548.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 548.
 Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: 2E708AAB594B9F3FCBA99C9C110FCA9C;1535.
+(rerunfilecheck)             Checksum: 760505C98F88683B4DACEC7732C734BF;2071.
  ) 
 Here is how much of TeX's memory you used:
- 24671 strings out of 482913
- 433815 string characters out of 5959408
- 688543 words of memory out of 5000000
- 39308 multiletter control sequences out of 15000+600000
- 597497 words of font info for 130 fonts, out of 8000000 for 9000
+ 24891 strings out of 482913
+ 436622 string characters out of 5959408
+ 684614 words of memory out of 5000000
+ 39522 multiletter control sequences out of 15000+600000
+ 602543 words of font info for 88 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 68i,14n,68p,1494b,499s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/home/jens/.TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}</home/jens/.Tiny
-TeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/jens/.TinyTeX/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/jens/.TinyTeX/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/jens/.TinyTeX/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmsy10.pfb></home/jens/.TinyTeX/texmf-dist/fonts/
-type1/urw/symbol/usyr.pfb></home/jens/.TinyTeX/texmf-dist/fonts/type1/urw/times
-/utmb8a.pfb></home/jens/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></
-home/jens/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on report.pdf (8 pages, 280609 bytes).
+ 68i,14n,68p,1620b,517s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/home/jens/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/home/jens/.Tin
+yTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/home/jens/.TinyTeX/texmf-dis
+t/fonts/enc/dvips/lm/lm-mathex.enc}{/home/jens/.TinyTeX/texmf-dist/fonts/enc/dv
+ips/lm/lm-mathsy.enc}{/home/jens/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.e
+nc}</home/jens/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></home/jens
+/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></home/jens/.TinyTeX/texm
+f-dist/fonts/type1/public/lm/lmmi10.pfb></home/jens/.TinyTeX/texmf-dist/fonts/t
+ype1/public/lm/lmmi12.pfb></home/jens/.TinyTeX/texmf-dist/fonts/type1/public/lm
+/lmmi8.pfb></home/jens/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></ho
+me/jens/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></home/jens/.TinyTe
+X/texmf-dist/fonts/type1/public/lm/lmr7.pfb></home/jens/.TinyTeX/texmf-dist/fon
+ts/type1/public/lm/lmr8.pfb></home/jens/.TinyTeX/texmf-dist/fonts/type1/public/
+lm/lmri12.pfb></home/jens/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
+</home/jens/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy6.pfb></home/jens/.Ti
+nyTeX/texmf-dist/fonts/type1/public/lm/lmsy8.pfb>
+Output written on report.pdf (22 pages, 391782 bytes).
 PDF statistics:
- 295 PDF objects out of 1000 (max. 8388607)
- 256 compressed objects within 3 object streams
- 83 named destinations out of 1000 (max. 500000)
- 111 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 404 PDF objects out of 1000 (max. 8388607)
+ 345 compressed objects within 4 object streams
+ 105 named destinations out of 1000 (max. 500000)
+ 135 words of extra memory for PDF output out of 10000 (max. 10000000)
 

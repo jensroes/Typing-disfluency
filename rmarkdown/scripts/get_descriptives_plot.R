@@ -30,7 +30,8 @@ d2 %>% ungroup() %>% group_by(subj) %>%
             SE = 2*sd(IKI)/sqrt(n())) %>% 
   ungroup() -> d_summary
 
-#tjxgfl pgkfkq dtdrgt npwdvf
+
+cons <- c("tjxgfl", "pgkfkq", "dtdrgt", "npwdvf")
 d_summary$bgs <- c("tj", "jx", "xg", "gf", "fl",
                    "pg","gk", "kf", "fk",  "kq", 
                    "dt", "td", "dr", "rg", "gt", 
@@ -60,7 +61,8 @@ d2 %>% ungroup() %>% group_by(subj) %>% mutate(bigram = 1:n()) %>%
   scale_linetype_manual(name = "", values = Ms) +
   scale_color_manual(name = "", values = Mcol) +
   theme(strip.text = element_text(size = 12, hjust=0),
-        axis.ticks = element_blank()) -> p.big
+        axis.ticks = element_blank()) + 
+  annotate(geom="text", x=c(1.75,7.75,12.75,17.75), y=17500, label=cons, size = 4) -> p.big
 
 d.raw <- d2 %>% ungroup() %>% 
   group_by(subj) %>% mutate(bigram = 1:n()) %>% 
