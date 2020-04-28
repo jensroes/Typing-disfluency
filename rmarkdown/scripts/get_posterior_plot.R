@@ -56,7 +56,6 @@ ps %>% select(beta, delta) %>%
   labs(x = bquote("Disfluency slowdown"~hat(delta)~"[in msecs]"), 
        y = "Posterior density") +
   theme_few(base_size = 10) +
-  theme(axis.ticks = element_blank(),
-        axis.text.y = element_blank()) -> p_param
+  theme(axis.ticks = element_blank()) -> p_param
 
 plot_post <- plot_grid(p_beta, p_theta, p_scatter, p_param, align = "vh", labels = c("A", "B", "C", "D"), ncol=2, nrow = 2)

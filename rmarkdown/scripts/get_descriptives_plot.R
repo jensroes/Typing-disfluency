@@ -1,4 +1,4 @@
-Ms <- c("Median" = "dotted", "Mean" = "dashed", "Mode" = "longdash")
+Ms <- c("Median" = "dotted", "Mean" = "longdash", "Mode" = "solid")
 Mcol <- c("Median" = "darkolivegreen4", "Mean" = "turquoise4", "Mode" = "darkred")
 
 d %<>% select(subj, bg, bigram, IKI)
@@ -27,42 +27,73 @@ d2 %>% ungroup() %>% group_by(subj) %>%
   summarise(Mode = dmode(IKI),
             Mean = mean(IKI),
             Median = median(IKI),
-            SE = 2*sd(IKI)/sqrt(n())) %>% 
+            lo = sd(IKI)/sqrt(n()),
+            up = sd(IKI)/sqrt(n())) %>% 
   ungroup() -> d_summary
 
 
 cons <- c("tjxgfl", "pgkfkq", "dtdrgt", "npwdvf")
-d_summary$bgs <- c("tj", "jx", "xg", "gf", "fl",
-                   "pg","gk", "kf", "fk",  "kq", 
+d_summary$bgs <- c("tj", "jx", "xg", "gf", "fl", 
+                   "pg","gk", "kf", "fk",  "kq",
                    "dt", "td", "dr", "rg", "gt", 
                    "np", "pw", "wd", "dv", "vf")
 
 d_summary %<>%
+  mutate(block = rep(1:4, each = 5)) %>%
   mutate(bgs = factor(bgs, levels = unique(bgs)[bigram], ordered = T))
+
+d_summary %>%
+  pivot_longer(Mode:Median, names_to = "CT", values_to = "values") %>%
+  mutate(lo = values - lo,
+         up = values + up) %>% 
+  mutate(lo = ifelse(lo < 0, 0, lo)) %>% 
+  mutate(consB = plyr::mapvalues(block, from = unique(block), to = cons)) %>%
+  mutate(consB = factor(consB, levels = cons, ordered = T)) -> d_summary_long
+
 
 d2 %>% ungroup() %>% group_by(subj) %>% mutate(bigram = 1:n()) %>% 
   filter(bigram < 21) %>% ungroup() %>%
-  left_join(d_summary[,c("bigram", "bgs")], by = "bigram") %>%
+  left_join(d_summary[,c("bigram", "bgs", "block")], by = "bigram") %>%
+  select(-bg,-sequence,-`1`:-`p_seq`) %>%
   mutate(bgs = factor(bgs, levels = unique(bgs)[unique(bigram)], ordered = T)) %>% 
-  ggplot() +
-  geom_point(aes(y = IKI, x = bgs, group = factor(subj)), size =.5, show.legend = F, alpha = .1) +
-  geom_line(aes(y = IKI, x = bgs, group = factor(subj)), linetype = "dashed", show.legend = F, alpha = .05) +
-  geom_pointrange(data = d_summary, aes(y = Mode, x = bigram, ymin = Mode - SE, ymax= Mode + SE, color = "Mode"),fatten = 3) +
-  geom_pointrange(data = d_summary, aes(y = Mean, x = bigram, ymin = Mean - SE, ymax= Mean + SE, color = "Mean"), fatten = 3) +
-  geom_pointrange(data = d_summary, aes(y = Median, x = bigram, ymin = Median - SE, ymax= Median + SE, color = "Median"), fatten = 3) +
-  geom_line(data = d_summary, aes(y = Mode, x = bgs, group = 1, color = "Mode", linetype = "Mode")) +
-  geom_line(data = d_summary, aes(y = Median, x = bgs, group = 1, color = "Median", linetype = "Median")) +
-  geom_line(data = d_summary, aes(y = Mean, x = bgs, group = 1, color = "Mean", linetype = "Mean")) +
-  geom_vline(data = filter(d_summary), aes(xintercept = c(5.5)), linetype = "dotted", size = .25) +
-  geom_vline(data = filter(d_summary), aes(xintercept = c(10.5)), linetype = "dotted", size = .25) +
-  geom_vline(data = filter(d_summary), aes(xintercept = c(15.5)), linetype = "dotted", size = .25) +
-  theme_few(base_size = 10) + scale_y_log10() +
-  labs(x = "Bigram (in order)", y = "log-scaled IKIs [in msecs]") +
+  mutate(consB = plyr::mapvalues(block, from = unique(block), to = cons)) %>%
+  mutate(consB = factor(consB, levels = cons, ordered = T)) -> plot_df
+
+
+ggplot(data = plot_df, aes(x = IKI, y = bgs, group = factor(subj))) +
+  coord_flip() +
+  facet_wrap(~consB, scales = "free_x", nrow = 1 ) +
+  theme_few(base_size = 10) + 
+  scale_x_log10(limits = c(50, 20000)) +
+  geom_point(size = .1, show.legend = F, position = position_dodge(.1)) +
+  geom_line(linetype = "solid", show.legend = F, size = .1, alpha = .15, orientation = "y", position = position_dodge(.1)) +
+  labs(y = "", x = "") +
   scale_linetype_manual(name = "", values = Ms) +
-  scale_color_manual(name = "", values = Mcol) +
+  scale_color_colorblind("") +
   theme(strip.text = element_text(size = 12, hjust=0),
-        axis.ticks = element_blank()) + 
-  annotate(geom="text", x=c(1.75,7.75,12.75,17.75), y=17500, label=cons, size = 4) -> p.big
+        axis.ticks = element_blank(),
+        axis.text.x = element_blank(),
+        legend.key.width = unit(1, "cm")) -> p.ppt;p.ppt
+
+ggplot(data = plot_df) +
+  coord_flip() +
+  facet_wrap(~consB, scales = "free_x", nrow = 1 ) +
+  theme_few(base_size = 10) + 
+  scale_x_log10(limits = c(130, 1200), breaks = c(250, 500, 1000)) +
+#  scale_x_log10(limits = c(50, 20000)) +
+  geom_pointintervalh(data = d_summary_long, aes(x = values, y = bgs, xmin = lo, xmax = up, color = CT), 
+                                position = position_dodgev(height = .75), fatten_point = 2.5, show.legend = F) +
+  geom_line(data = d_summary_long, aes(x = values, y = bgs, group = CT, color = CT, linetype = CT), 
+            position = position_dodge(.75), show.legend = T, orientation = "y") +
+  labs(y = "Bigram (in order)", x = "") +
+  scale_linetype_manual(name = "", values = Ms) +
+  scale_colour_wsj(name = "") +
+  theme(strip.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "top",
+        legend.justification = "right",
+        legend.key.width = unit(1, "cm")) -> p.big
+
 
 d.raw <- d2 %>% ungroup() %>% 
   group_by(subj) %>% mutate(bigram = 1:n()) %>% 
@@ -75,31 +106,50 @@ d2 %>% ungroup() %>% group_by(subj) %>%
   mutate(bigram = 1:n()) %>% filter(bigram < 21) %>% 
   ungroup() %>%
   ggplot(aes( x = IKI)) +
-  stat_density(geom="line", size = .2, colour = "black", show.legend = F, position = "identity") +
+  geom_segment(data=d.raw, inherit.aes = F, 
+               aes(x=mean, y=-Inf, yend = Inf, xend = mean, linetype="Mean", color = "Mean"), size = .5) +
+  geom_segment(data=d.raw, inherit.aes = F, 
+               aes(x=median, y=-Inf, yend = Inf, xend = median, linetype="Median", color = "Median"), size = .5) +
+  geom_segment(data=d.raw, inherit.aes = F, 
+               aes(x=mode, y=-Inf, yend = Inf, xend = mode, linetype="Mode", color = "Mode"), size = .5) +
+  stat_density(geom="line", size = .5, 
+               colour = "black", 
+               show.legend = F,
+               position = "identity") +
   scale_x_log10() +
-  theme_void(base_size = 10) +
-  labs(x = "", y = "") +
-  geom_segment(data=d.raw, inherit.aes = F, 
-               aes(x=mean, y=0, yend = .75, xend = mean, linetype="Mean", color = "Mean")) +
-  geom_segment(data=d.raw, inherit.aes = F, 
-               aes(x=median, y=0, yend = 1.1, xend = median, linetype="Median", color = "Median")) +
-  geom_segment(data=d.raw, inherit.aes = F, 
-               aes(x=mode, y=0, yend = 1.25, xend = mode, linetype="Mode", color = "Mode")) +
-  theme(axis.text = element_blank(),
-        axis.ticks = element_blank(),
+  theme_few(base_size = 10) +
+  labs(x = "log-scaled IKIs [in msecs]", y = "Density") +
+  facet_grid(~1) +
+  theme(axis.ticks = element_blank(),
         legend.key.width = unit(1, "cm"),
+        legend.key = element_blank(),
+        axis.title.x = element_text(size = 10),
+        axis.title.y = element_text(size = 10, margin=margin(0,28,0,0)),
+        strip.text = element_text(colour = "transparent"),
         legend.justification = "top") +
   scale_linetype_manual(name = "", values = Ms) +
-  scale_color_manual(name = "", values = Mcol) +
-  coord_flip() -> p.log;p.log
+  scale_colour_wsj(name = "") -> p.log
+
+plotA <- plot_grid(
+  p.ppt + theme(legend.position="none", plot.margin = unit(c(0,.1,-.1,.1), "cm")),
+  p.big + theme(legend.position="none", plot.margin = unit(c(-.2,.1,.1,.1), "cm")), 
+  nrow = 2, axis = c("l"), align = 'v')
+
+
+y.grob <- textGrob("log-scaled IKIs [in msecs]", gp=gpar(fontsize=10), rot=90)
+
+plotAgrob <- arrangeGrob(plotA, left = y.grob)
 
 pcol <- plot_grid(
-  p.big + theme(legend.position="none", plot.margin = unit(c(.1, 0, .1, .1), "cm")),
-  p.log + theme(legend.position="none", plot.margin = unit(c(.1, 0, .1, 0), "cm")),
-  align = 'h', nrow = 1,
-  rel_widths = c(4,.5)
+  plotAgrob, 
+  p.log + theme(legend.position="none", plot.margin = unit(c(-.1,.1,.1,.1), "cm")),
+  nrow = 2,  rel_heights = c(2,1.15), 
+  labels = c("A", "B")
 )
 
-legend <- get_legend(p.log + theme(legend.position = "top", legend.justification = "right"))
+legend <- get_legend(p.log + theme(legend.position = "bottom", 
+                                   legend.justification = "right",
+                                   plot.margin = unit(c(0,0,0,0), "cm")))
 
-plot_all <- plot_grid(legend, pcol, ncol = 1, rel_heights = c(.1,1))
+plot_all <- plot_grid(pcol,legend, ncol = 1, rel_heights = c(1,.1))
+

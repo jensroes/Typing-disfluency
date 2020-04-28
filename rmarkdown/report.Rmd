@@ -1,6 +1,6 @@
 ---
-title             : "Modelling disfluencies in copy-typing as mixture process"
-shorttitle        : "Modelling disfluencies as mixture process"
+title             : "Modelling disfluencies in copy-typing"
+shorttitle        : "Modelling disfluencies in copy-typing"
 
 author: 
   - name          : "Jens Roeser"
@@ -29,10 +29,10 @@ affiliation:
 
 
 abstract: |
-   The analysis of keystroke timing data typically involves the calculation of summary statistics such as the mean inter-keystroke interval, pause frequencies etc. There are two fundamental problems with this: first, parametric descriptives for non-normal distributed data are going to be biased estimates and neglect information associated with variance; second, pauses and pause-related process measures are defined using threshold value which are, in principle, arbitrary. We implemented a series of Bayesian models that aimed to address both issues by (a) providing reliable typing estimates and (b) statistically detecting process disfluencies. We tested these models on a random sample of 100 participants from the Dutch copy-task corpus. Our results illustrate how typing disfluencies can be statistically determined as a finite mixture process. The typing task was characterized by this mixture model as a combination of fluent and disfluent typing associated with parameters that capture the magnitude and the probability of disfluencies. Mixture models provide a principle method to detect disfluencies in keyboard typing data.
+   The analysis of keystroke latency data typically involves the calculation of summary statistics such as the mean inter-keystroke interval, pause frequencies etc. There are two fundamental problems with this: first, descriptives ignore important information in the data and frequently result in biased estimates; second, pauses and pause-related measures are defined using threshold value which are, in principle, arbitrary. We implemented a series of Bayesian models that aimed to address both issues by (a) providing reliable typing estimates and (b) statistically detecting process disfluencies. We tested these models on a random sample of 100 participants from the Dutch copy-task corpus. Our results illustrate how disfluencies can be statistically determined as a mixture of distributions; i.e. a combination of fluent and disfluent typing intervals characterized by a disfluency magnitude and disfluency probability. Mixture models provide a principled approach to detect disfluencies in keyboard typing data.
 
 
-keywords: "Copy-task; keystroke modeling; autoregression; mixture models; Bayesian inference"
+keywords: "Copy-task; keystroke modelling; autoregression; mixture models; Bayesian statistical models; typing skills"
 
 
 bibliography      : ["ref.bib"]
@@ -43,6 +43,10 @@ classoption       : "man"
 output            : 
   papaja::apa6_pdf:
     keep_tex: TRUE
+#  papaja::apa6_docx:
+#    keep_tex: TRUE
+#    reference_docx: template_flr.docx
+
 
 
 figsintext        : yes
@@ -66,18 +70,25 @@ header-includes:
 
 ```{r setup, include=FALSE}
 library(magrittr)
-library(kableExtra)
 library(tidyverse)
-library(gridExtra)
+
+library(papaja)
 library(knitr)
 library(citr)
-library(papaja)
+library(kableExtra)
+
+library(tidybayes)
+library(grid)
+library(gridExtra)
+library(ggstance)
 library(ggforce)
 library(ggthemes)
 library(ggExtra)
 library(cowplot)
+
 source("../functions/functions.R")
 source("../functions/get_data.R")
+
 knitr::opts_chunk$set(warning = FALSE, 
                       message = FALSE,
                       cache.extra = R.version,
@@ -90,29 +101,29 @@ dev.args = list(pdf = list(type = "cairo"))
 
 # Introduction
 
-Writing research has made extensive use of keystroke-logging to capture typing process data. In particular process disfluencies (loosely defined as relatively long intervals between subsequent keystrokes) are interesting to develop an understanding of the individuals writing progress. This is because language production is typically thought of as a cascade from the mental generation of a message, into grammatical processing and finally the generation and execution of motor codes that serve the transition of an idea. This can be found in theoretical models of speech [@bock2014syntactically], handwriting [@van1991handwriting] and keyboard typing [@hayes2012evidence]. Disfluencies at the execution stage are therefore indicators of processing demands that arise on higher levels of mental representation [@christiansen2016now;@olive2014toward]; for example, when preplanning syntactic dependencies [@roeser2019advance] or retrieving a lexical entry for a word or its spelling [@torrance2016adolescent]. At present there is no principled way of detecting keystroke lags that constitute a process disfluency. In this paper we present a series of statistical models that aimed at capturing the typing process and in particular process disfluencies.
+Writing research has made extensive use of keystroke-logging to capture typing process data. In particular process disfluencies (loosely defined as relatively long intervals between subsequent keystrokes) are interesting to develop an understanding of the individuals writing progress. This is because language production is typically thought of as a cascade from the mental generation of a message, into grammatical processing and finally the generation and execution of motor codes that serve the transition of an idea. This can be found in theoretical models of speech [@bock2014syntactically], handwriting [@van1991handwriting] and keyboard typing [@hayes2012evidence]. Disfluencies at the execution stage are therefore indicators of processing demands that arise on higher levels of mental representation [@christiansen2016now;@olive2014toward]; for example, when preplanning syntactic dependencies [@roeser2019advance] or retrieving a lexical entry for a word or its spelling [@torrance2016adolescent]. At present there is no principled way of detecting keystroke lags that constitute a process disfluency. In this paper we present a series of statistical models aimed at capturing the typing process and in particular process disfluencies.
 
 
-Keystroke logs provide rich information about the typing process. From this log, researchers can calculate different process measures including measures of writing fluency [@chukharev2019combined]. To name a few, researchers have performed data analysis on means, medians, standard deviations (SD) etc. of inter-keystroke intervals (the duration between two consecutive keystrokes), number of pauses or pause duration, within-word keystroke intervals and many other variables [for an overview see @conijn2019understanding]. @conijn2019understanding suggested that these aggregates are sensitive to processing difficulty that arises on different levels of mental representation. However, there are two substantial problems tight to this. 
+Keystroke logs provide rich information about the typing process. From this log, researchers can calculate different process measures including measures of writing fluency [@chukharev2019combined; @van2015fluency; @medimorec2016effects; @medimorec2017disfluency]. To name a few, researchers have performed data analysis on means, medians, standard deviations (SD) etc. of inter-keystroke intervals (the latency between two consecutive keystrokes), number of pauses or pause duration, within-word keystroke intervals and many other variables [for an overview see @conijn2019understanding]. @conijn2019understanding suggested that these aggregates are sensitive to processing difficulty that arises on different levels of mental representation. However, there are two substantial problems tight to this. 
 
-First, pause frequency, bursts and related measures [@alves2015progress] require a definition of what passes as a pause [@wen06], i.e. a pause criterion often set to 2 secs [@chanquoy1996writing; @kaufer1986composing; @sullivan2002self;@wen02] or some other lower bound [@chukharev2014pauses; @connelly2012predicting; @leijten2013keystroke]. Researchers have stipulated pause thresholds specific to their research purposes and based on prior research. However, ideally, this threshold would need to be specific to both the writing task and the skills of the typist [@wen06]. For example, when comparing the frequency of pauses larger than 2 secs for a dyslexic and a normal typist one might observe more pauses for the dyslexic because a) 2 secs are indeed not unusual transitions between two keystrokes for a dyslexic or b) because pauses for the normal typist are typically shorter than 2 secs and therefore unobserved given the 2 secs pause criterion [@wengelin2001disfluencies]. 
+First, researchers made extensive use of pause frequencies, writing bursts and related measures to assess writing performance [e.g. @alves2015progress; @beers2017effects; @zhang2019there]. These measures require a definition of what passes as a pause [@wen06;@van2016keystroke], i.e. a pause criterion often set to 2 secs [@chanquoy1996writing; @kaufer1986composing; @sullivan2002self;@wen02] or some other lower bound [@chukharev2014pauses; @connelly2012predicting; @leijten2013keystroke]. Researchers have stipulated pause thresholds specific to their research purposes and based on prior research. However, ideally, this threshold would need to be specific to both the writing task and the skills of the typist [@wen06]. For example, when comparing the frequency of pauses larger than 2 secs for a dyslexic and a normal typist, one might observe more pauses for the dyslexic because 2 secs are indeed not unusual transitions between two keystrokes for a dyslexic writer or pauses for the normal typist are typically shorter than 2 secs and therefore unobserved given the 2 secs pause criterion [@wengelin2001disfluencies]. This bias would also affect the interpretation of results from L2 typists and other threshold criteria [@van2015fluency].
 
-Second, data aggregation results in the loss of important information about disfluencies and time course variation. Even if this variation is not of interest to answer a research question, parametric aggregates such the mean and the SD are biased estimates of the typing process. This is because parametric aggregates assume, by definition, that the data must come from a normal distribution for the summary statistic to be representative for the sample. This is not the case as keystroke intervals are zero-bound and therefore right-skewed.^[In fact, the minimum size of keystroke intervals is determined by the time it takes to plan and execute the motor program.] Therefore, data aggregation may lead to incorrect inference based on biased parameter values. To prevent biased parameter values, i.e. to ensure normal distributed data, summary statistics involve data trimming [@hoaglin1987fine] to remove data that were _a priori_ considered outliers. However, the removal of such disfluencies affects groups of struggling writers more than normal writers and therefore skews the information in the data.
+Second, data aggregation results in the loss of important information about disfluencies and time course variation. Even if this variation is not of interest to answer a research question, parametric aggregates such as the mean and the SD are biased estimates of the typing process. This is because parametric aggregates assume, by definition, that the data must come from a normal distribution for the summary statistic to be representative for the sample. This is not the case as keystroke intervals are zero-bound and therefore right-skewed.^[In fact, the minimum size of keystroke intervals is determined by the time it takes to plan and execute the motor program.] Therefore, data aggregation may lead to incorrect inference based on biased parameter values [@baaijen2018discovery]. To prevent biased parameter values, i.e. to ensure normal distributed data, summary statistics involve data trimming [@hoaglin1987fine] to remove data that were _a priori_ considered outliers. However, the removal of such disfluencies affects groups of struggling writers more than normal writers and therefore skews the information in the data.
 
 
-A central methodological challenge with implications for writing research [@hayes2012evidence;@kaufer1986composing;@wen06] is the detection of writing disfluencies. We addressed this problem by implementing statistical models that aim to capture the nature of the data generating process (i.e. keyboard typing). Crucially we want these models to provide reliable estimates to an individuals typing performance without subjecting the data to trimming criteria, or threshold values and aggregation.
+A central methodological challenge with implications for writing research [@hayes2012evidence;@kaufer1986composing;@wen06;@van2016keystroke] is the detection of writing disfluencies. We addressed this problem by implementing statistical models that aim to capture the nature of the data generating process (i.e. keyboard typing). Crucially we want these models to provide reliable estimates of typing performance without subjecting the data to trimming and threshold criteria, and aggregation.
 
 
 
 
 # Modelling typing process data
 
-As a guiding principle, we aim to produce statistical models that are in line with the mental process that creates the data. The typing process data are measures of the lag between subsequent keypresses (the inter-keystroke interval; IKI), for example, the transitions c$^{\wedge}$a$^{\wedge}$t for the word _cat_ where $^{\wedge}$ indicates the typing difference between pressing $<$c$>$ and $<$a$>$. Further, our models should provide a systematic way of addressing process disfluencies; when the lag before pressing $<$a$>$ is unusually large. We implemented a series of possible models for the keystroke data. The predictive performance of these models will be compared in the Results section.
+As a guiding principle, we aim to produce statistical models that are in line with the mental process that creates the data. The typing process data are measures of the lag between subsequent keypresses, for example, the transitions c$^{\wedge}$a$^{\wedge}$t for the word _cat_ where $^{\wedge}$ respectively indicates the inter-keystroke interval (IKI) between pressing $<$c$>$ and $<$a$>$, and $<$a$>$ and $<$t$>$. Further, our models should provide a systematic way of addressing process disfluencies; when the lag before pressing $<$a$>$ is unusually large. We implemented a series of possible models for the keystroke data. The quality of these models will be compared in the Results section.
 
-Statistical models can be used to characterize an underlying data generating process as a function with parameter values. For example, if we assume that the process that we are interested in can be described as normal distribution, we need a mean $\mu$ and a variance $\sigma^2$ to draw this distribution. The values of the parameters $\mu$ and $\sigma^2$ are unknown and often expected to vary across task demands and population. This model can be written as $y \sim Normal(\mu, \sigma^2)$; the data $y$ come from a process that follows a normal distribution with an unknown mean $\mu$ and an unknown error variance $\sigma^2$. Our statistical models need to determine values for these parameters that can be considered reliable. Bayesian models, as used in this paper, are ideal for reliable parameter estimation as they allow us to derive a probability distribution of the parameter value of interest [@farrell2018computational; @gelman2014; @lee2014bayesian]. To achieve this, Bayesian models require the explicit inclusion of prior information about the distribution of the parameters of interest. For small data sets even vague prior information influences the posterior (inferred parameter estimates) but for larger data sets the posterior is overcome by the data [i.e. automatic Ockam's razor; @jefferys1992ockham]. In the present papar, priors are used to aid model convergence by constraining the parameter space [i.e. using weakly regulating priors; @lambert2018student;@mcelreath2016statistical]. 
+Statistical models can be used to characterize an underlying data generating process as a function with parameter values. For example, if we assume that the process of interest can be described as normal distribution, we need a mean $\mu$ and a variance $\sigma^2$ to draw this distribution. The values of the parameters $\mu$ and $\sigma^2$ are unknown and often expected to vary across task demands and population. This model can be written as $y \sim Normal(\mu, \sigma^2)$; the data $y$ come from a process that follows a normal distribution with an unknown mean $\mu$ and an unknown error variance $\sigma^2$. Our statistical models need to determine values for these parameters that can be considered reliable. Bayesian models, as used in this paper, are ideal for reliable parameter estimation as they allow us to derive a probability distribution of the parameter value of interest [@farrell2018computational; @gelman2014; @lee2014bayesian]. To achieve this, Bayesian models require the explicit inclusion of prior information, i.e. existing knowledge about parameter values. For small data sets even vague priors influences the posterior (inferred parameter estimates) but for larger data sets the posterior is overcome by the data [i.e. automatic Ockam's razor; @jefferys1992ockham]. In the present papar, priors are used to aid model convergence by constraining the parameter space [i.e. using weakly regulating priors; @lambert2018student;@mcelreath2016statistical]. 
 
 
-We assume throughout that IKIs can be characterized as log-normal distributed because IKIs are zero-bound [@baa08book], as in equation \ref{eq:lmm}. 
+We assume throughout that IKIs can be characterized as log-normal distributed because IKIs are zero-bound [@baa08book]. To be able to estimate the parameter of interest, the mean $\mu$, we need a model that accounts for other sources of variance. This can easily be achieved with linear mixed effects models (LMM) which has been used to model keystroke data [@leijten2011coordinating;@quene2004multi; @waes2019; @van2010reading]. The LMM in equation \ref{eq:lmm} is an extension of the simple example above. Sources of random error variance in this model are participants $u$ and bigrams $w$.
 
 $$
 \tag{1}
@@ -122,7 +133,8 @@ y_{ij} \sim LogNormal(\mu + u_i + w_j, \sigma_e^2)\\
 (\#eq:lmm)
 $$
 
-Equation \ref{eq:lmm} is an extension of the simple example above, which is generally referred to as linear mixed effects models (LMM) which has been used to model keystroke data [@quene2004multi; @waes2019; @van2010reading]. The advantage of LMMs is that the parameters of interest, the mean $\mu$, can be estimated while accounting for assumed sources of random error variance. For example, some participants are faster typists than others. These differences associated with the $i$s participant, expressed as $u_i$, can be assumed to be normal distributed around 0 with a between participants variance $\sigma_u^2$ with $i = 1, \dots, I$, where $I$ is the number of participants (see \ref{eq:lmm2}). 
+
+In particular, some participants are faster typists than others. These differences associated with participant $i$, expressed as $u_i$, can be assumed to be normal distributed around 0 with a between participants variance $\sigma_u^2$ with $i = 1, \dots, I$, where $I$ is the number of participants (see \ref{eq:lmm2}). The variance $\sigma_u^2$ is given a half-Normal prior with a mean of 0 and a variance of 2.5.
 
 $$
 \tag{2}
@@ -134,7 +146,7 @@ u_i \sim Normal(0,\sigma_u^2)\\
 (\#eq:lmm2)
 $$
 
-A standard approach to model the variation between individual keystroke pairs (i.e. bigrams), as shown before in equation \ref{eq:lmm}, is to assume that each bigram $j$ with $j = 1, \dots, J$, where $I$ is the total number of bigrams, is independent of the other bigrams and associated with a unknown variance $w_j$ that is distributed around 0 with a between bigram variance $\sigma_w^2$ as in equation \ref{eq:lmm5} [see @van2019multilingual]. 
+Variation between keystroke pairs (i.e. letter bigrams) $w$ is added as random intercepts term in equation \ref{eq:lmm} [@van2019multilingual;@waes2019]. More specifically, this it to assume that each bigram $j$ with $j = 1, \dots, J$, where $J$ is the total number of bigrams, is independent of the other bigrams. Each bigram intercept difference $w_j$ is distributed around 0 with a between bigram variance $\sigma_w^2$ (equation \ref{eq:lmm5}). 
 
 $$
 \tag{3}
@@ -146,23 +158,21 @@ w_j \sim Normal(0,\sigma_w^2)\\
 (\#eq:lmm5)
 $$
 
-
-
-For model fit purposes, we parameterised the mean $\mu$ as non-centred with weakly regulating priors [@lambert2018student] as shown in equation \ref{eq:lmm3}.
+In other words, the parameter estimate for the mean $\mu$ in equation \ref{eq:lmm} is the marginalised values after taking into account random variation between participants $u$ and bigrams $w$. To aid effective sampling, we non-centred the mean $\mu$ in all models with regulating priors [equation \ref{eq:lmm3}; see @lambert2018student].
 
 $$
 \tag{4}
 \begin{aligned}
-\mu = \mu_{\alpha} + \mu_{\sigma} * \mu_{\eta}\\
-\mu_{\alpha} \sim Normal(5,2)\\
-\mu_{\sigma} \sim Normal(0,10)\\
-\mu_{\eta} \sim Normal(0,1)\\
+\mu = \alpha_{\mu} + \sigma_{\mu} * \mu_{\text{raw}}\\
+\alpha_{\mu} \sim Normal(5,2)\\
+\sigma_{\mu} \sim Normal(0,10)\\
+\mu_{\text{raw}} \sim Normal(0,1)\\
 \text{constraint: }\mu_{\sigma}>0 
 \end{aligned}
 (\#eq:lmm3)
 $$
 
-For the unexplained variance $\sigma_e^2$ we used a uninformative half-Cauchy prior [equation \ref{eq:lmm4}; @gelman2014]. 
+For the unexplained variance $\sigma_e^2$ we used an uninformative half-Cauchy prior [equation \ref{eq:lmm4}; see @gelman2014]. 
 
 $$
 \tag{5}
@@ -173,21 +183,21 @@ $$
 (\#eq:lmm4)
 $$
 
-Further, we can extent this model by assuming that larger variations in typing differences for bigrams depend on the typing speed of each participant. For example, fast participants might show less variation between bigrams that slow participants. This assumption can be modelled by including by-participant slope adjustments for bigrams by introducing a variance-covariance matrix $\Sigma_u$; LKJ prior with $\nu=2.0$ [@lewandowski2009generating]. 
+Further, we can extend this model by assuming that larger variations in typing differences for bigrams depend on the typing speed of each participant. For example, fast participants might show less variation between bigrams than slow participants. This assumption can be modelled by including by-participant slope adjustments for bigrams by introducing a variance-covariance matrix $\Sigma_u$; LKJ prior with $\nu=2.0$ [@lewandowski2009generating]. 
 
 
 
 ## Typing as autoregressive process
 
-The previous model captures variation associated with particular bigrams but assumes that disfluencies are subject to random noise. Further, the standard analysis assumes that subsequent keystrokes are independent and thus exchangeable. IKIs are not necessarily independent but and IKI$_{i}$ might be related to IKI$_{i-1}$ preceding it. In other words, we can predict an IKI with the previous keystroke and captured their relationship with a parameter $\phi$; see equation \ref{eq:ark}. This is called an autoregressive process [@eltahir2004dynamic]. This model captures disfluencies as slowdown relative to a previous keystroke. The autocorrelation was assumed to vary for each participant $\phi_i$ with a pooled mean $\phi$ and error variance $\eta^2$. Note, to allow comparisons between this and all other models we had exclude the first bigram $y_{i1}$ for each participant.
+The previous model captures variation associated with particular bigrams but assumes that disfluencies are subject to random noise. Further, the standard analysis assumes that subsequent keystrokes are independent and thus exchangeable. IKIs are not necessarily independent; IKI$_{i}$ might be related to IKI$_{i-1}$ preceding it [@conijn2019typo]. In other words, we can predict an IKI with the previous keystroke and capture their relationship with a parameter $\phi$; see equation \ref{eq:ark}. This is called an autoregressive process [@eltahir2004dynamic]. This model captures disfluencies as slowdown relative to a previous keystroke. The autocorrelation was assumed to vary for each participant $\phi_i$ with a centred mean $\mu_{\phi}$ and error variance $\eta^2$. 
 
 $$
 \tag{6}
 \begin{aligned}
 y_{ij} \sim LogNormal(\mu + \phi_i*log(y_{ij-1}) + u_i, \sigma_e^2)\\
 \text{where}\\
-\phi_i \sim Normal(\phi, \eta^2)\\
-\phi \sim Normal(0, 1)\\
+\phi_i \sim Normal(\mu_{\phi}, \eta^2)\\
+\mu_{\phi} \sim Normal(0, 1)\\
 \eta \sim Cauchy(0, 1)\\
 \text{constraint: }\eta >0 
 \end{aligned}
@@ -195,9 +205,9 @@ y_{ij} \sim LogNormal(\mu + \phi_i*log(y_{ij-1}) + u_i, \sigma_e^2)\\
 $$
 
 
-## Typing as (autoregressive) mixture process
+## Typing as mixture process
 
-Disfluencies during the typing process can be captured in finite mixture models. Mixture models assume that data come from a combination of distributions. For the present purpose we constrain the model to be finite. In other words, we fixed the number of underlying distributions to two, namely 2 log-Gaussian (normal) distributions, of which one represents fluent tying (shorter IKIs) and the other represents disfluencies (longer IKIs). This model can be summarised as in equation \ref{eq:mog}, following @vasishth2017. The first and second line are the sum of two log-normal distributions of which the first distribution has a mixing proportion (weight) $\theta$ and the other distribution receives the remaining proportion $1-\theta$. Both distributions have the same mean $\mu$ but the parameter $\delta$ that added to the first distribution and constrained to be positive. Thus, $\delta$ captures the magnitude of the disfluency. The mixing proportion $\theta_i$, then, captures the probability of disfluent IKIs for each participant $i$. 
+Disfluencies can also be captured in finite mixture models. Mixture models assume that data come from a combination of distributions. For the present purpose we constrain the model to be finite. In other words, we fixed the number of underlying distributions to two, namely 2 log-Gaussian (normal) distributions, of which one represents fluent typing (shorter IKIs) and the other represents disfluencies (longer IKIs). This model can be summarised as in equation \ref{eq:mog}, following @vasishth2017. The first and second line are the sum of two log-normal distributions of which the first distribution has a mixing proportion (weight) $\theta$ and the other distribution receives the remaining proportion $1-\theta$. Both distributions have the same mean $\mu$ but the parameter $\delta$ that added to the first distribution and constrained to be positive. Thus, $\delta$ captures the magnitude of the disfluency. The mixing proportion $\theta_i$, then, captures the probability of disfluent IKIs for each participant $i$. 
 
 
 $$
@@ -212,15 +222,15 @@ $$
 (\#eq:mog)
 $$
 
-The hyper-parameter $\theta$ captures the population disfluency probability (with an error variance $\tau^2$) as shown in equation \ref{eq:mog2}. The mixing proportion $\theta_i$ was transformed to range from 0 to 1 (inverse logit) where a value of 0 would indicate fluent typing and 1 indicates disfluency.  
+The hyper-parameter $\mu_{\theta}$ captures the population disfluency probability (with an error variance $\tau^2$) as shown in equation \ref{eq:mog2}. The mixing proportion $\theta_i$ was transformed to range from 0 to 1 (inverse logit) where a value of 0 would indicate fluent typing and 1 indicates disfluency.  
 
 
 $$
 \tag{8}
 \begin{aligned}
-		\theta_i = InvertedLogit(\theta_i)\\
-		\theta_i \sim Normal(\theta,\tau^2)\\
-		\theta \sim Normal(0,1)\\
+		\theta_i = Logit^{-1}(\theta_i)\\
+		\theta_i \sim Normal(\mu_{\theta},\tau^2)\\
+		\mu_{\theta} \sim Normal(0,1)\\
 		\tau \sim Cauchy(0,1)\\
 		\text{constraint: } \tau > 0
 \end{aligned}	
@@ -240,6 +250,9 @@ $$
 \end{aligned}	
 (\#eq:mog3)
 $$
+
+
+## Typing as autoregressive mixture process
 
 Note that the mixture model, as well as the LMM, implies that subsequent keystroke intervals are independent. This might be the case for disfluencies but subsequent IKIs in fluent typing might involve autocorrelations. Therefore, we implemented another mixture model but replaced the bigram intercepts $w_j$, in the distribution that represents fluent typing in equation \ref{eq:mog}, with an autoregressor $\phi_i*y_{ij-1}$, as in equation \ref{eq:ark}; random bigram intercepts were kept for the distribution of disfluent typing intervals. 
 
@@ -262,13 +275,15 @@ To test which model captures the typing process best, we applied a series of mod
 ```{r models, results = 'asis'}
 models <- tibble(Models = paste0("M",1:5),
        Type = c("LMM", "LMM", "AR", "MoG", "AR + MoG"),
-   #    Equation = paste0("\ \\ref{eq:", c("lmm", "lmmslopes", "ark", "arktarget", "arkmog", "arktargetmog"), "}"),
+       Equation = paste0("\ \\ref{eq:", c("lmm", "", "ark", "mog", ""), "}"),
        Description = c("Random intercepts for bigram order",
-                       "As M1 but with by-participant slope adjustments for bigram order",
-                       "$\\phi$ for autocorrelation between subsequent IKIs",
-                       "Mixture of normal typing and disfluencies $\\delta$ with probability $\\theta$",
-                       "As M4 but autocorrelation $\\phi$, as in M3, for normal typing")
+                       "As M1; by-participant random bigram slopes",
+                       "Autocorrelation between subsequent IKIs",
+                       "Mixture process of normal and disfluent typing",
+                       "As M4 but autocorrelation for normal typing")
                        ) 
+
+models$Equation[c(2,5)] <- ""
 
 papaja::apa_table(models,
                   align = c("l", "l", "l"), 
@@ -281,17 +296,17 @@ papaja::apa_table(models,
 ```
 
 
-The copy-task corpus consists of keystroke data collected in Inputlog, a Javascript-based web application available on \url{www.inputlog.net}. In a set of different contexts participants have to produce keyboard typed responses. In this analysis we focus on the consonant task. Participants saw and copy-typed four blocks of six consonant sequences "tjxgfl pgkfkq dtdrgt npwdvf" that do not occur adjacently in Dutch. This task allows us to measure typing skills in a non-linguistic environment [@grabowski2010second]. Importantly for the present purpose, the task requires repeated looks at the target string to copy it accurately which is relative to the participants memory span. This results in a combination of fluent typing and typing interruptions. In other words, for this task we need to be able to disentangle fluent and disfluent IKIs. We used a random sample of `r nrow(d.ppt)` participants (`r d.sex[1]` females, `r d.sex[2]` males) in the age range between `r d.age[2]` and `r d.age[3]` years (median age = `r d.age[1]` years) to keep the sample relatively homogeneous.
+The copy-task corpus consists of keystroke data collected in Inputlog, a Javascript-based web application available on \url{www.inputlog.net} with the source released on \url{https://github.com/lvanwaes/Inputlog-Copy-Task} and \url{https://zenodo.org/record/2908966}. In a set of different subtasks participants have to produce keyboard typed responses (a sentence, various phrases and consonants). In this analysis we focus on the consonant task. Participants saw and copy-typed a single time four blocks of six consonant sequences "tjxgfl pgkfkq dtdrgt npwdvf". This task allows us to measure typing skills in a non-linguistic environment [@grabowski2010second]. Importantly for the present purpose, fluent copying and pausing is a function of the participant's memory span and typing skill such that touch-typists depend less on holding sequences in memory for fluent copying than hunt-and-peck typists. This results in a combination of fluent typing and typing interruptions. In other words, for this task we need to be able to disentangle fluent and disfluent IKIs. We used a random sample of `r nrow(d.ppt)` participants (`r d.sex[1]` females, `r d.sex[2]` males) from the age range of `r d.age[2]` to `r d.age[3]` years (median age = `r d.age[1]` years). Before analysis we excluded spaces and editing operations from the data. To allow comparisons between the autoregressive model and all other models we had exclude the first IKI for each participant. 
 
 
 # Results
 
 ## Data overview
 
-The raw data are visualized in Figure \ref{fig:descriptives}. Each grey line represents one participant and the coloured lines shown different measures of central tendency. This figure highlights that the consonants task is a combination of fluent and disfluent typing. This combination is expressed in the up-and-down pattern but also in the bimodality of the density function in the right margin. Further using central tendency descriptives highlight different properties of the distribution. The mean is sensitive to larger IKIs and is therefore not at the peak of the distribution while the mode and the median are relative close to the peak. All central tendencies vary depending on the position of the bigram in the string. 
+The raw data are visualized in Figure \ref{fig:descriptives}. In the upper panel of Figure \ref{fig:descriptives}A each line represents one participant. In the lower panel of Figure \ref{fig:descriptives}A the coloured lines show different measures of central tendency which are also shown in the density plot in Figure \ref{fig:descriptives}B. This figure highlights: (1) aggregating data ignores individual disfluencies patterns in the data; (2) the choice of central tendency measure might lead to different conclusions about patterns in the data. Figure \ref{fig:descriptives}A shows that participants slow down and speed up for some but not the same bigrams. The figure suggests that this is not a learning effect or a tendency to fatique. Central tendency measures in the lower panel of Figure \ref{fig:descriptives}A suggest that some slowdowns might be bigram specific (e.g. $<$jx$>$, $<$td$>$). Importantly though, this graph suggests that the choice of central tendency measure might affect whether we consider an observation a disfluency. For example, a slowdown from $<$pg$>$ to $<$gk$>$ median and mean, but not the mode, suggest a disfluency. Similarily a speedup tendency can be observed in mean and median but not in the mode from $<$gk$>$ to $<$kf$>$. Figure \ref{fig:descriptives}B shows why this might be the case. Shown is the density distribution of the IKI data. The distribution is skewed (although log-scaled) with a bimodal tendency. While mean, median and mode are the same for a normal distribution, they are representing different properties of a non-normal sample distribution. In particular, means are known to be more sensitive to long values which are inevitible as IKIs are zero-bound (cannot be smaller than zero) but have, in principle, no upper bound. In other words, means are closer to the horizontal middle of the distribution which, for right-skewed distributions, is on the right of the peak of the distribution (of observations with the highest kernel density). The latter is being represented by the mode. The median appears to be a sensible compromise as it is less supceptive to extreme values than the mean. However, all three central tendencies are problematic as they ignore important property of the distribution, i.e. the combination of regular and slow IKIs. In other words, data aggregation may hide participant-specific disfluencies and some patterns observed in the data may depend on the choice of central tendency.
 
 
-```{r descriptives, fig.pos="!ht", fig.height = 3, fig.width = 6, fig.align = "center", fig.cap="IKI data by participant over bigrams position shown in order. Shown are the raw data, each line representing one participant, and different measures of central tendency (with 2$\\times$standard error [SE]). Vertical lines indicate the position of SPACES. The density distribution of IKI data is shown in the right margin."}
+```{r descriptives, fig.pos="!ht", fig.height = 5.5, fig.width = 6, fig.align = "center", fig.cap="Descriptive summary of IKI data. Panel A illustrates IKI over bigrams position (time course) by participant in the upper row and as different measures of central tendency in the middle row (with standard error [SE]). Panel B shows the density distribution of IKI data with the same central tendency descriptors as in panel A."}
 
 source("scripts/get_descriptives_plot.R")
 plot_all
@@ -301,9 +316,9 @@ plot_all
 
 ## Model fit
 
-All models were implemented as Bayesian models [see e.g. @gelman2014; @lambert2018student; @mcelreath2016statistical] in the probabilistic programming language Stan [@carpenter2016stan; @rstan; @rstan2; @hoffman2014no]. \textit{R} and \textit{Stan} code are available on GitHub ([github.com/jensroes/Typing-disfluency](https://github.com/jensroes/Typing-disfluency)). Models were fitted with 30,000 iterations (15,000 warm-up) on 3 Markov chain Monte Carlo chains. Convergence was tested via the Rubin-Gelman statistic [@gelman1992], traceplots and cross-validation [@vehtari2015pareto; @vehtari2017practical].
+All models were implemented as Bayesian models [see e.g. @gelman2014; @lambert2018student; @mcelreath2016statistical] in the probabilistic programming language Stan [@carpenter2016stan; @rstan; @rstan2; @hoffman2014no]. \textit{R} and \textit{Stan} code are available on GitHub ([github.com/jensroes/Typing-disfluency](https://github.com/jensroes/Typing-disfluency)). Models were fitted with 30,000 iterations (15,000 warm-up) on 3 MCMC chains. Convergence was tested via the Rubin-Gelman statistic [@gelman1992], traceplots and cross-validation [@vehtari2015pareto; @vehtari2017practical].
 
-The predictive performance of the models was established using leave-one-out cross-validation which penalizes models with more parameters [see @farrell2018computational; @mcelreath2016statistical; @lambert2018student; @lee2014bayesian]. The out-of-sample predictive performance was determined via Pareto smoothed importance-sampling [@vehtari2015pareto; @vehtari2017practical] and estimated as sum of the expected log predictive density ($\widehat{elpd}$). $\widehat{elpd}$ was used to compare the predictive quality of our models. Model comparisons can be found in Table \ref{tab:modelcomparisons}. The mixture model M4 (see equation \ref{eq:mog}) revealed the highest predictive performance.
+The predictive performance of the models was established using leave-one-out cross-validation. Cross-validation penalizes models with more parameters and therefore prevents overfit [see @farrell2018computational; @mcelreath2016statistical; @lambert2018student; @lee2014bayesian]. The out-of-sample predictive performance was determined via Pareto smoothed importance-sampling [@vehtari2015pareto; @vehtari2017practical] and estimated as sum of the expected log predictive density ($\widehat{elpd}$). $\widehat{elpd}$ was used to compare the predictive quality of our models. Model comparisons can be found in Table \ref{tab:modelcomparisons}. The mixture model M4 (see equation \ref{eq:mog}) revealed the highest predictive performance.
 
 ```{r modelcomparisons, results = "asis"}
 source("scripts/get_loo_table.R")
@@ -328,9 +343,9 @@ source("scripts/get_posterior.R")
 
 ## Parameter evaluation
 
-The copy-typing process captured by the mixture model can be characterized with the posterior distributions of the model's parameter values. The process relevant parameters are illustrated in Figure \ref{fig:parameters}. Firstly, IKIs, excluding disfluencies, are shown by participant in Figure \ref{fig:parameters}A. The red line indicates the pooled overall parameter estimate for fluent typing $\hat{\beta}$=`r round(beta_sum[1],0)` msecs centred around a 95% PI of [`r round(beta_sum[2],0)`, `r round(beta_sum[3],0)`]. For each participant the probability of disfluent typing is shown in Figure \ref{fig:parameters}B. The overall disfluency probability (in red) was $\hat{\theta}$=`r round(theta_sum[1],2)` centred around 95% PI[`r round(theta_sum[2],2)`, `r round(theta_sum[3],2)`]. In other words, for the consonant task we observe `r round(theta_sum[1],2)*100`\% disfluent typing and `r round(1-theta_sum[1],2)*100`\% fluent typing. 
+The copy-typing process captured by the mixture model can be characterized with the posterior distributions of the model's parameter values. The process relevant parameters are illustrated in Figure \ref{fig:parameters}. Firstly, IKIs, excluding disfluencies, are shown by participant in Figure \ref{fig:parameters}A. The red line indicates the pooled overall parameter estimate for fluent typing, i.e. $\hat{\beta}$=`r round(beta_sum[1],0)` msecs centred around a 95% PI of [`r round(beta_sum[2],0)`, `r round(beta_sum[3],0)`]. For each participant the probability of disfluent typing is shown in Figure \ref{fig:parameters}B. The overall disfluency probability (in red) was $\hat{\theta}$=`r round(theta_sum[1],2)` centred around 95% PI[`r round(theta_sum[2],2)`, `r round(theta_sum[3],2)`]. In other words, for the consonant task we observe `r round(theta_sum[1],2)*100`\% disfluent typing and `r round(1-theta_sum[1],2)*100`\% fluent typing. 
 
-The y-axis in panel A and B are ordered by the average size of the respective values, thus the lines do not represent the same participants. In fact, Figure \ref{fig:parameters}C suggests that the inferred latency for fluent typing and the probability to exhibit disfluencies are independent. Shown are the parameter estimates for each participant and the overall pooled estimates. In other words, fast as well as slow copy-typists can show low and high disfluency probabilities. Finally, the slowdown for disfluent typing is shown in Figure \ref{fig:parameters}D. Disfluent typing in the consonant task is $\hat{\delta}$=`r delta_sum[1]` msecs (95% PI[`r delta_sum[2]`, `r delta_sum[3]`]) slower than fluent typing.^[Faster participants might show larger disfluencies magnitudes; i.e. the size of the disfluency $\delta$ may vary by participant. This was not supported for the consonant copy-task. Allowing $\delta$ to vary by participant renders a negligible gain over model M4 ($\Delta\widehat{elpd}$=`r mc$elpd_diff`, SE=`r mc$se_diff`); holding $\theta$ constant while allowing $\delta$ to vary by participant revealed a lower predictive performance ($\Delta\widehat{elpd}$=`r mc2$elpd_diff`, SE=`r mc2$se_diff`).] Overall, for the consonant task it is crucial to distinguish between fluent and disfluent typing because disfluencies are indeed more common. In other words, the task demands do not inhibit keystroke intervals throughout the task but a large proportion of produced bigrams. Mixture models can provide accurate estimates for fluent typing while account for disfluencies by modelling fluent and disfluent typing as a mixture process.
+The y-axis in panel A and B are ordered by the average size of the respective values, thus the lines do not represent the same participants. In fact, Figure \ref{fig:parameters}C suggests that the inferred latency for fluent typing and the probability to exhibit disfluencies are independent. Shown are the parameter estimates for each participant and the overall pooled estimates. In other words, fast as well as slow copy-typists can show low and high disfluency probabilities. Finally, the slowdown for disfluent typing is shown in Figure \ref{fig:parameters}D. Disfluent typing in the consonant task is $\hat{\delta}$=`r delta_sum[1]` msecs (95% PI[`r delta_sum[2]`, `r delta_sum[3]`]) slower than fluent.^[Faster participants might show larger disfluencies magnitudes; i.e. the size of the disfluency $\delta$ may vary by participant. This was not supported for the consonant copy-task. Allowing $\delta$ to vary by participant renders a negligible gain over model M4 ($\Delta\widehat{elpd}$=`r mc$elpd_diff`, SE=`r mc$se_diff`); holding $\theta$ constant while allowing $\delta$ to vary by participant revealed a lower predictive performance ($\Delta\widehat{elpd}$=`r mc2$elpd_diff`, SE=`r mc2$se_diff`).] Overall, for these data it is crucial to distinguish between fluent and disfluent typing. This is because disfluencies are indeed more common than fluent transitions in this task. Not distinguishing between fluent and disfluent typing would lead to the incorrect inference that the task complexity affects the keystroke transitions throughout while this is not true for roughly one-third of the data. Mixture models can provide accurate estimates for fluent typing while account for disfluencies by modelling fluent and disfluent typing as a mixture process.
 
 
 ```{r parameters, fig.pos="!ht", fig.height=6.5, fig.width=6, fig.align = "center", fig.cap="Posterior parameter values of the mixture model. Panel A shows by-participant IKIs and overall IKI value for fluent typing in red. Panel B shows by-participant disfluency probability (overall parameter value $\\theta$ in red). Panel C shows fluent IKIs plotted against disfluency probability (red triangle indicates overall parameter value). Panel D shows the posterior distribution of the disfluency slowdown. All error bars are 95\\% probability intervals."}
@@ -346,12 +361,11 @@ plot_post
 
 Our aim was to provide a statistical model of inter-keystroke intervals that addresses process disfluencies in a principled manner. We compared a series of Bayesian models addressing this aim. Model comparisons showed that process disfluencies can be captured as a mixture process for the consonant copy-task. This model allows us to extract reliable typing-interval estimates for fluent typing while accounting for process disfluencies by modelling fluent and disfluent typing as a combination of two distributions with a latent mixing ratio.
 
-This model provides a probability distribution of the parameter values for a) fluent typing, overall and by-participant, b) the disfluency probability, overall and by-participant, and c) the disfluency magnitude (i.e. typing slowdown). These parameter estimates are relevant on two levels. First, they allows us to characterize the writing task at hand. For example, we observed that copy-typing non-lexical strings of consonants shows indeed a larger proportion of disfluent compared to fluent typing. Second, by-participant parameter estimates allow us to extract typing characteristics for individual typists. In particular, we extracted each participants fluent typing speed and the probability of disfluencies exhibited by each participant. The probability of disfluencies in this task can be understood as measures of memory span [@grabowski2010second]. If participants with a smaller memory span look more often to the target string, they will show a larger proportion of typing disfluencies. Taken together with the overall and individual parameter estimates, we can determine whether an individual was a fast / slow typist or had unusually high / low probability to exhibit disfluencies compared to the population estimates. Thus, the model can be used diagnostically to identify participants with larger disfluency probabilities or to compare pausing across groups of participants.
+This model provides a probability distribution of the parameter values for a) fluent typing, overall and by-participant, b) the disfluency probability, overall and by-participant, and c) the disfluency magnitude (i.e. typing slowdown). These parameter estimates are relevant on two levels. First, they allow us to characterize the writing task at hand. For example, we observed that copy-typing non-lexical strings of consonants shows indeed a larger proportion of disfluent compared to fluent typing. Second, by-participant parameter estimates allow us to extract typing characteristics for individual typists. In particular, we extracted each participants' fluent typing speed and the probability of disfluencies exhibited by each participant. This disfluency probability for the consonant task can be understood as an indicator of memory span [@grabowski2010second;@olive2014toward] and low level reading skill [@de2018exploring] and depends on individual typing skills. If participants with a smaller memory span look more often to the target string, they will show a larger proportion of typing disfluencies. Taken together with the overall and individual parameter estimates, we can determine whether an individual was a fast / slow typist or had unusually high / low probability to exhibit disfluencies compared to the population estimates. Thus, the model can be used diagnostically to identify participants with larger disfluency probabilities or to compare pausing across groups of participants.
 
-The central advantage of using mixture models to account for typing disfluencies is that we can by-pass the use of threshold values to define disfluencies. From the raw data it is not possible to know which data are disfluencies. Using threshold values ignores that some participants are generally slower typists and some tasks are more difficult. Mixture models allow us to capture disfluencies as a latent process in a principled way. This is important because our mixture models take into account that a disfluency is relative to an individuals' typing speed and the task at hand [@wen06]. Therefore, these models allow us to test predictions about typing disfluencies in certain population such as learning typists, L2 typists and individuals with genuine typing difficulty after account for individual differences in typing speed or vice versa. Further while we used copy-task data, other writing tasks will lead to other disfluency estimates. In other words, the presented model can be used to test hypothesis about psychological factors that might affect the ratio of disfluencies in the writing process. As an avenue for future research, mixture models as presented in this paper can be used for different types of writing tasks and particular populations.
+The central advantage of using mixture models to account for typing disfluencies is that we can by-pass the use of threshold values to define disfluencies and include it as individual typing skill characteristic in the analysis of writing process data. From the raw data it is not possible to know which data are disfluencies. Using threshold values ignores that some participants are generally slower typists and some tasks are more difficult. Mixture models allow us to capture disfluencies as a latent process in a principled way. This is important because our mixture models take into account that a disfluency is relative to an individuals' typing speed and the task at hand [@wen06]. Therefore, these models allow us to test predictions about typing disfluencies in certain population such as learning typists, L2 typists and individuals with genuine typing difficulty after account for individual differences in typing speed or vice versa. In other words, the presented model can be used to test hypothesis about psychological factors (e.g. memory demands, writing experience, proficiency in writing in a second language) that might affect the ratio of disfluencies in the writing process. If disfluencies are crutial to identify certain individuals in a sample, this mixture model might also be used as diagnostic tool. As an avenue for future research, mixture models as presented in this paper can be used for different types of writing tasks and particular populations.
 
-Writing involves processing on various levels of mental representation. As activation cascades from higher to lower levels of representation, a delay on any of these levels causes disfluencies. While we distinguished fluent and disfluent typing in a binary way, processing difficulty on different levels might be associated with different disfluency magnitudes and might be cumulative. If the size of the disfluency is assumed to depend on the inhibited process upstream or combination of processes, this can be implemented as additional mixture component(s) [@baaijen2012keystroke] to address different types of disfluencies [@wengelin2001disfluencies]. In other words extensions of mixture models allow us to test different hypotheses about the cascade of processes involved in writing and language production. 
-
+Writing involves processing on various levels of mental representation. As activation cascades from higher to lower levels of representation, a delay on any of these levels causes disfluencies. While we distinguished fluent and disfluent typing in a binary way, processing difficulty on different levels might be associated with different disfluency magnitudes and might be cumulative. If the size of the disfluency is assumed to depend on the inhibited process upstream or combination of processes, this can be implemented as additional mixture component(s) [similar to @baaijen2012keystroke] to address different types of disfluencies [@medimorec2016effects; @medimorec2017disfluency; @wengelin2001disfluencies]. In other words extensions of mixture models allow us to test different hypotheses about the cascade of processes involved in writing and language production. 
 
 
 
