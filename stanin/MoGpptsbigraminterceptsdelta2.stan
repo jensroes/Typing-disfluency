@@ -12,7 +12,7 @@ data {
 parameters {
 	real<lower=0> delta;
 	real<lower=0> tau_delta;
-  vector[nS] delta_s;
+  vector<lower=0>[nS] delta_s;
 
   real beta_mu;
   real beta_raw;
@@ -47,14 +47,15 @@ model {
   vector[2] lp_parts;
 
   // Priors
-  beta_mu ~ normal(5, 5);
-  beta_sigma ~ cauchy(0, 2.5);
+  beta_mu ~ normal(5, 2);
+  beta_sigma ~ normal(0, 1);
   beta_raw ~ normal(0, 1);
   sigma ~ cauchy(0, 2.5);
+  sigma_diff ~ normal(0, 1);
 
   delta_s ~ normal(delta, tau_delta);
   delta ~ normal(0, 1);
-  tau_delta ~ cauchy(0, 1);
+  tau_delta ~ normal(0, 1);
   
   theta ~ normal(0, 1);
 

@@ -1,7 +1,7 @@
 # Load packages
+rm(list=ls());gc()
 library(tidyverse)
 library(rstan)
-library(loo)
 library(magrittr)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
@@ -16,7 +16,7 @@ iterations = 30000
 path <- "./data/"
 d <- get_data(path = path) %>% 
   filter(component == "Consonants") %>% 
-  select(-component)
+  select(subj, bg, bigram, IKI)
 
 # Prepare data and variables
 (maxB <- max(d$bigram))
@@ -32,11 +32,9 @@ for (i in 1:nS) {
   y[i, 1:nB[nB$subj == i,]$n] <- subj_data$IKI  
 }
 
-
 dat <- within( list(), {
   nS <- nS
   nB <- nB$n
-  #  nBre <- max(as.integer(factor(d$bigram)))
   maxB <- maxB
   y <- y
   K <- 1
@@ -63,9 +61,6 @@ start_ll <- lapply(1:n_chain, function(id) start(chain_id = id) )
 # --------------
 # Stan models ##
 # --------------
-#---- 
-# Mixture of two gaussians with unequal variance
-#---- 
 # Load model
 ark <- stan_model(file = "stanin/ARKppt.stan")
 
@@ -98,8 +93,7 @@ saveRDS(m,
         compress = "xz")
 
 # Traceplots
-#names(m)
-param <- c("beta",  "phi_s") 
+param <- names(m)[!grepl("log_lik|y_tilde|phi_s|u\\[",names(m))]
 summary(print(m, pars = param, probs = c(.025,.975)))
 traceplot(m, param, inc_warmup = F)
 #traceplot(m, "u", inc_warmup = F)

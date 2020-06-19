@@ -1,4 +1,10 @@
-looc <- read_csv("../results/loo_results_consonants.csv") %>%
+loo_cons <- read_csv("../results/loo_results_consonants.csv") %>%
+  mutate(ctc = "Consonants")
+
+loo_lf <- read_csv("../results/loo_results_LF.csv") %>%
+  mutate(ctc = "LF bigrams")
+
+bind_rows(loo_cons, loo_lf) %>%
   mutate_if(is.numeric, round, 0) %>%
   unite(col = "elpd_diff", elpd_diff, se_diff, sep = " (") %>%
   unite(col = "elpd_loo", elpd_loo, se_elpd_loo, sep = " (") %>%
@@ -19,15 +25,31 @@ looc <- read_csv("../results/loo_results_consonants.csv") %>%
 #                          M1 = "Random intercepts",
 #                          M4 = "Random intercepts",
 #                          M5 = "Autoregressor $\\phi$ or random intercepts")) %>%
-  select(Model, Type, elpd_diff, elpd_loo)
+  select(ctc, Model, Type, elpd_diff, elpd_loo) -> looc
 
-names(looc)[c(3,4)] <- c("$\\Delta\\widehat{elpd}$", "$\\widehat{elpd}$")
+stringi::stri_sub(looc$elpd_loo, 4, 1) <- ","
+stringi::stri_sub(looc[nchar(looc$elpd_diff) >= 10,]$elpd_diff, 3, 1) <- ","
 
-mc <- read_csv("../results/loo_results_consonants_mog.csv") %>% 
-  filter(Model == "MoGpptsbigramintercepts - MoGpptsbigraminterceptsdelta") %>% 
+names(looc)[c(4,5)] <- c("$\\Delta\\widehat{elpd}$", "$\\widehat{elpd}$")
+
+mc_cons <- read_csv("../results/loo_results_consonants_mog.csv")
+
+mc_cons[2,]$Model <- paste(mc_cons[2,]$Model, mc_cons[1,]$Model, sep = " - ")
+mc_cons[3,]$Model <- paste(mc_cons[3,]$Model, mc_cons[1,]$Model, sep = " - ")
+
+mc_cons <- mc_cons %>% 
   mutate_if(is.numeric, round, 0)  %>% 
-  mutate_if(is.numeric, abs)
+#  mutate_if(is.numeric, abs) %>%
+  filter(elpd_diff != 0)
 
-mc2 <- read_csv("../results/loo_results_consonants_mog.csv") %>% 
-  filter(Model == "MoGpptsbigraminterceptsdelta2 - MoGpptsbigramintercepts") %>% 
-  mutate_if(is.numeric, round, 0)
+
+mc_lf <- read_csv("../results/loo_results_LF_mog.csv")
+
+mc_lf[2,]$Model <- paste(mc_lf[2,]$Model, mc_lf[1,]$Model, sep = " - ")
+mc_lf[3,]$Model <- paste(mc_lf[3,]$Model, mc_lf[1,]$Model, sep = " - ")
+
+mc_lf <- mc_lf %>% 
+  mutate_if(is.numeric, round, 0)  %>% 
+  #  mutate_if(is.numeric, abs) %>%
+  filter(elpd_diff != 0)
+

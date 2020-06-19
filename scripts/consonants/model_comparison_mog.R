@@ -31,18 +31,5 @@ mc %<>% as.data.frame() %>%
   select(name, elpd_diff:se_elpd_loo) %>%
   rename(Model = name);mc
 
-mc %<>%
-  filter(elpd_diff != 0) %>%
-  mutate(Model = paste0(Model," - MoGpptsbigraminterceptsdelta"))
-
-
-loo_compare(loo_MoGpptsbigramintercepts, loo_MoGpptsbigraminterceptsdelta2) %>%
-  as.data.frame() %>%
-  mutate(Model=row.names(.)) %>%
-  select(Model, elpd_diff:se_elpd_loo) %>%
-  filter(elpd_diff != 0) %>%
-  mutate(Model = "MoGpptsbigraminterceptsdelta2 - MoGpptsbigramintercepts") %>%
-  bind_rows(mc) -> mc;mc
-
 file_out <- paste0("results/loo_results_consonants_mog.csv")
 write_csv(mc, file_out)

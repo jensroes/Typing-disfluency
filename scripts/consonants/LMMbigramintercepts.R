@@ -1,7 +1,7 @@
+rm(list=ls());gc()
 # Load packages
 library(tidyverse)
 library(rstan)
-library(loo)
 library(magrittr)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
@@ -16,7 +16,7 @@ iterations = 30000
 path <- "./data/"
 d <- get_data(path = path) %>% 
   filter(component == "Consonants") %>% 
-  select(-component)
+  select(subj, bg, bigram, IKI)
 
 # Prepare data and variables
 (maxB <- max(d$bigram))
@@ -81,7 +81,7 @@ m <- sampling(lmm,
               #              pars = omit,
               thin = 1,
               seed = 81,
-              control = list(max_treedepth = 14,
+              control = list(max_treedepth = 16,
                              adapt_delta = 0.99,
                              stepsize = 2)
 )

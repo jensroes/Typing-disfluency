@@ -1,6 +1,6 @@
 Model,elpd_diff,se_diff,elpd_loo,se_elpd_loo
-MoGpptsbigramintercepts,0,0,-13856.73,59.04
-ARKMoGppt,-14.32,13.78,-13871.05,57.31
-LMMbigramslopes,-86.82,24.38,-13943.55,53.36
-LMMbigramintercepts,-152.93,18.41,-14009.66,54.49
-ARK1ppt,-222.84,20.63,-14079.56,54.15
+ARKMoGppt,0,0,-35332.35,99
+MoGpptsbigramintercepts,-8.18,17.75,-35340.53,98.65
+LMMbigramslopes,-57.82,34.93,-35390.17,87.86
+LMMbigramintercepts,-276.97,24.14,-35609.32,96.99
+ARK1ppt,-449.83,30.88,-35782.18,94.56
