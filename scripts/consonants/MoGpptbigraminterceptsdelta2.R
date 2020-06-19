@@ -15,7 +15,7 @@ iterations = 30000
 path <- "./data/"
 d <- get_data(path = path) %>% 
   filter(component == "Consonants") %>% 
-  select(-component)
+  select(subj, bg, bigram, IKI)
 
 # Prepare data and variables
 (maxB <- max(d$bigram))
@@ -47,11 +47,11 @@ start <-
           , beta_sigma = .1
           , beta_raw = 0
           , delta_s = rep(.1, dat$nS)
-          , theta = 0
+          , theta = 0.1
           , delta = .1
           , tau_delta = .1
           , sigma = 1
-          , sigma_diff = .1
+          , sigma_diff = .2
           , u = rep(0, dat$nS)
           , w = rep(0, dat$maxB-1)
           , sigma_u = 0.1
@@ -96,7 +96,7 @@ saveRDS(m,
         compress = "xz")
 
 # Traceplots
-(param <- names(m)[!grepl("log_|y_|n|lp_|_s|w", names(m))])
+(param <- names(m)[!grepl("log_|y_|n|lp_|beta2_s|beta_s|delta_s", names(m))])
 #param <- c("beta", "delta", "theta", "sigma", "sigma_u", "sigma_w") 
 summary(print(m, pars = param, probs = c(.025,.975)))
 traceplot(m, param, inc_warmup = F)

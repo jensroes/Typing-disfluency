@@ -1,8 +1,7 @@
 get_data <- function(path){
   library(tidyverse)
   d <- read_csv(paste0(path, "ct.csv")) %>% 
-    filter(component %in% c("Consonants", "Tapping"), 
-           !is.na(age), 
+    filter(!is.na(age), 
            age >= 18,
            age <= 25,
            session == 1) %>%
@@ -11,27 +10,36 @@ get_data <- function(path){
     ) %>% 
     filter(!is.na(IKI), 
            IKI > 0 
-           #target == 1
            ) %>%
     select(-logfile) %>%
-    select(subj, bg, bigram, IKI, sex, age, component, target) %>%
-    group_by(subj, component) %>%
+    select(subj, bg, bigram, IKI, sex, age, component, target, rep, freq) %>%
+    mutate(rep = ifelse(component %in% c("Tapping","Consonants"), 1, rep)) %>%
+    group_by(subj, component, rep) %>%
     mutate(bigram = 1:n()) %>%
     ungroup() 
 
+  maxC <- d %>% pull(component) %>% unique() %>% length()
+  
   d %>% count(subj, component) %>% 
     count(subj) %>% 
     arrange(n) %>% 
-    filter(n == 1) %>% 
+    filter(n < maxC) %>% 
     pull(subj) -> remove_subj_1
   
-  d %>% group_by(subj) %>%
-    mutate(maxB = max(bigram)) %>%
-    filter(maxB > 30) -> remove_subj_2
+  d %>% 
+    filter(component != "Tapping") %>%
+    group_by(subj, component) %>%
+    summarise(maxB = max(bigram)) %>%
+    ungroup() %>% 
+    group_by(component) %>%
+    mutate(medianB = mean(maxB)) %>%
+    arrange(desc(maxB),component,subj) %>% 
+    filter(maxB > 1.75*medianB) %>%
+    pull(subj) -> remove_subj_2
   
   set.seed(125)
   d <- d %>% filter(!(subj %in% c(remove_subj_1, remove_subj_2))) %>%
-    filter(subj %in% sample(unique(subj), 100)) %>%
+    filter(subj %in% sample(unique(subj), 250)) %>%
     mutate(subj = as.integer(factor(subj))) %>%
     arrange(subj, component, bigram) 
     

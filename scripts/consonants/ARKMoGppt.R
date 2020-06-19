@@ -1,8 +1,7 @@
 # Load packages
-rm(list=ls())
+rm(list=ls()); gc()
 library(tidyverse)
 library(rstan)
-library(loo)
 library(magrittr)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
@@ -17,7 +16,7 @@ iterations = 30000
 path <- "./data/"
 d <- get_data(path = path) %>% 
   filter(component == "Consonants") %>% 
-  select(-component)
+  select(subj, bg, bigram, IKI)
 
 (maxB <- max(d$bigram))
 (nS <- length(unique(d$subj)))
@@ -51,12 +50,12 @@ start <-
           , beta_mu = 5
           , beta_sigma = .1
           , beta_raw = 0
-          , theta = 0
+          , theta = 0.1
           , theta_s = rep(0, dat$nS)
           , tau_theta = .1
-          , tau_phi = .1
+          , tau_phi = .01
           , sigma = 1
-          , sigma_diff = .1
+          , sigma_diff = .2
           , u = rep(0, dat$nS)
           , w = rep(0, dat$maxB-1)
           , sigma_u = 0.1
@@ -75,7 +74,7 @@ start_ll <- lapply(1:n_chain, function(id) start(chain_id = id) )
 ark <- stan_model(file = "stanin/ARKMoGppt.stan")
 
 # Parameters to omit in output
-#omit <- c("RE")
+omit <- c("theta", "theta_s", "n", "theta_tilde")
 
 # Fit model
 m <- sampling(ark, 
@@ -86,6 +85,8 @@ m <- sampling(ark,
               chains = n_chain, 
               cores = n_cores,
               refresh = 1000,
+              include = FALSE, # Don't include the following parameters in the output
+              pars = omit,
               save_warmup = FALSE, # Don't save the warmup
               thin = 1,
               seed = 81,
@@ -101,10 +102,11 @@ saveRDS(m,
         compress = "xz")
 
 # Traceplots
-(param <- names(m)[!grepl("u|w|log_|n|lp_|_tilde|_s", names(m))])
+(param <- names(m)[!grepl("w\\[|u\\[|log_|n|lp_|_tilde|beta_s\\[|beta2_s|prob_s|phi_s|theta_s", names(m))])
 #param <- c("beta", "beta_mu", "beta_sigma", "beta_raw", "phi", "theta", "delta",
 #           "sigma", "sigma_diff", "sigma_e", "sigmap_e") 
 summary(print(m, pars = param, probs = c(.025,.975)))
 traceplot(m, param, inc_warmup = F)
 #traceplot(m, "u", inc_warmup = F)
 
+#which(is.na(summary(m)$summary[,"Rhat"] ))

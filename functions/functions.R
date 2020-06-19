@@ -5,13 +5,13 @@ dmode <- function(x, ...) {
   dx$x[which.max(dx$y)]
 } 
 
-g_legend <- function(a.gplot){
-  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+
+get_legend<-function(myggplot){
+  tmp <- ggplot_gtable(ggplot_build(myggplot))
   leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
   legend <- tmp$grobs[[leg]]
-  return(legend)}
-
-
+  return(legend)
+}
 
 # Function to get samples for a subset of parameters
 get_samples = function(stan_out, pars_to_keep){

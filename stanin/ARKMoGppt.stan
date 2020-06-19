@@ -70,8 +70,8 @@ model {
   vector[2] lp_parts;
   
   // Priors
-  beta_mu ~ normal(5, 5);
-  beta_sigma ~ cauchy(0, 2.5);
+  beta_mu ~ normal(5, 1);
+  beta_sigma ~ normal(0, 1);
   beta_raw ~ normal(0, 1);
   delta ~ normal(0, 1);
   sigma ~ cauchy(0, 2.5);
@@ -83,11 +83,11 @@ model {
   }
 
   phi ~ normal(0, 1);
-  tau_phi ~ cauchy(0, 1);
+  tau_phi ~ normal(0, 3);
   
   theta_s ~ normal(theta, tau_theta);
   theta ~ normal(0, 1);
-  tau_theta ~ cauchy(0, 1);
+  tau_theta ~ normal(0, 2.5);
 
   
   // REs priors
@@ -120,7 +120,6 @@ generated quantities{
   int n = 0;
   real beta2 = beta + delta;
   vector[nS] beta_s = beta + u;
-  vector[nS] beta2_s = beta + delta + u;
 
   for(s in 1:nS){
     int nBS = nB[s];

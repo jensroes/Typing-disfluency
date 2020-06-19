@@ -1,4 +1,4 @@
-  // LMM with REs for subject and bigrams 
+// LMM with REs for subject and bigrams 
 
 data {
 	int<lower=1> N;                    // Number of observations
@@ -12,7 +12,7 @@ data {
 parameters {
 	real<lower=0> delta;
 	real<lower=0> tau_delta;
-  vector[nS] delta_s;
+  vector<lower=0>[nS] delta_s;
   vector[nS] theta_s;
 
   real beta_mu;
@@ -61,8 +61,8 @@ model {
   theta_s ~ normal(theta, tau_theta);
   theta ~ normal(0, 1);
 
-  tau_theta ~ cauchy(0, 1);
-  tau_delta ~ cauchy(0, 1);
+  tau_theta ~ normal(0, 1);
+  tau_delta ~ normal(0, 1);
 
 	// REs priors
   sigma_u ~ normal(0,2.5);
