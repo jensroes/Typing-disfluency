@@ -18,18 +18,22 @@ for(i in 1:length(files)){
 }
 
 (loos <- ls(pattern = "loo_MoGppts"))
-mc <- do.call(what = loo_compare, args = lapply(loos, as.name))
-tibble(name = loos, model = paste0("model",1:length(loos))) -> names
 
-mc %<>% as.data.frame() %>%
-  round(2) %>%
-  mutate(model=row.names(.)) %>%
-  select(model, elpd_diff:se_elpd_loo) %>%
-  left_join(names) %>%
-  select(-model) %>%
-  mutate(name = gsub("loo_", "", name)) %>%
-  select(name, elpd_diff:se_elpd_loo) %>%
-  rename(Model = name);mc
+delta1 <- loo_compare(loo_MoGpptsbigramintercepts, loo_MoGpptsbigraminterceptsdelta)
+delta2 <- loo_compare(loo_MoGpptsbigramintercepts, loo_MoGpptsbigraminterceptsdelta2)
+
+delta1 %<>% as.data.frame() %>%
+  rownames_to_column(var = "best_model") %>%
+  mutate(model = "MoGpptsbigraminterceptsdelta")
+
+delta2 %<>% as.data.frame() %>%
+  rownames_to_column(var = "best_model") %>%
+  mutate(model = "MoGpptsbigraminterceptsdelta2")
+
+bind_rows(delta1, delta2) %>%
+  filter(elpd_diff != 0) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  select(best_model, model, elpd_diff:se_elpd_loo) -> mc
 
 file_out <- paste0("results/loo_results_LF_mog.csv")
 write_csv(mc, file_out)

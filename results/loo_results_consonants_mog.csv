@@ -1,4 +1,3 @@
-Model,elpd_diff,se_diff,elpd_loo,se_elpd_loo
-MoGpptsbigraminterceptsdelta,0,0,-35158.72,100.48
-MoGpptsbigramintercepts,-6.02,5.36,-35164.74,99.17
-MoGpptsbigraminterceptsdelta2,-23.54,18.97,-35182.26,103.23
+best_model,model,elpd_diff,se_diff,elpd_loo,se_elpd_loo
+model1,MoGpptsbigraminterceptsdelta,-7.97,3.64,-35340.53,98.65
+model2,MoGpptsbigraminterceptsdelta2,-112.26,48.2,-35452.79,82.79

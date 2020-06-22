@@ -34,22 +34,6 @@ names(looc)[c(4,5)] <- c("$\\Delta\\widehat{elpd}$", "$\\widehat{elpd}$")
 
 mc_cons <- read_csv("../results/loo_results_consonants_mog.csv")
 
-mc_cons[2,]$Model <- paste(mc_cons[2,]$Model, mc_cons[1,]$Model, sep = " - ")
-mc_cons[3,]$Model <- paste(mc_cons[3,]$Model, mc_cons[1,]$Model, sep = " - ")
-
-mc_cons <- mc_cons %>% 
-  mutate_if(is.numeric, round, 0)  %>% 
-#  mutate_if(is.numeric, abs) %>%
-  filter(elpd_diff != 0)
-
-
 mc_lf <- read_csv("../results/loo_results_LF_mog.csv")
 
-mc_lf[2,]$Model <- paste(mc_lf[2,]$Model, mc_lf[1,]$Model, sep = " - ")
-mc_lf[3,]$Model <- paste(mc_lf[3,]$Model, mc_lf[1,]$Model, sep = " - ")
-
-mc_lf <- mc_lf %>% 
-  mutate_if(is.numeric, round, 0)  %>% 
-  #  mutate_if(is.numeric, abs) %>%
-  filter(elpd_diff != 0)
 
