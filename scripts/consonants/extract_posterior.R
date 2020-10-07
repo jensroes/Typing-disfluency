@@ -15,4 +15,3 @@ write_csv(ps, "results/consonants_posterior_MoG.csv")
 
 #ytilde <- rstan::extract(m, "y_tilde") %>% as.data.frame() %>% as_tibble()
 #write_csv(ytilde, "results/consonants_posterior_MoG_ytilde.csv")
-

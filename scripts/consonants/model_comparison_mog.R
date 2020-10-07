@@ -23,17 +23,19 @@ delta1 <- loo_compare(loo_MoGpptsbigramintercepts, loo_MoGpptsbigraminterceptsde
 delta2 <- loo_compare(loo_MoGpptsbigramintercepts, loo_MoGpptsbigraminterceptsdelta2)
 
 delta1 %<>% as.data.frame() %>%
-  rownames_to_column(var = "best_model") %>%
-  mutate(model = "MoGpptsbigraminterceptsdelta")
+  rownames_to_column(var = "worse_model") %>%
+  mutate(model2 = "MoGpptsbigraminterceptsdelta",
+         model1 = "MoGpptsbigramintercepts")
 
 delta2 %<>% as.data.frame() %>%
-  rownames_to_column(var = "best_model") %>%
-  mutate(model = "MoGpptsbigraminterceptsdelta2")
+  rownames_to_column(var = "worse_model") %>%
+  mutate(model2 = "MoGpptsbigraminterceptsdelta2",
+         model1 = "MoGpptsbigramintercepts")
 
 bind_rows(delta1, delta2) %>%
-  filter(elpd_diff != 0) %>%
+#  filter(elpd_diff != 0) %>%
   mutate_if(is.numeric, round, 2) %>%
-  select(best_model, model, elpd_diff:se_elpd_loo) -> mc
+  select(worse_model, model1, model2, elpd_diff:se_elpd_loo) -> mc;mc
 
 file_out <- paste0("results/loo_results_consonants_mog.csv")
 write_csv(mc, file_out)

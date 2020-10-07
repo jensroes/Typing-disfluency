@@ -49,7 +49,7 @@ start <-
           , beta_raw = 0
           , sigma = 1
           , u = rep(0, dat$nS)
-          , w = rep(0, dat$maxB-1)
+          , w = rep(0, dat$maxB)
           , sigma_u = 0.1
           , sigma_w = 0.1
     )

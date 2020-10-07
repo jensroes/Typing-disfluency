@@ -9,13 +9,13 @@ d_beta %>%
          color = Comp, 
          linetype = Comp,
          shape = Comp)) +
-  geom_pointrangeh(position = posn.j, fatten = .25, alpha = .5) +
+  geom_pointrangeh(position = posn.j, fatten = .15, alpha = .5) +
   scale_color_manual(label, values = mycolours[c(7,4)]) +
   scale_shape_manual(label, values = c(1, 2)) +
   scale_linetype_manual(label, values = c("dashed", "dotted")) +
   scale_x_continuous(limits = c(50, 800), breaks = seq(100, 800, 100)) +
   labs(y = "", 
-       x = bquote(atop("Fluent typing IKIs"~hat(beta)~"[in msecs]"))) +
+       x = "By-participant fluent-typing estimates [in msecs]") +
   theme(axis.text.y = element_blank()) -> p_beta
 
 d_theta %>%
@@ -30,13 +30,13 @@ d_theta %>%
              color = Comp, 
              linetype = Comp,
              shape = Comp)) +
-  geom_pointrangeh(position = posn.j, fatten = .25, alpha = .5) +
+  geom_pointrangeh(position = posn.j, fatten = .15, alpha = .5) +
   scale_color_manual(label, values = mycolours[c(7,4)]) +
   scale_shape_manual(label, values = c(1, 2)) +
   scale_linetype_manual(label, values = c("dashed", "dotted")) +
   scale_x_continuous(limits = c(0,1), breaks = seq(0,1,.25)) +
   labs(y = "", 
-       x = bquote(atop("Disfluency probability"~hat(theta)))) +
+       x = "By-participant typing-disfluency probability") +
   theme(axis.text.y = element_blank()) -> p_theta
 
 
@@ -51,8 +51,8 @@ ps %>% select(beta, delta, Comp) %>%
   scale_fill_manual(label, values = mycolours[c(7,4)]) +
   scale_linetype_manual(label, values = c("dashed", "dotted")) +
   scale_x_continuous(breaks = seq(50, 400, 50)) +
-  labs(x = bquote("Disfluency slowdown"~hat(delta)~"[in msecs]"), 
-       y = "Posterior probability density") -> p_param
+  labs(x = "Slowdown magnitude for\ndisfluent typing [in msecs]", 
+       y = "Posterior probability\ndensity") -> p_param
 
 
 #pss %>%
@@ -82,15 +82,15 @@ pss %>%
   geom_point(inherit.aes =F, aes(x = beta_sum[1], y = theta_sum[1]), shape=16, size = 1.5, colour = "black") +
   geom_point(inherit.aes =F, aes(x = beta_sum[4], y = theta_sum[5]), shape=17, size = 1.5, colour = "black") +
   geom_errorbar(inherit.aes = F, aes(ymin = theta_sum[2], ymax = theta_sum[3], x = beta_sum[1]), 
-                colour = "black", size =.25, width = 0) +
+                colour = "black", size =.35, width = 0) +
   geom_errorbarh(inherit.aes = F, aes(xmin = beta_sum[2], xmax = beta_sum[3], y = theta_sum[1]), 
-                 colour = "black", size =.25, height = 0) +
+                 colour = "black", size =.35, height = 0) +
   geom_errorbar(inherit.aes = F, aes(ymin = theta_sum[6], ymax = theta_sum[7], x = beta_sum[4]), 
-                colour = "black", size =.25, width = 0) +
+                colour = "black", size =.35, width = 0) +
   geom_errorbarh(inherit.aes = F, aes(xmin = beta_sum[5], xmax = beta_sum[6], y = theta_sum[5]), 
-                 colour = "black", size =.25, height = 0) +
-  labs(y = bquote("Disfluency probability"~hat(theta)),
-       x = bquote("Fluent typing IKIs"~hat(beta)~"[in msecs]")) -> p_scatter;p_scatter
+                 colour = "black", size =.35, height = 0) +
+  labs(y = "By-participant typing\ndisfluency probability",
+       x = "By-participant fluent-typing\nestimates [in msecs]") -> p_scatter;p_scatter
 
 p_theta <- p_theta + guides(colour = guide_legend(reverse = TRUE),
                  shape = guide_legend(reverse = TRUE),
@@ -103,7 +103,7 @@ plot_post <- cowplot::plot_grid(NULL, legend,
                        p_theta + theme(legend.position = "none"),
                        p_scatter + theme(legend.position = "none"), 
                        p_param + theme(legend.position = "none"),
-                       rel_heights = c(.5,4,2.85),
+                       rel_heights = c(.5,4.5,2.95),
                        axis = 'l',
                        align = 'b',
                        labels = c("","", "A", "B", "C", "D"),

@@ -6,7 +6,7 @@ library(magrittr)
 path <- "stanout/consonants/"
 #path <- "stanout/"
 
-(files <- dir(path, pattern = ".rda")[1:5])
+(files <- dir(path, pattern = ".rda")[c(1:3,5)])
 ms <- gsub(files, pattern = ".rda", replacement = "")
 
 for(i in 1:length(files)){
