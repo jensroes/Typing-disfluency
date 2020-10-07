@@ -35,8 +35,8 @@ transformed parameters{
 
 model {
    // Priors
-  beta_mu ~ cauchy(5, 2.5);
-  beta_sigma ~ normal(0, 2);
+  beta_mu ~ normal(5, 4);
+  beta_sigma ~ normal(0, 10);
   beta_raw ~ normal(0, 1);
 
 	sigma ~ cauchy(0, 2.5);
