@@ -10,11 +10,11 @@ bind_rows(loo_cons, loo_lf) %>%
   unite(col = "elpd_loo", elpd_loo, se_elpd_loo, sep = " (") %>%
   mutate(elpd_diff = paste0(elpd_diff, ")")) %>%
   mutate(elpd_loo = paste0(elpd_loo, ")")) %>%
-  mutate(Model = recode(Model, ARK1ppt = "M2",
+  mutate(Model = recode(Model, ARK1pptbgs = "M2",
                         LMMbigramintercepts = "M1",
                   #      LMMbigramslopes = "M2",
                         MoGpptsbigramintercepts = "M3",
-                        ARKMoGppt = "M4")) %>%
+                        ARKMoGpptbgs = "M4")) %>%
   mutate(Type = recode(Model, #M2 = "LMM",
                        M1 = "LMM",
                        M2 = "AR",

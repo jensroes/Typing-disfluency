@@ -1,0 +1,37 @@
+\documentclass[border=10pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, backgrounds, fit}
+
+\begin{document}
+	
+	\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, text width=4.5cm, draw=black, fill=orange!5]
+	\tikzstyle{decision} = [diamond, minimum width=1cm, minimum height=1cm, text centered, text width=1.45cm, draw=black, fill=green!5, font = \scriptsize]
+	\tikzstyle{arrow} = [thick,->,>=stealth]
+	\tikzstyle{cloud} = [draw, ellipse,fill=red!5, node distance=2cm, minimum height=3em, minimum width=10em]
+	
+	\begin{tikzpicture}[node distance=2cm]
+		
+		% Nodes
+		\node (in) [process] {Visual encoding};		
+		\node (word) [above of = in, yshift = -.75cm] {``een chaotische cowboy''};		
+		
+		\node (start) [cloud, below of = in, yshift = -.25cm] {Buffer};
+				
+		\node (out1) [process, below of=start, yshift = -.25cm] {Motor planning};
+		\node (dec1) [decision, right of=start, xshift = 3cm] {Update buffer?};
+		
+		\node (out2) [below of=out1, yshift = .75cm] {\textit{een chao\dots}};
+
+		% Arrows
+		\draw [arrow] (word) -- (in);
+		\draw [arrow] (in) -- (start);
+		\draw [arrow] (start) -- (out1);
+		\draw [arrow] (out1.east) -| (dec1.south);
+		
+		\draw [arrow] (dec1.west) -- node[near start, below=5pt] {$no$} (start);
+		\draw [arrow] (dec1.north) |- node[near start, below=1pt, left = 2pt] {$yes$} (in.east);
+		\draw [arrow] (out1) -- (out2);
+		
+		\end{tikzpicture}
+
+\end{document}

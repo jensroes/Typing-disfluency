@@ -1,6 +1,3 @@
-Ms <- c("Median" = "dotted", "Mean" = "longdash", "Mode" = "solid")
-Mcol <- c("Median" = "darkolivegreen4", "Mean" = "turquoise4", "Mode" = "darkred")
-
 d %<>% select(subj, bg, bigram, IKI, component)
 
 d %>% group_by(subj, component) %>%
@@ -162,7 +159,7 @@ d.raw <- d2 %>%
   filter((component == "Consonants" & bigram <= length(cons_bgs)) | 
            (component == "LF" & bigram <= length(lf_bgs) )) %>% 
   ungroup() %>% 
-  mutate(component = recode(component, LF = "LF-bigrams")) %>%
+  mutate(component = recode(component, LF = "LF bigrams")) %>%
   group_by(component) %>%
   summarise(mean = mean(IKI),
             median = median(IKI), 
@@ -176,7 +173,7 @@ d2 %>%
   select(subj, bigram, IKI, component, max) %>%
   filter((component == "Consonants" & bigram <= length(cons_bgs)) | 
            (component == "LF" & bigram <= length(lf_bgs) )) %>% 
-  mutate(component = recode(component, LF = "LF-bigrams")) %>%
+  mutate(component = recode(component, LF = "LF bigrams")) %>%
   ggplot(aes( x = IKI, group = component, fill = component, colour = component)) +
   geom_segment(data=d.raw,  
                aes(x=mean, y=-Inf, yend = Inf, xend = mean, linetype="Mean"), size = .15) +
@@ -204,7 +201,7 @@ plotA <- plot_grid(p_cons + theme(legend.position="none",
                    plot.margin = unit(c(-.1,.1,.2,-.1), "cm")),
   nrow = 2, axis = "l", align = 'v');plotA
 
-y.grob <- textGrob("Consonants task", gp=gpar(fontsize=9), rot=270)
+y.grob <- textGrob("Consonants", gp=gpar(fontsize=9), rot=270)
 
 plotA <- arrangeGrob(plotA, right = y.grob)
 
@@ -216,7 +213,7 @@ plotB <- plot_grid(p_lf + theme(legend.position="none",
                                       plot.margin = unit(c(-.1,.1,.2,.05), "cm")),
                    nrow = 2, axis = "l", align = 'v');plotB
 
-y.grob <- textGrob("LF-bigrams task", gp=gpar(fontsize=9), rot=270)
+y.grob <- textGrob("LF bigrams", gp=gpar(fontsize=9), rot=270)
 
 plotB <- arrangeGrob(plotB, right = y.grob)
 
@@ -226,17 +223,15 @@ y.grob <- textGrob("log-scaled IKIs [in msecs]", gp=gpar(fontsize=10), rot=90)
 
 plot_top <- arrangeGrob(plot_top, left = y.grob)
 
+legend <- get_legend(p.log + theme(legend.position = "bottom", 
+                                   legend.justification = "right",
+                                   plot.margin = unit(c(0,0,0,0), "cm")))
 plots <- plot_grid(
   plot_top, 
   p.log + theme(legend.position="none", 
                 plot.margin = unit(c(.3,.6,.1,.7), "cm")),
-  nrow = 2,  rel_heights = c(3,1), 
+  ncol = 2, rel_widths = c(2,1.25), 
   labels = c("A", "B")
 )
 
-legend <- get_legend(p.log + theme(legend.position = "bottom", 
-                                   legend.justification = "right",
-                                   plot.margin = unit(c(0,0,0,0), "cm")))
-
-plot_all <- plot_grid(plots,legend, ncol = 1, rel_heights = c(1,.1))
-
+plots_all <- plot_grid(plots, legend, nrow = 2, rel_heights = c(3,.5))

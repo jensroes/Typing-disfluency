@@ -8,7 +8,6 @@ data {
   matrix[nS,maxB] y;            //outcome: for each subject one IKI per column/bigram (in 
 }
 
-
 parameters {
 	real<lower=0> delta;
 	real<lower=0> tau_delta;
@@ -29,9 +28,8 @@ parameters {
 	vector[nS] u; //subj intercepts
   real<lower=0> sigma_u;//subj sd
   
-  vector[maxB-1] w; //bigram intercepts
+  vector[maxB] w; //bigram intercepts
   real<lower=0> sigma_w;//bigram sd
-
 }
 
 transformed parameters{
@@ -74,8 +72,8 @@ model {
   // likelihood
   for(s in 1:nS){
     int nBS = nB[s];
-    for(b in 2:nBS){
-      real mu = beta + u[s] + w[b-1];
+    for(b in 1:nBS){
+      real mu = beta + u[s] + w[b];
       lp_parts[1] = log_theta_s[1, s] + lognormal_lpdf(y[s,b] | mu, sigma_e); // 
       lp_parts[2] = log_theta_s[2, s] + lognormal_lpdf(y[s,b] | mu + delta_s[s], sigmap_e); // 
       target += log_sum_exp(lp_parts);
@@ -84,8 +82,8 @@ model {
 }
 
 generated quantities{
-	vector[N-nS] log_lik;
-	vector[N-nS] y_tilde;
+	vector[N] log_lik;
+	vector[N] y_tilde;
   vector[2] lp_parts;
   real<lower=0,upper=1> prob_tilde; 
   real beta2 = beta + delta;
@@ -95,8 +93,8 @@ generated quantities{
  
   for(s in 1:nS){
     int nBS = nB[s];
-    for(b in 2:nBS){
-      real mu = beta + u[s] + w[b-1];
+    for(b in 1:nBS){
+      real mu = beta + u[s] + w[b];
       n += 1;
       lp_parts[1] = log_theta_s[1, s] + lognormal_lpdf(y[s,b] | mu, sigma_e); // typing
       lp_parts[2] = log_theta_s[2, s] + lognormal_lpdf(y[s,b] | mu + delta_s[s], sigmap_e); // t

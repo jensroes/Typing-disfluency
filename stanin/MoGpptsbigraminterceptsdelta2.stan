@@ -27,7 +27,7 @@ parameters {
 	vector[nS] u; //subj intercepts
   real<lower=0> sigma_u;//subj sd
   
-  vector[maxB-1] w; //bigram intercepts
+  vector[maxB] w; //bigram intercepts
   real<lower=0> sigma_w;//bigram sd
 
 }
@@ -69,8 +69,8 @@ model {
   // likelihood
   for(s in 1:nS){
     int nBS = nB[s];
-    for(b in 2:nBS){
-      real mu = beta + u[s] + w[b-1];
+    for(b in 1:nBS){
+      real mu = beta + u[s] + w[b];
       lp_parts[1] = log_theta[1] + lognormal_lpdf(y[s,b] | mu, sigma_e); // 
       lp_parts[2] = log_theta[2] + lognormal_lpdf(y[s,b] | mu + delta_s[s], sigmap_e); // 
       target += log_sum_exp(lp_parts);
@@ -79,19 +79,19 @@ model {
 }
 
 generated quantities{
-	vector[N-nS] log_lik;
-	vector[N-nS] y_tilde;
+	vector[N] log_lik;
+	vector[N] y_tilde;
   vector[2] lp_parts;
   real<lower=0,upper=1> prob_tilde; 
   real beta2 = beta + delta;
   vector[nS] beta_s = beta + u;
-  vector[nS] beta2_s = beta + delta + u;
+  vector[nS] beta2_s = beta + delta_s + u;
   int n = 0;
  
   for(s in 1:nS){
     int nBS = nB[s];
-    for(b in 2:nBS){
-      real mu = beta + u[s] + w[b-1];
+    for(b in 1:nBS){
+      real mu = beta + u[s] + w[b];
       n += 1;
       lp_parts[1] = log_theta[1] + lognormal_lpdf(y[s,b] | mu, sigma_e); // typing
       lp_parts[2] = log_theta[2] + lognormal_lpdf(y[s,b] | mu + delta_s[s], sigmap_e); // t

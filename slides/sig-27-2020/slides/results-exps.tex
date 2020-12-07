@@ -1,0 +1,40 @@
+
+
+\begin{frame}{NP-type effect (LMM)}
+
+
+
+\begin{tikzpicture}
+    \draw (0, 0) node[inner sep=0,anchor=west] {\includegraphics[scale=.5]{NPexp.pdf}};
+    \draw (2.75, 2.9) node[font=\scriptsize,anchor=west, visible on=<3->] {48 msecs; PI [20, 76]; BF$_{10}$: 4,267};
+%    \draw (2.75, 2.5) node[font=\tiny,anchor=west] {LMM-1: $\widehat{elpd}=$-22,125 (78)};
+    \draw (10.75, .35) node[font=\scriptsize,anchor=east, visible on=<5>] {16 msecs; PI [-7, 40]; BF$_{10}$: 30};
+%    \draw (10.75, -.05) node[font=\tiny,anchor=east] {LMM-1: $\widehat{elpd}=$-14,318 (69)};
+	\path[fill = white, visible on=<1>] (2.75,.95) rectangle (10.5cm,3.2cm);
+	\path[fill = white, visible on=<-3>] (2.75,.65) rectangle (10.65cm,-1.65cm);
+\end{tikzpicture}
+
+
+
+\end{frame}
+
+\begin{frame}{Probability of long latencies (MoG)} 
+
+\begin{tikzpicture}
+    \draw (0, 0) node[inner sep=0,anchor=west] {\includegraphics[scale=.5]{NPexpmog.pdf}};
+    \draw (10.75, 2.95) node[font=\scriptsize,anchor=east, visible on=<3->] {MoG -- LMM: $\updel\widehat{elpd}=$-401 (36)};
+ %   \draw (10.75, 2.55) node[font=\tiny,anchor=east] {MoG-1: $\widehat{elpd}=$-21,725 (65)};
+    \draw (10.75, .45) node[font=\scriptsize,anchor=east, visible on=<5>] {MoG -- LMM: $\updel\widehat{elpd}$=-305 (35)};
+ %   \draw (10.75, .05) node[font=\tiny,anchor=east] {MoG-1: $\widehat{elpd}$=-14,013 (54)};
+	\path[fill = white, visible on=<1>] (2.75,.95) rectangle (10.65cm,3.2cm);
+	\path[fill = white, visible on=<-3>] (2.75,.65) rectangle (10.65cm,-1.65cm);
+
+\end{tikzpicture}
+
+\end{frame}
+
+
+% Exp 1        48ms; PI [20, 76]; BF: 4267
+% Exp 2       16ms; PI [-7, 40]; BF: 30  
+% Exp 1 0.044; PI [-0.002, 0.092]; BF: 0.138
+% Exp 2 0.029; PI [-0.012, 0.071]; BF: 0.054

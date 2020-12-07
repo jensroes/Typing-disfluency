@@ -1,0 +1,105 @@
+
+\begin{frame}{Research focus}
+
+\begin{small}
+\begin{itemize}
+	\item How do we address the long right tail in statistical models without losing information, trimming data, imposing pause thresholds?
+	\item log-Gaussian \ stable distribution \parencite{guo2018modeling}
+	\item ex-Gaussian \parencite{chukharev2014pauses}
+	\item Mixture of processes \parencite{almond2012preliminary,baaijen2012keystroke}		 
+	\item Implementation of the copy-typing process as statistical models in Stan \parencite{carpenter2016stan}; code based on \textcite{sorensen2016bayesian} and \textcite{vasishth2017}; also \textcite{vasishth2017feature}.
+	% representing the assumed cognitive model as statistical model
+	% principled account of pauses (the long tail of the distribution)
+
+\end{itemize}
+\end{small}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{LogNormal Mixed-Effects Model}
+	
+		\begin{equation*}
+			\begin{aligned}	
+				y_{ij} \sim LogNormal(\mu_{ij}, \sigma_{e}^2) \\
+				\only<2->{\mu_{ij} = \alpha + u_i + w_j}
+			\end{aligned}
+		\end{equation*}
+		\only<3>{
+		\begin{small}	
+			\begin{itemize}
+				\item Average IKI $\alpha$.				
+				\item Participants: $u_i \sim Normal(0, \sigma_u^2)$
+				\item Bigrams: $w_j \sim Normal(0, \sigma_w^2)$
+				\item Error variance $\sigma_e^2$
+			\end{itemize}
+		\end{small}
+	}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Extending mixed models to mixtures}
+
+\only<1-2>{
+	\uncover<2>{	
+	\begin{equation*}
+		\begin{aligned}	
+			y \sim LogNormal(\mu, \sigma_{e}^2) 
+		\end{aligned}
+	\end{equation*}
+	}
+}
+\only<3>{	
+	\begin{equation*}
+		\begin{aligned}	
+			y \sim \mathcolorbox{red!20!white}{\theta} \cdot LogNormal(\mu, \sigma_{e}^2)\\
+ 		 \theta = 1
+		\end{aligned}
+	\end{equation*}
+}
+
+\only<4>{	
+	\begin{equation*}
+		\begin{aligned}	
+			y \sim \theta \cdot LogNormal(\mu_{1}, \sigma_{e_1}^2) + \\
+			(1 - \theta) \cdot LogNormal(\mu_{2}, \sigma_{e_2}^2) \\
+			\theta =\text{ ?}
+	\end{aligned}
+\end{equation*}
+}
+
+\end{frame}
+
+
+
+ 
+
+
+\begin{frame}[fragile]{Mixture of Gaussians}
+	
+	\begin{equation*}
+		\begin{aligned}
+	\only<1>{y_{ij} \sim \theta_{i} \cdot LogNormal(\mu_{ij} + \delta, \sigma_{e'}^2) + \\
+(1 - \theta_{i}) \cdot LogNormal(\mu_{ij}, \sigma_{e}^2) \\}
+	\only<2>{y_{ij} \sim \theta_{i} \cdot LogNormal(\mu_{ij} + \delta, \sigma_{e'}^2) + \\
+	(1 - \theta_{i}) \cdot \mathcolorbox{red!20!white}{LogNormal(\mu_{ij}, \sigma_{e}^2)} \\}
+	\only<3>{y_{ij} \sim \theta_{i} \cdot \mathcolorbox{red!20!white}{LogNormal(\mu_{ij} + \delta, \sigma_{e'}^2)} + \\
+	(1 - \theta_{i}) \cdot LogNormal(\mu_{ij}, \sigma_{e}^2) \\}
+	\only<4->{y_{ij} \sim \mathcolorbox{red!20!white}{\theta_{i}} \cdot LogNormal(\mu_{ij} + \delta, \sigma_{e'}^2) + \\
+	(1 - \theta_{i}) \cdot LogNormal(\mu_{ij}, \sigma_{e}^2) \\}
+			\mu_{ij} = \alpha + u_i + w_j\\
+		\end{aligned}
+	\end{equation*}
+
+	\begin{small}
+		\begin{itemize}
+			\item Disfluencies result in a slowdown $\delta$.
+			\item happening with a probability $\theta$; differs by-participant $i$	
+			\item associated with larger variance $\sigma_{e'_k}^2$
+		\end{itemize}
+	\end{small}		
+	
+\end{frame}
+

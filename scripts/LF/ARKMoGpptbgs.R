@@ -72,7 +72,7 @@ start_ll <- lapply(1:n_chain, function(id) start(chain_id = id) )
 # Mixture of two gaussians with unequal variance
 #---- 
 # Load model
-ark <- stan_model(file = "stanin/ARKMoGppt.stan")
+ark <- stan_model(file = "stanin/ARKMoGpptbgs2.stan")
 
 # Parameters to omit in output
 #omit <- c("RE")
@@ -97,7 +97,7 @@ m <- sampling(ark,
 
 # Save model
 saveRDS(m, 
-        file = "stanout/LF/ARKMoGppt.rda",
+        file = "stanout/LF/ARKMoGpptbgs2.rda",
         compress = "xz")
 
 # Traceplots

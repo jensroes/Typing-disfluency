@@ -21,7 +21,7 @@ parameters {
 	vector[nS] u; //subj intercepts
   real<lower=0> sigma_u;//subj sd
   
-  vector[maxB-1] w; //bigram intercepts
+  vector[maxB] w; //bigram intercepts
   real<lower=0> sigma_w;//bigram sd
 
 }
@@ -47,22 +47,22 @@ model {
   // likelihood
   for(s in 1:nS){
     int nBS = nB[s];
-    for(b in 2:nBS){
-      real mu = beta + u[s] + w[b-1];
+    for(b in 1:nBS){
+      real mu = beta + u[s] + w[b];
       y[s, b] ~ lognormal(mu, sigma); 
     }
   }
 }
 
 generated quantities{
-	vector[N-nS] log_lik;
-	vector[N-nS] y_tilde;
+	vector[N] log_lik;
+	vector[N] y_tilde;
   int n = 0;
 
   for(s in 1:nS){
     int nBS = nB[s];
-    for(b in 2:nBS){
-      real mu = beta + u[s] + w[b-1];
+    for(b in 1:nBS){
+      real mu = beta + u[s] + w[b];
       n += 1;
       log_lik[n] = lognormal_lpdf(y[s, b] | mu, sigma); 
       y_tilde[n] = lognormal_rng(mu, sigma);

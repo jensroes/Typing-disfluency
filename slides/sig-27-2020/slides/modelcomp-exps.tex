@@ -1,0 +1,30 @@
+\begin{frame}{Model comparisons}
+\begin{scriptsize}
+% latex table generated in R 4.0.2 by xtable 1.8-4 package
+% Wed Aug 19 16:26:17 2020
+\begin{table}[ht]
+\centering
+	\caption{\scriptsize{Predictive performance estimated as the \textit{expected log pointwise predictive density} ($\widehat{elpd}$). Models are ordered by predictive performance (model with highest predictive performance in top row)}. Standard error in parentheses.}
+\begin{tabular}{rlrr}
+  \toprule
+ & Model & $\updel\widehat{elpd}$ & $\widehat{elpd}$ \\ 
+  \midrule
+ Experiment 1 & MoG & -- & -21,724 (65) \\ 
+ % & MoG-0 & -1 (2) & -21,725 (65) \\ 
+  & LMM-1 & -401 (36) & -22,125 (78) \\ 
+  & LMM-2 & -402 (36) & -22,126 (78) \\ 
+ % & LMM-0 & -406 (36) & -22,131 (78) \\ 
+   \midrule
+    Experiment 2 & MoG & -- & -17,223 (62) \\ 
+%   \rowcolor{yellow!40!white}& MoG-0 & 0 (1) & -17,223 (62) \\ 
+   & LMM-1 & -489 (49) & -17,712 (87) \\ 
+ %   & LMM-0 & -489 (49) & -17,712 (87) \\ 
+    & LMM-2 & -491 (50) & -17,714 (88) \\ 
+
+		\bottomrule
+		\end{tabular}\\
+		\textit{Note.} LMM = Linear mixed effects model; MoG = Mixture of Gaussians
+		 
+		\end{table}
+\end{scriptsize}
+\end{frame}

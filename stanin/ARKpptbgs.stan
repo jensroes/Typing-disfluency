@@ -39,6 +39,10 @@ parameters {
   // For random effects
   vector[nS] u; //subject intercepts
   real<lower=0> sigma_u;	// subj sd
+  
+  vector[maxB] w; // bigram intercepts
+  real<lower=0> sigma_w;	// bigram sd
+  
 }
 
 transformed parameters{
@@ -62,35 +66,63 @@ model {
   // REs priors
   sigma_u ~ normal(0,2.5);
   u ~ normal(0, sigma_u); //subj random effects
-  
+
+  sigma_w ~ normal(0,2.5);
+  w ~ normal(0, sigma_w); //bigram random effects
+
   // Likelihood	
   for(s in 1:nS){
     int nBS = nB[s];
-    for(b in (K+1):nBS){
-      real mu = beta + u[s];
-      for (k in 1:K){
-        mu += phi_s[s,k] * logy[s,b-k];
+    for(b in 1:K){
+      real mu = beta + u[s] + w[b];
+      if(b == 1){      // Model of the first keystrokes
         y[s, b] ~ lognormal(mu, sigma);
       }
+      if(b > 1){       // Model of the first k keystrokes after the k=1 
+       for(k in 1:(b-1)){
+         mu += phi_s[s,k] * logy[s,b-k];
+       }
+       y[s, b] ~ lognormal(mu, sigma);
+      }
+    } // Model of the keystrokes with full k-degree autoregression
+    for(b in (K+1):nBS){
+      real mu = beta + u[s] + w[b];
+      for(k in 1:K){
+        mu += phi_s[s,k] * logy[s,b-k];
+      }
+      y[s, b] ~ lognormal(mu, sigma);
     }
   }
 }
 
 generated quantities{
-  vector[N-(nS*K)] log_lik;
-  vector[N-(nS*K)] y_tilde;
+//  vector[N-(nS*K)] log_lik;
+//  vector[N-(nS*K)] y_tilde;
+  vector[N] log_lik;
+  vector[N] y_tilde;
   int n = 0;
   
   for(s in 1:nS){
     int nBS = nB[s];
-    for(b in (K+1):nBS){
-      real mu = beta + u[s];
-      for (k in 1:K){
-        n += 1;
-        mu += phi_s[s,k] * logy[s,b-k];
-        log_lik[n] = lognormal_lpdf(y[s, b] | mu, sigma); 
-        y_tilde[n] = lognormal_rng(mu, sigma);
+    for(b in 1:K){
+      real mu = beta + u[s] + w[b];
+      n += 1;
+      if(b > 1){       // Model of the first k keystrokes after the k=1 
+        for(k in 1:(b-1)){
+          mu += phi_s[s,k] * logy[s,b-k];
+        }
       }
+      log_lik[n] = lognormal_lpdf(y[s, b] | mu, sigma);
+      y_tilde[n] = lognormal_rng(mu, sigma);
+    } // Model of the keystrokes with full k-degree autoregression
+    for(b in (K+1):nBS){
+      real mu = beta + u[s] + w[b];
+      n += 1;
+      for(k in 1:K){
+        mu += phi_s[s,k] * logy[s,b-k];
+      }
+      log_lik[n] = lognormal_lpdf(y[s, b] | mu, sigma); 
+      y_tilde[n] = lognormal_rng(mu, sigma);
     }
   }
 }

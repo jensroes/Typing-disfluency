@@ -47,7 +47,7 @@ parameters {
   vector[nS] u; //subject intercepts
   real<lower=0> sigma_u;	// subj sd
 
-  vector[maxB-1] w; //bigram intercepts
+  vector[maxB] w; //bigram intercepts
   real<lower=0> sigma_w;//bigram sd
 
 }
@@ -77,7 +77,6 @@ model {
   sigma ~ cauchy(0, 2.5);
   sigma_diff ~ normal(0, 1);
 
-
   for(s in 1:nS){
     phi_s[s] ~ normal(phi, tau_phi);
   }
@@ -89,7 +88,7 @@ model {
   theta ~ normal(0, 1);
   tau_theta ~ normal(0, 2.5);
 
-  
+
   // REs priors
   sigma_u ~ normal(0,2.5);
   u ~ normal(0, sigma_u); //subj random effects
@@ -100,21 +99,38 @@ model {
   // Likelihood	
   for(s in 1:nS){
     int nBS = nB[s];
+    for(b in 1:K){
+      real mu =  beta + delta + u[s] + w[b];
+      real mu2 = beta + u[s] + w[b];
+      if(b > 1){       // Model of the first k keystrokes after the k=1 
+       for(k in 1:(b-1)){
+         mu += phi_s[s,k] * logy[s,b-k];
+         mu2 += phi_s[s,k] * logy[s,b-k];
+       }
+      }
+     lp_parts[1] = log_theta_s[1,s] + lognormal_lpdf(y[s,b] | mu2, sigma_e); // fluent
+     lp_parts[2] = log_theta_s[2,s] + lognormal_lpdf(y[s,b] | mu, sigmap_e); // disfluent
+     target += log_sum_exp(lp_parts);
+    } // Model of the keystrokes with full k-degree autoregression
     for(b in (K+1):nBS){
-      real mu = u[s] + beta;
+      real mu =  beta + delta + u[s] + w[b];
+      real mu2 = beta + u[s] + w[b];
       for (k in 1:K){
         mu += phi_s[s,k] * logy[s,b-k];
-        lp_parts[1] = log_theta_s[1,s] + lognormal_lpdf(y[s,b] | mu, sigma_e); // fluent
-        lp_parts[2] = log_theta_s[2,s] + lognormal_lpdf(y[s,b] | beta + delta + u[s] + w[b-1], sigmap_e); // disfluent
-        target += log_sum_exp(lp_parts);
+        mu2 += phi_s[s,k] * logy[s,b-k];
       }
+      lp_parts[1] = log_theta_s[1,s] + lognormal_lpdf(y[s,b] | mu2, sigma_e); // fluent
+      lp_parts[2] = log_theta_s[2,s] + lognormal_lpdf(y[s,b] | mu, sigmap_e); // disfluent
+      target += log_sum_exp(lp_parts);
     }
   }
 }
 
 generated quantities{
-  vector[N-(nS*K)] log_lik;
-  vector[N-(nS*K)] y_tilde;
+//  vector[N-(nS*K)] log_lik;
+//  vector[N-(nS*K)] y_tilde;
+  vector[N] log_lik;
+  vector[N] y_tilde;
   vector[2] lp_parts;
   real<lower=0,upper=1> theta_tilde; 
   int n = 0;
@@ -123,21 +139,44 @@ generated quantities{
 
   for(s in 1:nS){
     int nBS = nB[s];
+    for(b in 1:K){
+      real mu = beta + delta + u[s] + w[b];
+      real mu2 = beta + u[s] + w[b];
+      n += 1;
+      if(b > 1){       // Model of the first k keystrokes after the k=1 
+        for(k in 1:(b-1)){
+          mu += phi_s[s,k] * logy[s,b-k];
+          mu2 += phi_s[s,k] * logy[s,b-k];
+        }
+      }
+      lp_parts[1] = log_theta_s[1,s] + lognormal_lpdf(y[s,b] | mu2, sigma_e); 
+      lp_parts[2] = log_theta_s[2,s] + lognormal_lpdf(y[s,b] | mu, sigmap_e); 
+      log_lik[n] = log_sum_exp(lp_parts); 
+   	  theta_tilde = bernoulli_rng(prob_s[s]); 
+      if(theta_tilde) { 
+        y_tilde[n] = lognormal_rng(mu, sigmap_e);
+      }
+      else{
+        y_tilde[n] = lognormal_rng(mu2, sigma_e);
+      }
+    } // Model of the keystrokes with full k-degree autoregression
     for(b in (K+1):nBS){
-      real mu = beta + u[s];
+      real mu = beta + delta + u[s] + w[b];
+      real mu2 = beta + u[s] + w[b];
+      n += 1;
       for(k in 1:K){
-        n += 1;
         mu += phi_s[s,k] * logy[s,b-k];
-        lp_parts[1] = log_theta_s[1,s] + lognormal_lpdf(y[s,b] | mu, sigma_e); 
-        lp_parts[2] = log_theta_s[2,s] + lognormal_lpdf(y[s,b] | beta + delta + u[s] + w[b-1], sigmap_e); 
-        log_lik[n] = log_sum_exp(lp_parts); 
-     		theta_tilde = bernoulli_rng(prob); 
-        if(theta_tilde) { 
-          y_tilde[n] = lognormal_rng(beta + delta + u[s] + w[b-1], sigmap_e);
-        }
-        else{
-          y_tilde[n] = lognormal_rng(mu, sigma_e);
-        }
+        mu2 += phi_s[s,k] * logy[s,b-k];
+      }
+      lp_parts[1] = log_theta_s[1,s] + lognormal_lpdf(y[s,b] | mu2, sigma_e); 
+      lp_parts[2] = log_theta_s[2,s] + lognormal_lpdf(y[s,b] | mu, sigmap_e); 
+      log_lik[n] = log_sum_exp(lp_parts); 
+   		theta_tilde = bernoulli_rng(prob_s[s]); 
+      if(theta_tilde) { 
+        y_tilde[n] = lognormal_rng(mu, sigmap_e);
+      }
+      else{
+        y_tilde[n] = lognormal_rng(mu2, sigma_e);
       }
     }
   }
