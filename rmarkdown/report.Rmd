@@ -63,6 +63,7 @@ csquotes          : true
 header-includes:
   - \usepackage{booktabs}
   - \usepackage{longtable}
+  - \usepackage{graphicx}
   - \usepackage{array}
   - \usepackage{multirow}
   - \usepackage{float}
@@ -143,7 +144,7 @@ First, pause frequencies, writing bursts and related measures are used to assess
 Second, data aggregation results in the loss of important information about disfluencies and time course variation. Even if this variation is not of interest to a research question, parametric aggregates such as mean and standard deviation, and even non-parametric descriptives such as median and interquartile range, are biased estimates for keystroke data. This is because many summary statistics, including the mean and the standard deviation, assume that the population, or process for writing data, that the data are sampled from is normally distributed. Keystroke intervals, however, are non-normally distributed; keystroke intervals are zero-bound and therefore right-skewed.^[In fact, the minimum size of keystroke intervals is a function of the time it takes to plan and execute the motor program and keyboard polling.] Figure \ref{fig:example} illustrates this problem for the inter-keystroke intervals of two participants (from the copy-task data reported below). For the keystroke intervals (panel A; log-transformed intervals are shown in panel B) of either participant, we contrast the density function of the observed data (dashed line) and the normal density function (solid line) entailed by the observed mean keystroke-intervals, shown as dotted vertical line, and standard deviation (see figure caption). 
 
 
-```{r example, fig.pos="!ht", fig.height = 4.5, fig.width = 6.5, fig.align = "center", fig.cap="Example for mean as biased estimator for the inter-keystroke intervals (IKIs) for two participants (participant 74 in the top panels; participant 75 in the bottom panels). All panels show the empirical (observed) density of the data and the normal-density function entailed by the observed mean (represented as dotted vertical line) and the standard deviation (SD): participant 74: mean=204 (SD=118), participant 75: mean=431 (SD=448). The untransformed IKIs are shown in plot A and the log-scaled IKIs are shown in plot B."}
+```{r example, fig.pos="bp!", fig.height = 4.5, fig.width = 6.5, fig.align = "center", fig.cap="Example for mean as biased estimator for the inter-keystroke intervals (IKIs) for two participants (participant 74 in the top panels; participant 75 in the bottom panels). All panels show the empirical (observed) density of the data and the normal-density function entailed by the observed mean (represented as dotted vertical line) and the standard deviation (SD): participant 74: mean=204 (SD=118), participant 75: mean=431 (SD=448). The untransformed IKIs are shown in plot A and the log-scaled IKIs are shown in plot B."}
 source("scripts/get_example_plot.R");plot
 #filter(d_summary, subj == unique(d_summary$subj)[1]) %>% pull(mean)
 #filter(d_summary, subj == unique(d_summary$subj)[1]) %>% pull(sd)
@@ -167,14 +168,14 @@ As a guiding principle, we aim to produce a statistical model that represents th
 For example, writing a word involves the retrieval of its name and, then, its spelling. If the writer knows both, activation can flow smoothly into the execution of the corresponding motor codes. However if the writer struggles to retrieve the spelling for or the lexical entry of a word, the activation flow is being interrupted. Inhibition is then resulting in process disfluencies expressed in a larger lag between adjacent keys. In copy-typing tasks we can constraint the underlying cognitive process by removing higher-level processes such as lexical planning and orthographic retrieval. Figure \ref{fig:model} illustrates a basic model of the copy-typing process. At the top level, some chunk of letters has to be visually encoded. The size of this chunk is to some extent specific to task, target string and individual typing skill / style. The visually encoded sequence has to be buffered and, then, corresponding motor codes have to be activated. If there are no more motor codes that can be generated from the buffered information, visual encoding is required to update the buffer.
 
 
-```{r model, fig.pos="!ht", fig.height = 3.5, fig.width = 6.5, fig.align = "center", fig.cap="Basic model of copy typing; example for ``een chaotische cowboy'' (a chaotic cowboy)."}
+```{r model, fig.pos="bp!", fig.height = 3.5, fig.width = 6.5, fig.align = "center", fig.cap="Basic model of copy typing; example for ``een chaotische cowboy'' (a chaotic cowboy)."}
 include_graphics("spelling_decision.pdf")
 ```
 
 The consequence of buffer updates is a slowdown in keystroke intervals (i.e. a pause, disfluency) that cannot be explained on the basis of lexical retrieval or difficulty with particular bigrams. Figure \ref{fig:example2} shows the by-bigram IKIs of three participants copy-typing the (Dutch equivalent of the) phrase *a chaotic cowboy*. These example data illustrate that disfluencies are not bigram-related difficulty. Participant 240 shows a small disfluency between $<$c$>$ and $<$h$>$ but no other notable slowdown; participant 105 shows a large disfluency between $<$o$>$ and $<$t$>$; participant 238 shows three disfluencies in total. Importantly, although to-be-copied words were the same, the number, location, and size of the disfluency/ies varied across participants. The model in Figure \ref{fig:model} explains these disfluencies as buffer updates. Our statistical model should provide a systematic way of addressing process disfluencies, even though their occurrence is, to some extent, non-deterministic (i.e. can not be predicted on the basis of letter identity or bigram location).
 
 
-```{r example2, fig.pos="!ht", fig.height = 3.5, fig.width = 6.5, fig.align = "center", fig.cap="Example of the inter-keystroke intervals (IKIs) from three participants, shown as different linetypes, copy-typing ``een chaotische cowboy'' (a chaotic cowboy)."}
+```{r example2, fig.pos="bp!", fig.height = 3.5, fig.width = 6.5, fig.align = "center", fig.cap="Example of the inter-keystroke intervals (IKIs) from three participants, shown as different linetypes, copy-typing ``een chaotische cowboy'' (a chaotic cowboy)."}
 lf <- c("een", "chaotische", "cowboy")
 lf_bgs <- c("ee", "en", 
             "ch", "ha", "ao", "ot", "ti", "is", "sc", "ch", "he", 
@@ -388,7 +389,7 @@ models <- tibble(Models = paste0("M",1:4),
                        "Mixture process of fluent and disfluent typing",
                        "As M3 but with autocorrelation component")) 
 
-papaja::apa_table(models, align = c("l", "l", "l"), escape = FALSE, digits = 0, placement = "!ht",
+papaja::apa_table(models, align = c("l", "l", "l"), escape = FALSE, digits = 0, placement = "bp!",
                   caption = "Overview of typing-process models. All models were fitted with random intercepts for participants and bigrams.",
                   note = "LMM = Linear mixed-effects models; AR = Autoregressive model; MoG = Mixture of log-Gaussians") 
 ```
@@ -409,14 +410,12 @@ Bayesian models, as used in this paper, are ideal for the reliable estimation of
 
 The IKI data for the LF-bigrams task and the consonants task are visualized in Figure \ref{fig:descriptives}. The upper panels of the LF-bigrams task and the consonants task in Figure \ref{fig:descriptives}A show the data for each participant. In the lower panels of Figure \ref{fig:descriptives}A, different measures of central tendency are shown. The density function of the IKI data are shown in Figure \ref{fig:descriptives}B with vertical lines corresponding to the central tendency measures in Figure \ref{fig:descriptives}A.
 
-These visualisation highlight two important points for the present data that were discussed in the introduction section: (1) aggregating data neglects individual time-course variability in the data; (2) the choice of central-tendency measure leads to different conclusions about the data. As for the first point, Figure \ref{fig:descriptives}A shows that participants slowdowns and speedups throughout the trial but do not show consistent patterns for the same letter bigrams as might be concluded from the corresponding summary statistics. If we disregard by-participant variability, central-tendency measures in the lower panels of Figure \ref{fig:descriptives}A suggest that some slowdowns and speedups might be bigram specific. For example, in the LF-bigrams task, the first bigram is followed by a faster IKI; in the consonants task, the first bigram is followed by a slowdown. Importantly though, there is a substantial variability between participants. 
 
 
 
-As for the second point, the choice of central-tendency measure might affect whether we consider an observation a disfluency, or a participant to be prone to disfluent typing. In particular, means are systematically longer than the median and mode. Figure \ref{fig:descriptives}B illustrates why this is the case. Shown are the density functions for the LF-bigrams and the consonants task. Even log-scaled data show skewed distributions with a heavy right tail. While in a normal distribution the mean, median and mode have identical values, the conceptual differences between these three measures of central tendency lead to different values in non-normal distributed data. In particular, means are known to be sensitive to extreme values; these are inevitable for zero-bound IKIs with, in principle, no upper bound. For keystroke data, large means might be the consequence of a few larger IKIs that over-shadow largely normal typing behaviour. Means are closer to the horizontal middle of the data space which, for right-skewed distributions, is on the right of the distribution's peak (the value with the highest kernel density). The latter is being represented by the mode. Regardless of which measure is used, all three central tendency indicators ignore important properties of the distribution. That is, measures of central tendency neglect the variability in the data; keystroke data might indeed represent a combination of processes; e.g. normal typing and disfluencies. Central tendency measures do not allow us to distinguish between IKIs that are the results of fluent typing and IKIs that reflect process lags. 
 
 \blandscape
-```{r descriptives, fig.pos="!ht", fig.height = 4.5, fig.width = 9, fig.align = "center", fig.cap="Data overview. Plot A illustrates IKIs over bigram position (time-course) by participant in the upper rows and as different measures of central tendency (with standard error [SE]) in the lower rows for each the LF-bigrams task and the consonants task. Plot B shows the density distribution of IKI data with the same central-tendency descriptors as in plot A."}
+```{r descriptives, fig.pos="bp!", fig.height = 4.5, fig.width = 9, fig.align = "center", fig.cap="Data overview. Plot A illustrates IKIs over bigram position (time-course) by participant in the upper rows and as different measures of central tendency (with standard error [SE]) in the lower rows for each the LF-bigrams task and the consonants task. Plot B shows the density distribution of IKI data with the same central-tendency descriptors as in plot A."}
 #\clearpage
 #\pagenumbering{gobble}
 #\thispagestyle{empty}
@@ -427,6 +426,10 @@ source("scripts/get_descriptives_plot.R");plots_all
 \elandscape
 
 
+These visualisation highlight two important points for the present data that were discussed in the introduction section: (1) aggregating data neglects individual time-course variability in the data; (2) the choice of central-tendency measure leads to different conclusions about the data. As for the first point, Figure \ref{fig:descriptives}A shows that participants slowdowns and speedups throughout the trial but do not show consistent patterns for the same letter bigrams as might be concluded from the corresponding summary statistics. If we disregard by-participant variability, central-tendency measures in the lower panels of Figure \ref{fig:descriptives}A suggest that some slowdowns and speedups might be bigram specific. For example, in the LF-bigrams task, the first bigram is followed by a faster IKI; in the consonants task, the first bigram is followed by a slowdown. Importantly though, there is a substantial variability between participants. 
+
+
+As for the second point, the choice of central-tendency measure might affect whether we consider an observation a disfluency, or a participant to be prone to disfluent typing. In particular, means are systematically longer than the median and mode. Figure \ref{fig:descriptives}B illustrates why this is the case. Shown are the density functions for the LF-bigrams and the consonants task. Even log-scaled data show skewed distributions with a heavy right tail. While in a normal distribution the mean, median and mode have identical values, the conceptual differences between these three measures of central tendency lead to different values in non-normal distributed data. In particular, means are known to be sensitive to extreme values; these are inevitable for zero-bound IKIs with, in principle, no upper bound. For keystroke data, large means might be the consequence of a few larger IKIs that over-shadow largely normal typing behaviour. Means are closer to the horizontal middle of the data space which, for right-skewed distributions, is on the right of the distribution's peak (the value with the highest kernel density). The latter is being represented by the mode. Regardless of which measure is used, all three central tendency indicators ignore important properties of the distribution. That is, measures of central tendency neglect the variability in the data; keystroke data might indeed represent a combination of processes; e.g. normal typing and disfluencies. Central tendency measures do not allow us to distinguish between IKIs that are the results of fluent typing and IKIs that reflect process lags. 
 
 
 For our data, aggregation does not just neglect participant-specific typing patterns but the choice of central-tendency measure leads to different conclusions about the data (e.g. which IKIs can be considered pauses). To ensure accurate statistical inference, we need to be able to account for participant-specific typing patterns as expressed across the typing time-course.
@@ -443,7 +446,7 @@ The predictive performance of the models was established using leave-one-out cro
 ```{r modelcomparisons, results = "asis"}
 source("scripts/get_loo_table.R")
 
-papaja::apa_table(looc[-1], align =  "lllrr", escape = FALSE, placement = "!ht",
+papaja::apa_table(looc[-1], align =  "lllrr", escape = FALSE, placement = "bp!",
                   row.names = T, stub_indents = list(`Consonants` = 1:4, `LF bigrams`= 5:8),
                   caption = "Model comparisons expressed as expected log predictive density ($\\widehat{elpd}$). The top row of each copy-task component shows the model with the highest predictive performance. Differences in predictive performance are shown as $\\Delta\\widehat{elpd}$ contrasting for each copy-task component the model in the first row and the remaining models. Standard errors (SE) are shown in brackets.",  
                   note = "LMM = Linear mixed-effects models; AR = Autoregressive model; MoG = Mixture of log-Gaussians") 
@@ -481,7 +484,7 @@ param_table %<>%
   select(-description) %>%
   rename(Parameter = Param)
 
-papaja::apa_table(param_table, align =  "lrr", escape = FALSE, placement = "!ht", row.names = T,
+papaja::apa_table(param_table, align =  "lrr", escape = FALSE, placement = "bp!", row.names = T,
                   stub_indents = list(`Population estimates` = 1:4, `Variance estimates`= 5:10),
                   caption = "Parameter estimates with 95\\% PIs separated into population estimates and estimates for variance components. Parameters are shown as used in equations with a brief description of their conceptual meaning in parentheses. Estimates are shown for the LF-bigrams task and the consonants task.") 
 
@@ -492,7 +495,7 @@ Figure \ref{fig:parameters} summarises by-participant model estimates. The model
 
 
 \blandscape
-```{r parameters, fig.pos="!ht", fig.height=4.5, fig.width=9, fig.align = "center", fig.cap="By-participant parameter values for LF-bigrams and consonants task. Plot A and Plot B show the average IKIs for fluent typing and disfluency probabilities, respectively, for each participant ordered by magnitude (for a random subset of 50 participants for illustration); error bars indicate 95\\% PIs, dotted vertical line shows the population estimate. Plot C--E show correlations (red line) between by-participant mean-posterior estimates of the consonants task and the LF-bigrams task for fluent typing (C), the autoregressor (D), and the disfluency probability (E)."}
+```{r parameters, fig.pos="bp!", fig.height=4.5, fig.width=9, fig.align = "center", fig.cap="By-participant parameter values for LF-bigrams and consonants task. Plot A and Plot B show the average IKIs for fluent typing and disfluency probabilities, respectively, for each participant ordered by magnitude (for a random subset of 50 participants for illustration); error bars indicate 95\\% PIs, dotted vertical line shows the population estimate. Plot C--E show correlations (red line) between by-participant mean-posterior estimates of the consonants task and the LF-bigrams task for fluent typing (C), the autoregressor (D), and the disfluency probability (E)."}
 
 n_ppts <- 50; source("scripts/get_posterior_plot2.R"); plots_post
 ```

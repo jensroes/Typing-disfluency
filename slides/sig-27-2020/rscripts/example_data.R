@@ -42,7 +42,7 @@ d %<>% filter(component == "LF") %>%
 
 set.seed(123)
 # Create the plot for a few ppts (first to all and then select)
-d_example <- d %>% filter(subj %in% sample(x = unique(subj), size = 6)) %>%
+d_example <- d %>% filter(subj %in% sample(x = unique(subj), size = 3)) %>%
   select(-component) %>%
   mutate(logIKI = log(IKI)) %>%
   group_by(subj) %>%
@@ -76,67 +76,79 @@ normaldens <- plyr::ddply(d_example, "subj", function(df) {
 })
 
 
-
-# Empirical and normal
+# observed and normal
 normalscale <- ggplot(d_example, aes(x = IKI))  + 
-  geom_line(aes(y = ..density.., linetype = 'Empirical', colour = 'Empirical'), stat = 'density', size = .75) +
-  geom_line(aes(y = density, linetype = 'Normal', colour = 'Normal'), data = normaldens, size = .75) +
+  geom_line(aes(y = ..density.., linetype = 'observed', colour = 'observed'), stat = 'density', size = .75) +
+  geom_line(aes(y = density, linetype = 'normal', colour = 'normal'), data = normaldens, size = .75) +
   scale_linetype_manual("Density", values = c("solid", "dashed")) +
   scale_colour_manual("Density", values = c("#69b3a2", "purple")) + #
   geom_vline(data = filter(d_summary, subj == unique(subj)[1]), aes(xintercept = mean), 
-             linetype = "dotted", colour = "grey30") +
+             linetype = "dotted", size = .75, colour = "firebrick4") + #"grey30"
   labs(y = "Density", x = "IKIs [in msecs]") +
   facet_wrap(~subj, nrow = 2) +
   theme(strip.text = element_text(hjust = 0),
+        axis.title.x = element_text(hjust = 0),
         axis.text.y = element_blank(),
-        legend.key.width = unit(1,"cm")); normalscale
+        legend.key.width = unit(1,"cm")) +
+  guides(color = guide_legend(reverse = T),
+         linetype = guide_legend(reverse = T)); normalscale
 
 ggsave("slides/sig-27-2020/gfx/normalemp.pdf", width = 8.25, height = 5)
 
 
-# Empirical
+# observed
 normalscale <- ggplot(d_example, aes(x = IKI))  + 
-  geom_line(aes(y = ..density.., linetype = 'Empirical', colour = 'Empirical'), stat = 'density', size = .75) +
-  scale_linetype_manual("Density", values = c("solid")) +
-  scale_colour_manual("Density", values = c("#69b3a2")) + #
+  geom_line(aes(y = ..density.., linetype = 'observed', colour = 'observed'), stat = 'density', size = .75) +
+  scale_linetype_manual("Density", values = c("dashed")) +
+  scale_colour_manual("Density", values = c("purple")) + #
   geom_vline(data = filter(d_summary, subj == unique(subj)[1]), aes(xintercept = mean), 
-             linetype = "dotted", colour = "grey30") +
+             linetype = "dotted", colour = "firebrick4", size = .75) +
   labs(y = "Density", x = "IKIs [in msecs]") +
   facet_wrap(~subj, nrow = 2) +
   theme(strip.text = element_text(hjust = 0),
         axis.text.y = element_blank(),
-        legend.key.width = unit(1,"cm")); normalscale
+        axis.title.x = element_text(hjust = 0),
+        legend.key.width = unit(1,"cm")) +
+  guides(color = guide_legend(reverse = T),
+         linetype = guide_legend(reverse = T)); normalscale
 
 ggsave("slides/sig-27-2020/gfx/emp.pdf", width = 8.25, height = 5)
 
-# Normal empirical and normal on log scale
+# Normal observed and normal on log scale
 
 logscale <- ggplot(d_example, aes(x = logIKI)) +
-  geom_line(aes(y = ..density.., linetype = 'Empirical', colour = 'Empirical'), stat = 'density', size = .75) +
-  geom_line(aes(y = logdensity, linetype = 'Normal', colour = 'Normal'), data = normaldens, size = .75) +
+  geom_line(aes(y = ..density.., linetype = 'observed', colour = 'observed'), stat = 'density', size = .75) +
+  geom_line(aes(y = logdensity, linetype = 'normal', colour = 'normal'), data = normaldens, size = .75) +
   scale_linetype_manual("Density", values = c("solid", "dashed")) +
   scale_colour_manual("Density", values = c("#69b3a2", "purple")) + #
   geom_vline(data = filter(d_summary, subj == unique(subj)[1]), aes(xintercept = logmean), 
-             linetype = "dotted", colour = "grey30") +
-  labs(y = "Density", x = "log-scaled IKIs [in log(msecs)]") +
-  facet_wrap(~subj, nrow = 2) +
-  theme(strip.text = element_text(hjust = 0),
-        axis.text.y = element_blank(),
-        legend.key.width = unit(1,"cm"));logscale 
-
-ggsave("slides/sig-27-2020/gfx/lognormal.pdf", width = 8.25, height = 5)
-  
-
-logscale <- ggplot(d_example, aes(x = logIKI)) +
-  geom_line(aes(y = ..density.., linetype = 'Empirical', colour = 'Empirical'), stat = 'density', size = .75) +
-  scale_linetype_manual("Density", values = c("solid")) +
-  scale_colour_manual("Density", values = c("#69b3a2")) + #
-  geom_vline(data = filter(d_summary, subj == unique(subj)[1]), aes(xintercept = logmean), 
-             linetype = "dotted", colour = "grey30") +
+             linetype = "dotted", colour = "firebrick4", size = .75) +
   labs(y = "Density", x = "IKIs [in log(msecs)]") +
   facet_wrap(~subj, nrow = 2) +
   theme(strip.text = element_text(hjust = 0),
         axis.text.y = element_blank(),
-        legend.key.width = unit(1,"cm"));logscale 
+        axis.title.x = element_text(hjust = 0),
+        legend.key.width = unit(1,"cm")) +
+  guides(color = guide_legend(reverse = T),
+         linetype = guide_legend(reverse = T));logscale 
 
-ggsave("slides/sig-27-2020/gfx/lognormal2.pdf", width = 8.25, height = 5)
+ggsave("slides/sig-27-2020/gfx/lognormal.pdf", width = 8.25, height = 5)
+  
+
+# observed
+d_summary %<>% mutate(subj = gsub("Participant", "Ppt", subj))
+
+normalscale <- d_example %>% mutate(subj = gsub("Participant", "Ppt", subj)) %>%
+  ggplot(aes(x = IKI))  + 
+  geom_line(aes(y = ..density..), stat = 'density', size = .75) +
+  geom_vline(data = filter(d_summary, subj == unique(subj)[1]), aes(xintercept = mean), 
+             linetype = "dotted", colour = "firebrick3", size = .75) +
+  labs(y = "", x = "IKIs [in msecs]") +
+  facet_wrap(~subj, nrow = 3) +
+  theme(strip.text = element_text(hjust = 0),
+        axis.text.y = element_blank(),
+        axis.title.x = element_text(hjust = 0),
+        legend.position = "none",
+        legend.key.width = unit(1,"cm")); normalscale
+
+ggsave("slides/sig-27-2020/gfx/emp2.pdf", width = 3.5, height = 6)

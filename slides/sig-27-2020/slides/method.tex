@@ -1,22 +1,48 @@
 \begin{frame}{Method}
 
 \begin{itemize}
+	\item Implementation of the copy-typing process as statistical model in Stan \parencite{carpenter2016stan}; code based on \textcite{sorensen2016bayesian} and \textcite{vasishth2017}.
 	\item Bigram-keystroke interval data: Dutch subset of copy-task corpus \parencite{waes2019,van2019multilingual}
-	\item \textbf{Consonants task:} ``tjxgfl pgkfkq dtdrgt npwdvf''
-	\item \textbf{LF-bigrams task:} ``een chaotische cowboy''
 	\item Lexical and non-lexical copy-typing context
-	\item Random sample of 250 ppts (18-25 years of age)
+%	\item Random sample of 250 ppts (18-25 years of age)	
 \end{itemize}
 
 \end{frame}
 
 
-% create the same graph without buffer decision
-\begin{frame}{Copy-typing sequences of characters}
-	
+\begin{frame}{Consonants task}	
 	\begin{center}
-		\includegraphics[scale=.7]{spelling_decision.pdf}
+		\begin{large}
+			tjxgfl pgkfkq dtdrgt npwdvf
+		\end{large}
 	\end{center}
-	
 \end{frame}
+
+\begin{frame}{LF-bigrams task}	
+	\begin{center}
+		\only<1-4>{
+		\begin{large}
+			een chaotische cowboy\\ \medskip
+		\end{large}
+		}
+		\only<2-4>{
+		$\resizebox{0.05\textwidth}{11pt}{$\Downarrow$}$\\ \medskip
+			e^e^n \ \ c^h^a^o^t^i^s^c^h^e \ \ c^o^w^b^o^y\\ \medskip
+		}
+		\only<3-4>{
+		$\resizebox{0.05\textwidth}{11pt}{$\Downarrow$}$\\ \medskip
+		\begin{small}
+			162  97 107 141 800 148 278 132 199  94 154 177 870  88 274 611 \\
+		\medskip
+		\end{small}
+		}
+		\only<4>{
+				$\resizebox{0.05\textwidth}{11pt}{$\Downarrow$}$\\ \medskip
+		\includegraphics[scale = .5]{trial1.pdf}
+		
+		}
+	
+	\end{center}
+\end{frame}
+
 

@@ -1,0 +1,49 @@
+
+\begin{frame}{Model comparisons}
+
+\only<1>{
+	\begin{scriptsize}
+		% latex table generated in R 4.0.2 by xtable 1.8-4 package
+		% Tue Aug 18 15:17:51 2020
+		\begin{table}[ht]
+			\centering
+			\caption{\scriptsize{Predictive performance estimated as the \textit{expected log predictive density} ($\widehat{elpd}$) \parencite{vehtari2015pareto, vehtari2017practical}. Models are ordered by predictive performance (model with highest predictive performance in top row)}. Standard error in parentheses.}
+			\begin{tabular}{llrrrr}
+				\toprule
+				\multicolumn{2}{c}{} & \multicolumn{2}{c}{Consonants task} & \multicolumn{2}{c}{LF-bigrams task} \\ [1.5ex]
+				\midrule
+				Models & Distribution & $\updel\widehat{elpd}$ & $\widehat{elpd}$ & $\updel\widehat{elpd}$ & $\widehat{elpd}$ \\ [1.5ex]
+				\midrule
+				MoG & 2 $\times$ Log-normal &  &  &  & \\ [1.5ex]
+				LMM & Log-normal & {\color{white}-281 (25)} & {\color{white}-37,350 (99)} & {\color{white}-994 (63)} & {\color{white}-34,173 (121)} \\ [1.5ex]
+				\bottomrule
+			\end{tabular}\\
+			\textit{Note.} LMM = Linear mixed effects model; MoG = Mixture of Gaussians 
+		\end{table}
+	\end{scriptsize}
+}
+
+\only<2>{
+	\begin{scriptsize}
+		% latex table generated in R 4.0.2 by xtable 1.8-4 package
+		% Tue Aug 18 15:17:51 2020
+		\begin{table}[ht]
+			\centering
+			\caption{\scriptsize{Predictive performance estimated as the \textit{expected log predictive density} ($\widehat{elpd}$) \parencite{vehtari2015pareto, vehtari2017practical}. Models are ordered by predictive performance (model with highest predictive performance in top row)}. Standard error in parentheses.}
+			\begin{tabular}{llrrrr}
+				\toprule
+				\multicolumn{2}{c}{} & \multicolumn{2}{c}{Consonants task} & \multicolumn{2}{c}{LF-bigrams task} \\ [1.5ex]
+				\midrule
+				Models & Distribution & $\updel\widehat{elpd}$ & $\widehat{elpd}$ & $\updel\widehat{elpd}$ & $\widehat{elpd}$ \\ [1.5ex]
+				\midrule
+				MoG & 2 $\times$ Log-normal & -- & -37,069 (101) & -- & -33,178 (113) \\ [1.5ex]
+				LMM & Log-normal & -281 (25) & -37,350 (99) & -994 (63) & -34,173 (121) \\ [1.5ex]
+				\bottomrule
+			\end{tabular}\\
+			\textit{Note.} LMM = Linear mixed effects model; MoG = Mixture of Gaussians 
+		\end{table}
+	\end{scriptsize}
+}
+
+\end{frame}
+

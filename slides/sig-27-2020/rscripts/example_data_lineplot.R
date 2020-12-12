@@ -46,7 +46,7 @@ d_example2 <- d %>% filter(component == "LF") %>%
 
 #d_example3 <- d_example2 %>% filter(subj %in% c(105, 240, 238))
 set.seed(123)
-d_example3 <- d_example2 %>% filter(subj %in% as.numeric(sample(x = unique(subj), size = 6)))
+d_example3 <- d_example2 %>% filter(subj %in% as.numeric(sample(x = unique(subj), size = 3)))
 
 ggplot(d_example3, aes(y = IKI, x = bigram, 
                        linetype = subj, 
@@ -59,9 +59,34 @@ ggplot(d_example3, aes(y = IKI, x = bigram,
        colour = "Participant id",
        y = "IKIs [in msecs]", x = "Bigrams") +
   scale_shape_manual(values = 20:26) +
-  scale_color_viridis_d() +
+  scale_color_viridis_d(end = .2) +
   scale_x_continuous(breaks = sort(unique(d_example3[d_example3$ subj == unique(d_example3$subj)[1],]$bigram)), 
                      labels = d_example3[d_example3$subj == unique(d_example3$subj)[1],]$bg) +
   theme(legend.key.width =  unit(1, "cm"))
 
 ggsave("slides/sig-27-2020/gfx/trial.pdf", width = 8.25, height = 5)
+
+
+
+#d_example3 <- d_example2 %>% filter(subj %in% 210)
+d_example3 <- d_example2 %>% filter(subj %in% 1)
+
+d_example3$IKI
+
+ggplot(d_example3, aes(y = IKI, x = bigram)) +
+  geom_point(position = position_dodge(.5), size = 5, colour = "purple4", alpha = .8) +
+  geom_line(position = position_dodge(.5), size = .25, colour = "purple4", alpha = .6) +
+  labs(y = "", x = "") +
+  theme_void() +
+  theme(plot.margin = margin())
+
+ggsave("slides/sig-27-2020/gfx/trial1.pdf", width = 8.35, height = 1.75)
+
+ggplot(d_example3, aes(x = IKI)) +
+  geom_density(colour = "purple4") +
+  labs(y = "", x = "") +
+  theme_void() +
+  theme(plot.margin = margin())
+
+ggsave("slides/sig-27-2020/gfx/trial_dens.pdf", width = 8.35, height = 1.75)
+
