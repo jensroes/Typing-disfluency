@@ -1,0 +1,24 @@
+\begin{frame}[fragile]{Finite Mixture of two log-Gaussians}
+	
+		\begin{equation*}
+			\begin{aligned}
+				y_{ij} \sim \theta_{i} \cdot LogNormal(\alpha + \delta + u_i + w_j, \sigma_{e'}^2) + \\
+					(1 - \theta_{i}) \cdot LogNormal(\alpha + u_i + w_j, \sigma_{e}^2) \\
+				%	\only<2>{y_{ij} \sim \theta_{i} \cdot LogNormal(\mu_{ij} + \delta, \sigma_{e'}^2) + \\
+				%	(1 - \theta_{i}) \cdot \mathcolorbox{red!20!white}{LogNormal(\mu_{ij}, \sigma_{e}^2)} \\}
+				%	\only<3>{y_{ij} \sim \theta_{i} \cdot \mathcolorbox{red!20!white}{LogNormal(\mu_{ij} + \delta, \sigma_{e'}^2)} + \\
+				%	(1 - \theta_{i}) \cdot LogNormal(\mu_{ij}, \sigma_{e}^2) \\
+				%	\only<4->{y_{ij} \sim \mathcolorbox{red!20!white}{\theta_{i}} \cdot LogNormal(\mu_{ij} + \delta, \sigma_{e'}^2) + \\
+				%	(1 - \theta_{i}) \cdot LogNormal(\mu_{ij}, \sigma_{e}^2) \\}
+			\end{aligned}
+		\end{equation*}
+		\begin{small}
+			\begin{itemize}
+				\item $\alpha$: fluent IKI (e.g. no buffer update; no difficulty)
+				\item $\delta$: buffer update; other difficulty (finding correct key)
+				\item $\theta$: disfluency probability (by ppt $i$)	
+				\item $\sigma_{e'}^2$: variance larger than $\sigma_{e}^2$ 
+			\end{itemize}
+		\end{small}		
+	
+\end{frame}

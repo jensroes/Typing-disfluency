@@ -1,0 +1,47 @@
+
+\begin{frame}[fragile]{Extending mixed models to finite mixtures}
+
+\begin{minipage}{.45\textwidth}
+\only<1-2>{
+	\uncover<2>{	
+	\begin{equation*}
+		\begin{aligned}	
+			y \sim LogNormal(\mu, \sigma_{e}^2) 
+		\end{aligned}
+	\end{equation*}
+	}
+}
+\only<3>{	
+	\begin{equation*}
+		\begin{aligned}	
+			y \sim \theta \cdot LogNormal(\mu, \sigma_{e}^2)\\
+			\theta = 1
+		\end{aligned}
+	\end{equation*}
+}
+
+\only<4>{	
+	\begin{equation*}
+		\begin{aligned}	
+			y \sim \theta \cdot LogNormal(\mu + \delta, \sigma_{e_1}^2) + \\
+			(1 - \theta) \cdot LogNormal(\mu, \sigma_{e_2}^2) \\
+			\theta =\text{ 0.5}\\
+			\delta > 0
+		\end{aligned}
+	\end{equation*}
+}
+\end{minipage}
+\hfill
+\begin{minipage}{.475\textwidth}	
+\hfill
+\end{minipage}
+
+
+
+\end{frame}
+
+
+
+ 
+
+

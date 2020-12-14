@@ -1,12 +1,12 @@
 \begin{frame}{Population estimates} 
 
 \begin{tikzpicture}
-    \draw (0, 0) node[inner sep=0,anchor=west, visible on=<1-4>] {\includegraphics[scale=.5]{pop_beta.pdf}};
-	\path[fill = white, visible on=<1>] (2,-2.5) rectangle (9.5cm,1.5cm);
-	 \draw (0, 0) node[inner sep=0,anchor=west, visible on=<5>] {\includegraphics[scale=.5]{pop_prob.pdf}};	
-	 \draw[black!60!green, dashed, thick, visible on=<3>] (3.5,.5) ellipse (1.5cm and 1cm);
-	 \draw[black!60!green, dashed, thick, visible on=<3>] (6.6,-1.6) ellipse (3cm and 1cm);
- 	 \draw[black!60!green, dashed, thick, visible on=<4>] (4.25,-.75) ellipse (1cm and 1.25cm);
+    \draw (0, 0) node[inner sep=0,anchor=west, visible on=<2-5>] {\includegraphics[scale=.5]{pop_beta.pdf}};
+	\path[fill = white, visible on=<2>] (2,-2.5) rectangle (9.5cm,1.5cm);
+	 \draw (0, 0) node[inner sep=0,anchor=west, visible on=<1>] {\includegraphics[scale=.5]{pop_prob.pdf}};	
+	 \draw[black!60!green, dashed, thick, visible on=<4>] (3.5,.5) ellipse (1.5cm and 1cm);
+	 \draw[black!60!green, dashed, thick, visible on=<4>] (6.6,-1.6) ellipse (3cm and 1cm);
+ 	 \draw[black!60!green, dashed, thick, visible on=<5>] (4.25,-.75) ellipse (1cm and 1.25cm);
  \end{tikzpicture}
 
 \end{frame}
@@ -18,9 +18,11 @@
 	\begin{tikzpicture}
 		\draw (0, 0) node[inner sep=0,anchor=west, visible on=<1-2>] {\includegraphics[scale=.5]{betas_ppts.pdf}};
 		\path[fill = white, visible on=<1>] (1.12,-2.8) rectangle (10.48cm,2cm);
+		\draw (0, 0) node[inner sep=0,anchor=west, visible on=<3>] {\includegraphics[scale=.5]{beta_corr.pdf}};
 	\end{tikzpicture}
 	
 \end{frame}
+
 
 
 \begin{frame}{By-participant disfluency probability} 
@@ -28,6 +30,8 @@
 	\begin{tikzpicture}
 		\draw (0, 0) node[inner sep=0,anchor=west, visible on=<1-2>] {\includegraphics[scale=.5]{prob_ppts.pdf}};
 		\path[fill = white, visible on=<1>] (1.1,-2.8) rectangle (10.48cm,2cm);
+		\draw (0, 0) node[inner sep=0,anchor=west, visible on=<3>] {\includegraphics[scale=.5]{prob_corr.pdf}};
+		
 	\end{tikzpicture}
 	
 \end{frame}

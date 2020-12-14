@@ -1,0 +1,32 @@
+\begin{frame}[fragile]{Standard analysis: Mixed-Effects Model}
+	
+	\begin{minipage}{.45\textwidth}
+		\begin{equation*}
+			\begin{aligned}	
+				y_{ij} \sim LogNormal(\alpha + u_i + w_j, \sigma_{e}^2) \\
+			\end{aligned}
+		\end{equation*}
+	\end{minipage}	
+	\hfill
+	\begin{minipage}{.45\textwidth}	
+		\only<2>{
+		\begin{small}	
+			\begin{itemize}
+%				\item $y$: inter-key interval (IKIs)
+				\item $\alpha$: population-level IKI
+				\item $\sigma_e^2$: error variance
+				%\item Participants: $u_i \sim Normal(0, \sigma_u^2)$
+				%\item Bigrams: $w_j \sim Normal(0, \sigma_w^2)$
+				\item Participants: $u_i$
+				\item Bigrams: $w_j$
+				
+			\end{itemize}
+		\end{small}
+		}
+	\end{minipage}
+
+\end{frame}
+
+
+
+
