@@ -1,4 +1,4 @@
-## Brief description of all Stan models.
+## Brief description of Stan models.
 
 [1] "ARKMoGpptbgs.stan"                        
 Autoregressive model with two mixture components with random effects for bigrams and participantsand autoregressor for each participant. All autoregression was first order. Mixing proportion was allowed to vary by participant.
