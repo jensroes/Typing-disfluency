@@ -1,5 +1,6 @@
 /*
-  Serial order of bigrams auto regression model
+  Auto regression model first order for bigrams by ppt
+  Mixture model for disfluencies
   Random intercepts for subject 
 */
   

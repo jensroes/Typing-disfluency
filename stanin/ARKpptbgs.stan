@@ -1,5 +1,5 @@
 /*
-  Serial order of bigrams auto regression model
+  First order autoregressive model
   Random intercepts for subject 
 */
   

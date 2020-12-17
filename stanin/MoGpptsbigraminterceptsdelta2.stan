@@ -1,4 +1,8 @@
-// LMM with REs for subject and bigrams 
+/*
+  Mixture model for disfluencies
+  With by-ppt disfluency slowdowns (theta fixed across ppts)
+  Random intercepts for subject 
+*/
 
 data {
 	int<lower=1> N;                    // Number of observations

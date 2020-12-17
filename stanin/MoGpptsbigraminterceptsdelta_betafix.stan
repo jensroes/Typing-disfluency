@@ -1,4 +1,9 @@
-// LMM with REs for subject and bigrams 
+/*
+  Mixture model for disfluencies
+  With by-ppt disfluency component
+  Random intercepts for bigrams 
+  By-ppt random intercepts removed
+*/
 
 data {
 	int<lower=1> N;                    // Number of observations
@@ -23,10 +28,6 @@ parameters {
 
 	real theta;
 
-   // For random effects
-//	vector[nS] u; //subj intercepts
-//  real<lower=0> sigma_u;//subj sd
-  
   vector[maxB] w; //bigram intercepts
   real<lower=0> sigma_w;//bigram sd
 
@@ -60,8 +61,6 @@ model {
   theta ~ normal(0, 1);
 
 	// REs priors
-//  sigma_u ~ normal(0,2.5);
-//  u ~ normal(0, sigma_u); //subj random effects
 
   sigma_w ~ normal(0,2.5);
   w ~ normal(0, sigma_w); //bigram random effects
@@ -71,8 +70,8 @@ model {
     int nBS = nB[s];
     for(b in 1:nBS){
       real mu = beta + w[b];
-      lp_parts[1] = log_theta[1] + lognormal_lpdf(y[s,b] | mu, sigma_e); // 
-      lp_parts[2] = log_theta[2] + lognormal_lpdf(y[s,b] | mu + delta_s[s], sigmap_e); // 
+      lp_parts[1] = log_theta[1] + lognormal_lpdf(y[s,b] | mu, sigma_e); 
+      lp_parts[2] = log_theta[2] + lognormal_lpdf(y[s,b] | mu + delta_s[s], sigmap_e); 
       target += log_sum_exp(lp_parts);
     }
   }
@@ -84,7 +83,6 @@ generated quantities{
   vector[2] lp_parts;
   real<lower=0,upper=1> prob_tilde; 
   real beta2 = beta + delta;
-//  vector[nS] beta_s = beta + u;
   vector[nS] beta2_s = beta + delta_s;
   int n = 0;
  
@@ -93,8 +91,8 @@ generated quantities{
     for(b in 1:nBS){
       real mu = beta + w[b];
       n += 1;
-      lp_parts[1] = log_theta[1] + lognormal_lpdf(y[s,b] | mu, sigma_e); // typing
-      lp_parts[2] = log_theta[2] + lognormal_lpdf(y[s,b] | mu + delta_s[s], sigmap_e); // t
+      lp_parts[1] = log_theta[1] + lognormal_lpdf(y[s,b] | mu, sigma_e); 
+      lp_parts[2] = log_theta[2] + lognormal_lpdf(y[s,b] | mu + delta_s[s], sigmap_e); 
       log_lik[n] = log_sum_exp(lp_parts);
    		prob_tilde = bernoulli_rng(prob); 
       if(prob_tilde) { 
