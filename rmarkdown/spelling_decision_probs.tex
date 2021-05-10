@@ -1,6 +1,8 @@
 \documentclass[border=10pt]{standalone}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows, backgrounds, fit}
+\usetikzlibrary{mindmap,trees,decorations, decorations.pathreplacing,positioning, arrows.meta}
+
 
 \begin{document}
 	
@@ -13,25 +15,38 @@
 		
 		% Nodes
 		\node (in) [process] {Visual encoding};		
-		\node (word) [above of = in, yshift = -.75cm] {``een chaotische cowboy''};		
+		\node (word) [above of = in, yshift = -.75cm] {``tjxgfl pgkfkq dtdrgt npwdvf''};		
 		
 		\node (start) [cloud, below of = in, yshift = -.25cm] {Buffer};
-				
+		
 		\node (out1) [process, below of=start, yshift = -.25cm] {Motor planning};
 		\node (dec1) [decision, right of=start, xshift = 3cm] {Update buffer?};
-		
-		\node (out2) [below of=out1, yshift = .75cm] {\textit{een chao\dots}};
 
+%		\node (alpha) [right of=out1, xshift = 3cm, yshift = -1.5cm] {IKI: $\alpha + \delta$};
+
+		
+		\node (out2) [below of=out1, yshift = .75cm] {\textit{tjxgfl\dots}};
+		
 		% Arrows
 		\draw [arrow] (word) -- (in);
 		\draw [arrow] (in) -- (start);
 		\draw [arrow] (start) -- (out1);
 		\draw [arrow] (out1.east) -| (dec1.south);
 		
-		\draw [arrow] (dec1.west) -- node[near start, below=5pt] {no} (start);
-		\draw [arrow] (dec1.north) |- node[near start, below=1pt, left = 2pt] {yes} (in.east);
+		\draw [arrow] (dec1.west) -- node[near start, above = 7pt] {no: $1 - \theta$} (start);
+		\draw [arrow] (dec1.north) |- node[near start, left = 2pt] {yes: $\theta$} (in.east);
 		\draw [arrow] (out1) -- (out2);
 		
-		\end{tikzpicture}
+		% Bracket
+		\draw [decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt]
+		(-2.5,-5.65) -- (-2.5,-2.29)node [black,midway,xshift=-30pt] {IKI:
+			$\alpha$};
 
+		\draw [decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt]
+		(-2.5,-2.18) -- (-2.5,0.7)node [black,midway,xshift=-30pt] {IKI:
+	$\delta$};
+		
+		
+	\end{tikzpicture}
+	
 \end{document}

@@ -1,8 +1,6 @@
-
-
 # Create the plot for a few ppts (first to all and then select)
 d_example <- d %>% filter(component == "LF",
-                          subj %in% c(74:75)) %>%
+                          subj %in% c(75,72)) %>%
   select(-component) %>%
   mutate(logIKI = log(IKI)) %>%
   group_by(subj) %>%
@@ -39,14 +37,14 @@ normalscale <- ggplot(d_example, aes(x = IKI))  +
   geom_line(aes(y = ..density.., linetype = 'Empirical'), stat = 'density') +
   geom_line(aes(y = density, linetype = 'Normal'), data = normaldens) +
   scale_linetype_manual("Density", values = c("dashed", "solid")) +
+  scale_x_continuous(breaks = seq(0, 2000, 250)) +
   geom_vline(data = filter(d_summary, subj == unique(subj)[1]), aes(xintercept = mean), 
              linetype = "dotted", colour = "grey30") +
   geom_vline(data = filter(d_summary, subj == unique(subj)[2]), aes(xintercept = mean), 
              linetype = "dotted", colour = "grey30") +
   labs(y = "Density", x = "IKIs [in msecs]") +
   facet_wrap(~subj, nrow = 2) +
-  theme(strip.text = element_text(hjust = 0)); normalscale
-
+  theme(strip.text = element_text(hjust = 0))
 
 logscale <- ggplot(d_example, aes(x = logIKI)) +
   geom_line(aes(y = ..density.., linetype = 'Empirical'), stat = 'density') +
@@ -58,6 +56,7 @@ logscale <- ggplot(d_example, aes(x = logIKI)) +
              linetype = "dotted", colour = "grey30") +
   facet_wrap(~subj, nrow = 2) +
   labs(y = "", x = "log-scaled IKIs [in msecs]") +
+  scale_x_continuous(breaks = seq(0, 10, .5)) +
   theme(strip.text = element_text(hjust = 0)) 
 
 legend <- get_legend(logscale)

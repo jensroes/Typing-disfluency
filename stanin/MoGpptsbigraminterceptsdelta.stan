@@ -56,6 +56,7 @@ model {
   beta_sigma ~ cauchy(0, 2.5);
   beta_raw ~ normal(0, 1);
   sigma ~ cauchy(0, 2.5);
+  sigma_diff ~ normal(0, 1);
 
   delta_s ~ normal(delta, tau_delta);
   delta ~ normal(0, 1);

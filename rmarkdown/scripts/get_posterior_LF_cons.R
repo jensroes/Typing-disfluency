@@ -7,26 +7,25 @@ cons <- read_csv("../results/consonants_posterior_ARKMoG.csv")
 lf$Comp <- "LF"
 cons$Comp <- "Consonants"
 
-ps <- bind_rows(lf, cons)
+ps <- bind_rows(lf, cons); rm(list = c("lf", "cons"))
 
 ps %>% select(starts_with("phi"), Comp) %>%
-  gather(Param, value, -Comp) %>%
-    group_by(Param, Comp) %>%
-    summarise(M = mean(value),
+  pivot_longer(-Comp, "Param", "value") %>%
+  group_by(Param, Comp) %>%
+  summarise(M = mean(value),
             lo = quantile(value, probs = .025),
             up = quantile(value, probs = .975),
             p = mean(value < .5)) %>%
-    ungroup() %>%
-    separate(Param, into = c("Param", "id"), sep = "\\[") %>%
-    mutate(id = gsub("\\]", "", id),
-           id = gsub(",1", "", id),
+  ungroup() %>%
+  separate(Param, into = c("Param", "id"), sep = "\\[") %>%
+  mutate(id = gsub("\\]", "", id),
+         id = gsub(",1", "", id),
          id = ifelse(is.na(id), 0, id)) -> d_phi
 
 d_phi %>% filter(Param == "phi") %>% pivot_longer(M:up) %>% pull(value) -> phi_sum
 
-
 ps %>% select(starts_with("prob"), Comp) %>%
-  gather(Param, value, -Comp) %>%
+  pivot_longer(-Comp, "Param", "value") %>%
   group_by(Param, Comp) %>%
   summarise(M = mean(value),
             lo = quantile(value, probs = .025),
@@ -39,13 +38,11 @@ ps %>% select(starts_with("prob"), Comp) %>%
 
 d_theta %>% filter(id == 0) %>% pivot_longer(M:p) %>% pull(value) -> theta_sum
 
-
-ps %>% select(contains("beta"), contains("phi"), 
-              Comp, -`phi[1]`, -beta, -tau_phi, -starts_with("beta2")) %>%
-  gather(Param, value, -Comp) %>%
-  separate(Param, into = c("Param", "id"), sep = "\\[") %>%
-  mutate(id = gsub("\\]", "", id),
-         id = gsub(",1", "", id)) %>%
+ps %>% select(contains("beta"), contains("phi"), Comp, -`phi[1]`, -beta, -tau_phi, -starts_with("beta2")) %>%
+  pivot_longer(-Comp, "Param", "value") %>%
+  mutate(Param = gsub(",1", "", Param),
+         id = parse_number(Param),
+         Param = gsub("\\[[^][]*]", "", Param)) %>% 
   group_by(Param, id) %>%
   mutate(row_id = 1:n()) %>%
   ungroup() %>%
@@ -73,7 +70,8 @@ d_beta2 %>% pivot_longer(M:up) %>% pull(value) %>% round(0) -> beta_sum
 ps %>% select(starts_with("prob_s"), starts_with("beta_s"), Comp) %>%
   mutate_at(vars(starts_with("beta_s")), exp) %>%
   pivot_longer(-Comp) %>%
-  separate(name, into = c("param", "subj"), sep = "_") %>%
+  mutate(subj = parse_number(name),
+         param = gsub("\\[[^][]*]", "", name)) %>% select(-name) %>%
   group_by(param, subj) %>%
   mutate(rep = 1:n()) %>%
   group_by(subj, param, Comp) %>%
@@ -87,3 +85,5 @@ ps %>% select(beta, delta, Comp) %>%
   group_by(Comp) %>%
   summarise(mean(delta), quantile(delta, probs = .025), quantile(delta, probs = .975)) %>%
   pivot_longer(-Comp) %>% pull(value) %>% round(0) -> delta_sum
+
+

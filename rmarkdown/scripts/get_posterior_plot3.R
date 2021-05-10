@@ -1,5 +1,7 @@
 set.seed(123)
 sample_ppts <- sample(1:250,n_ppts)
+
+d_beta %<>% mutate(id = as.character(id))
 d_beta %>%
   filter(id != 0, id %in% sample_ppts) %>%
   mutate(Comp = recode(Comp, LF = "LF bigrams")) %>%
@@ -97,3 +99,4 @@ p_cors <- ggdraw(add_sub(p_cors, "Consonants",
 plots_post <- cowplot::plot_grid(p_ppts, p_cors, nrow = 2, 
                                  rel_heights = c(3,2.25), 
                                  axis = "l", align = "b");plots_post
+

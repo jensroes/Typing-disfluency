@@ -131,13 +131,15 @@ write_csv(d_sample, "../data/used_sample.csv")
 
 # Introduction
 
-Writing research has made extensive use of keystroke-logging to capture typing-process data. In particular process disfluencies (loosely defined as relatively long intervals between subsequent keystrokes) are interesting to develop an understanding of an individual's writing dynamics. This is because language production is typically thought of as an information cascade from the mental generation of a message, into grammatical processing and finally the generation and execution of motor codes. This idea can be found in theoretical models of speech [@bock2014syntactically], handwriting [@van1991handwriting] and keyboard typing [@hayes2012evidence]. Disfluencies at the execution stage are therefore indicators of process demands that arise on higher levels of mental representation [@christiansen2016now;@olive2014toward]; for example when preplanning syntactic dependencies [@roeser2019advance] or retrieving the lexical entry of a word or its spelling [@torrance2016adolescent]. At present there is no principled way that allows us to detect lags at the execution stage that can be considered process disfluencies. In this paper we present a series of statistical models aiming to capture process disfluencies and produce by-participant estimates of typing performance.
 
-Keystroke logs provide rich information about the typing process. From these logs, researchers can calculate different process measures including measures of writing fluency [@chukharev2019combined; @van2015fluency; @medimorec2016effects; @medimorec2017disfluency]. To name a few, researchers have performed data analysis on means, medians and standard deviations of inter-keystroke intervals (the latency between two consecutive keystrokes), number of pauses or pause duration and within-word keystroke intervals [for an overview of frequently used keystroke measures see @conijn2019understanding]. @conijn2019understanding suggested that these aggregates are sensitive to processing difficulty that arises on different levels of mental representation. However, there are two substantial problems tight to the use of summary statistics to develop an understanding of the typing process. 
+**Hesitations in keyboard typing are indicative of higher level processes. The maximum fluency of a typist composing text or copying text is restricted by motor planning and execution. However, sometimes upstream processes have to catch up -- when deciding what to say next or reminding ourselves of the text we are copying -- meaning that the output speed decreases. These hesitations are typically referred to as disfluencies and are invaluable to develop an understanding of an individual's writing dynamics. This is because it allows insight into the information cascade that underlies language production from the mental generation of a message, into grammatical processing, and finally the generation and execution of motor codes. In particular disfluencies are indicators of process demands that arise on higher levels of mental representation [@christiansen2016now;@olive2014toward]; for example when preplanning syntactic dependencies [@roeser2019advance] or retrieving the lexical entry of a word or its spelling [@torrance2016adolescent]. This idea can be found in theoretical models of spoken language production [@bock2014syntactically], handwriting [@van1991handwriting] and keyboard typing [@hayes2012evidence]. At present there is no principled way to detect hesitations at the execution stage that can be considered process disfluencies. In this paper we present a series of statistical models that aim to capture this theoretical process as a combination of fluent and disfluent keystroke transitions and to produce by-participant estimates of typing performance.**
 
-First, pause frequencies, writing bursts and related measures are used to assess writing performance [e.g. @alves2015progress; @beers2017effects; @zhang2019there]. These measures require a definition of what passes as a pause [@wen06;@van2016keystroke], i.e. a pause criterion threshold often set to 2 secs [@chanquoy1996writing; @kaufer1986composing; @sullivan2002self;@wen02] or some other lower bounds [@chukharev2014pauses; @connelly2012predicting; @leijten2013keystroke]. Researchers have stipulated pause thresholds specific to their research purposes and based on prior research. However, ideally, this threshold would need to be specific to factors such as location in the text, writing task and the skills of the typist [@wen06]. For example, mid-word pauses require a different threshold than sentence-initial pausing. Also, when comparing the frequency of pauses larger than 2 secs for a dyslexic and a normal typist, one might observe more pauses for the dyslexic because 2 secs are indeed not unusual transitions between two keystrokes for a dyslexic writer and pauses for the normal typist are typically shorter than 2 secs and therefore unobserved given a 2-secs pause criterion [@wengelin2001disfluencies]. This bias would also affect the interpretation of results from L2 typists and other threshold criteria [@van2015fluency]. 
+Writing research has made extensive use of keystroke-logging to inform the process underlying keyboard typing. Keystroke logs provide rich information about the typing process. From these logs, researchers can calculate different process measures including measures of writing fluency [@chukharev2019combined; @van2015fluency; @medimorec2016effects; @medimorec2017disfluency]. To name a few, researchers have performed data analysis on means, medians and standard deviations of inter-keystroke intervals (the latency between two consecutive keystrokes), number of pauses or pause duration and within-word keystroke intervals [for an overview of frequently used keystroke measures see @conijn2019understanding]. @conijn2019understanding suggested that these aggregates are sensitive to processing difficulty that arises on different levels of mental representation. However, there are two substantial problems tight to the use of summary statistics to develop an understanding of the typing process. 
 
-Second, data aggregation results in the loss of important information about disfluencies and time course variation. Even if this variation is not of interest to a research question, parametric aggregates such as mean and standard deviation, and even non-parametric descriptives such as median and interquartile range, are biased estimates for keystroke data. This is because many summary statistics, including the mean and the standard deviation, assume that population or process that the data are sampled from is normally distributed. Keystroke intervals, however, are non-normally distributed; keystroke intervals are zero-bound and therefore right-skewed.^[In fact, the minimum size of keystroke intervals is a function of the time it takes to plan and execute the motor program and keyboard polling.] Figure \ref{fig:example} illustrates this problem using a sample taken from the copy-task log of two participants (from the copy-task data reported below). For the keystroke intervals of either participant, we contrast the density function of the empirical data (dashed line) and the normal density function (solid line). The normal density function is based on the observed mean (dotted vertical line) and standard deviation (see figure caption). Panel A shows the untransformed inter-keystroke intervals; Panel B shows the log-transformed data.
+First, pause frequencies, writing bursts and related measures are used to assess writing performance [e.g. @alves2015progress; @beers2017effects; @zhang2019there]. These measures require a definition of what passes as a pause [@wen06;@van2016keystroke], i.e. a pause criterion threshold often set to 2 secs [@chanquoy1996writing; @kaufer1986composing; @sullivan2002self;@wen02] or some other lower bounds [@chukharev2014pauses; @connelly2012predicting; @leijten2013keystroke]. Researchers have stipulated pause thresholds specific to their research purposes and based on prior research. However, ideally, this threshold would need to be specific to factors such as location in the text, writing task and the skills of the typist [@wen06]. This is because, for example, pauses long values are less unusual for before sentences than within words. Also, when comparing the frequency of pauses larger than 2 secs for dyslexic and normal typists, one might observe more pauses for dyslexic individuals merely because writing execution unfolds generally more slowly than for proficient typists; indeed pauses shorter than 2 secs for proficient typists would be neglected entirely [@wengelin2001disfluencies]. In other words, a difference in typing-execution speed would give the illusion of a larger number of pauses if dyslexic typists. The same applies to the interpretation of pausing in L2 typists and the use of other threshold criteria [@van2015fluency]. 
+
+
+Second, data aggregation results in the loss of important information about disfluencies and time course variation. Even if this variation is not of interest to a research question, parametric aggregates such as mean and standard deviation, and even non-parametric descriptives such as median and interquartile range, are biased estimates for keystroke data. **This is because summary statistics capture some aspects of the data but neglect others. For example, both mean and median represent the centre of a normal distribution. For non-normally distributed data, the mean represents the average -- extreme values pull the mean away from the center of the distribution -- but does not capture where the majority of the data lies; the latter is captured by the median.** This is a problem for keystroke data. People tend to aim for high typing speed with a lower bound that is restricted by the time it takes to plan and execute motor programs.^[Plus keyboard polling.] Yet, writers can slow down typing execution and pause as long as they wish; hence keystroke intervals have, in principle, no upper bound. The combination of these two factors renders a distribution that has a strong positive skew. Figure \ref{fig:example} illustrates the mismatch between observed data and the normal distribution implies by parametric summary statistics. The figure shows a sample taken from the copy-task log of two participants (from the copy-task data reported below). For the keystroke intervals of either participant, we contrast the density function of the empirical data (dashed line) and the normal density function (solid line). The normal density function is based on the observed mean (dotted vertical line) and standard deviation (see figure caption). Panel A shows the untransformed inter-keystroke intervals; Panel B shows the log-transformed data.
 
 
 ```{r example, fig.pos="bp!", fig.height = 4.5, fig.width = 6.5, fig.align = "center", fig.cap="Example for mean as biased estimator for the inter-keystroke intervals (IKIs) for two participants (participant 72 in the top panels; participant 75 in the bottom panels). All panels show the empirical density of the data and the normal-density function entailed by the observed mean (represented as dotted vertical line) and the standard deviation (SD): participant 72: mean=431 (SD=448), participant 75: mean=256 (SD=98). The untransformed IKIs are shown in plot A and the log-scaled IKIs are shown in plot B."}
@@ -148,20 +150,24 @@ source("scripts/get_example_plot.R");plot
 #filter(d_summary, subj == unique(d_summary$subj)[2]) %>% pull(sd)
 ```
 
-Importantly, Figure \ref{fig:example} shows that means of both the untransformed and the log-scaled keystroke data of participants 72 and 75 appear to be poor central-tendency estimates. This is evidenced by the mismatch between the observed data and the normal distribution entailed by the observed mean and standard deviation. This mismatch is not only due to the right skew in the keystroke data but might be related to a bimodal tendency that can be seen best in the log-scaled keystroke-intervals shown in Figure \ref{fig:example}B; the empirical-density function shows two peaks in both participants. The distribution of longer keystroke intervals is therefore going to influence any statistical quantity that assumes a normal distribution. 
+Figure \ref{fig:example} shows a poor match between the parametric summary measures of both the untransformed and the log-scaled keystroke data of participants 72 and 75 and the normal distribution entailed by the observed mean and standard deviation. Importantly, this mismatch is not only due to the positive skew in the keystroke data but might be related to a bimodal tendency that can be seen best in the log-scaled keystroke-intervals shown in Figure \ref{fig:example}B; the empirical-density function shows two peaks in both participants. This mixture of short and long keystroke intervals is going to influence the reliability of summary statistics.
 
-Therefore, data aggregation may lead to incorrect inference about the writing process [@baaijen2018discovery]. To address biases in these estimates researchers have used data transformation, and data trimming [@hoaglin1987fine] to remove data that were _a priori_ considered outliers, or separated disfluencies (or pauses) from normal keystroke transitions. However log-transformation may account for positive skew but does not address the bimodality, as demonstrated in Figure \ref{fig:example}B. From existing research we know that keystroke data are not merely right-skewed, which can be addressed with log-normal transformations, but heavily right tailed [@almond2012preliminary; @baaijen2012keystroke; @chukharev2014pauses; @guo2018modeling]. Further, using fixed threshold values to distinguish between normal and delayed typing intervals will inevitably impact more on struggling writers but also learners and and dyslexic individuals more generally) leading to larger data loss, less reliable typing estimates and therefore incorrect conclusions about the hypothesis tested. A pause threshold would need to be participant-specific [@wen06] but is more difficult to determine for individuals with a larger variability (e.g. participant 72 in Figure \ref{fig:example}A).    
+Therefore, data aggregation may lead to incorrect inference about the writing process [@baaijen2018discovery]. To address biases in these estimates researchers have used data transformation, and data trimming [@hoaglin1987fine] to remove data that were considered outliers, or separated disfluencies (or pauses) from short keystroke transitions. However log-transformation may account for positive skew but does not address the bimodality, as illustrated in Figure \ref{fig:example}B. From existing research we know that keystroke data are not merely positively skewed, which can be addressed with log-normal transformations, but heavily right tailed [@almond2012preliminary; @baaijen2012keystroke; @chukharev2014pauses; @guo2018modeling]. Further, using fixed threshold values to distinguish between normal and delayed typing intervals will inevitably impact more on struggling writers but also learners and and dyslexic individuals more generally) leading to larger data loss, less reliable typing estimates and therefore incorrect conclusions about the hypothesis tested. A pause threshold would need to be participant-specific [@wen06] but is more difficult to determine for individuals with a larger variability (e.g. participant 72 in Figure \ref{fig:example}A).    
 
 A central methodological challenge with implications for writing research [@hayes2012evidence; @kaufer1986composing; @wen06; @van2016keystroke] is the detection of writing disfluencies. We addressed this problem by implementing statistical models that aim to capture the nature of the data generating cognitive process that underlies keyboard typing. Crucially we want a statistical model that provides reliable estimates of typing performance without subjecting the data to trimming or threshold criteria, aggregation or manual manipulation, and also accounts for typing disfluencies and other properties of the data (e.g. individual typing style, key-pair specific differences). 
 
 
+**To test the model that we describe in the following section we use data from two copy-tasks. Using a constrained writing context such as a copy task data rather than data from spontaneous text production was fundamental for our purposes. This is because, first, we can reduce the influence of higher level processes. While text production involves the generation of content and its linguistic encoding, high-level processes in copy-typing are constrained to reading. In other words, the cognitive source of longer keystroke intervals that are not related to the generation and execution of motor programs is less ambiguous. Second, in spontaneous text production there is a considerable variability between what participants write. In a copy task we can largely remove this variability.**
 
 
-# Modelling typing process data
+
+# Method
+
+## Modelling typing process data
 
 As a guiding principle, we aim to produce a statistical model that represents the mental process that generates the keystroke data. Keystrokes are the end of a cascade of mental processes. Lags between subsequent keypresses, for example, the transitions c$^{\wedge}$a$^{\wedge}$t for the word _cat_, where $^{\wedge}$ indicates the inter-keystroke intervals (IKI) between pressing $<$c$>$ and $<$a$>$, and $<$a$>$ and $<$t$>$, increase when the information flow into motor execution was interrupted on a higher level. Keystroke intervals reflect at minimum two states of this information flow: (1) either activation can flow into motor plans and keystroke transitions are normal; or (2) activation flow was inhibited on a level higher than the generation of a motor plan and therefore the keystroke transition increased. 
 
-For example, writing a word involves the retrieval of its name and, then, its spelling. If the writer knows both, activation can flow smoothly into the execution of the corresponding motor codes. However if the writer struggles to retrieve the spelling for or the lexical entry of a word, the activation flow is being interrupted. Inhibition is then resulting in process disfluencies expressed in a larger lag between adjacent keys. In copy-typing tasks we can constrain the underlying cognitive process by removing higher-level processes such as lexical planning and orthographic retrieval [@grabowski2008internal;@wallot2013typewriting]. Figure \ref{fig:model} illustrates a basic model of the copy-typing process [see also @yamaguchi2014pushing;@logan2011hierarchical;@salthouse1984effects]. At the top level, some chunk of letters has to be visually encoded. The size of this chunk is to some extent specific to task, target string, individual typing skill / style, but mainly constrained the verbal working memory of the participant. The visually encoded sequence has to be buffered and, then, corresponding motor codes have to be activated. If there are no more motor codes that can be generated from the buffered information, visual encoding is required to update the buffer.
+For example, writing a word involves the retrieval of its name and, then, its spelling. If the writer knows both, activation can flow smoothly into the execution of the corresponding motor codes. However if the writer struggles to retrieve the spelling for or the lexical entry of a word, the activation flow is being interrupted. Inhibition is then resulting in process disfluencies expressed in a larger lag between adjacent keys. In copy-typing tasks we can constrain the underlying cognitive process by removing higher-level processes such as lexical planning and orthographic retrieval [@grabowski2008internal;@wallot2013typewriting]. Figure \ref{fig:model} illustrates a basic model of the copy-typing process [see also @yamaguchi2014pushing; @logan2011hierarchical; @salthouse1984effects]. At the top level, some chunk of letters has to be visually encoded. The size of this chunk is to some extent specific to task, target string, individual typing skill / style, but mainly constrained the verbal working memory of the participant. The visually encoded sequence has to be buffered and, then, corresponding motor codes have to be activated. If there are no more motor codes that can be generated from the buffered information, visual encoding is required to update the buffer.
 
 
 ```{r model, fig.pos="bp!", fig.height = 3.5, fig.width = 6.5, fig.align = "center", fig.cap="Basic model of copy typing; example for ``een chaotische cowboy'' (a chaotic cowboy)."}
@@ -207,91 +213,82 @@ ggplot(d_example3, aes(y = IKI, x = bigram, linetype = subj, group = subj, shape
 Statistical models can be used to characterize the underlying data-generating process as a function of parameters. For example, if we assume that there is a single underlying process that generates normal distributed data, we can describe this process with a mean $\mu$ and a variance $\sigma^2$. The values of the parameters $\mu$ and $\sigma^2$ are unknown and typically used to represent and compare task and population specific (typing) performance. The model of the data can be written as $y \sim Normal(\mu, \sigma^2)$; i.e. the data $y$ come from a single process that follows a normal distribution with an unknown mean $\mu$ and an error variance $\sigma^2$. We can then feed data to our statistical model to determine values for its parameters. The resulting parameter estimates can be considered reliable if the data-generating (cognitive) process matches the process assumed by the model; i.e. the data come from a single process that generates normal distributed data.
 
 
-## Log-normal mixed-effects model of typing 
+### Log-normal mixed-effects model of typing 
 
 
 For the first model, the baseline model, we will assume that IKIs follow a log-normal distribution [e.g. @almond2012preliminary;@guo2018modeling] because IKIs are zero-bound and therefore right skewed [@baa08book].^[We discussed above that the heavy tail associated with keystroke data is not necessarily fitting a log-normal distribution. We used this model as it is roughly equivalent to the standard statistical method used in the field (e.g. fitting parametric models to log-transformed data).] This model is characterising the information cascade that generates keystroke intervals with the population mean. 
 
-To estimate the mean we need to be able to account for variability related to the sampling process. This can be achieved with log-normal (linear) mixed-effects models (LMM) which have been used in the literature to model keystroke data [@leijten2011coordinating;@quene2004multi; @waes2019; @van2010reading]. The LMM in equation \ref{eq:lmm} is an extension of the simple example above. We know that some participants are faster typists than other participants and some bigrams are easier to type than others. Writers vary generally in how fast they type, or how quickly they are performing in the given task. Further, more frequent bigrams (as part of words with a large number of occurrences in a corpus or bigrams that occur in many different words) are typically typed faster than low frequency bigrams; bigrams that are part of words are typed faster than novel bigrams; bigrams within morphological boundaries are typed faster than bigrams that cross morphological boundaries [@feldman2019lexical; @pinet2016typing; @not05; @sah08]. In other words, IKIs for participants and bigrams are varying around a common mean. These sources of random-error variance are captured by $u$ for participants and $w$ for keystroke bigrams in equation \ref{eq:lmm}. The population mean after accounting for variance associated with participants and bigrams is captured by the parameter $\beta$.
+To estimate the mean we need to be able to account for variability related to the sampling process. This can be achieved with log-normal (linear) mixed-effects models (LMM) which have been used in the literature to model keystroke data [@leijten2011coordinating;@quene2004multi; @waes2019; @van2010reading]. The LMM in equation \ref{eq:lmm} is an extension of the simple example above. We know that some participants are faster typists than other participants and some bigrams are easier to type than others. Writers vary generally in how fast they type, or how quickly they are performing in the given task. Further, more frequent bigrams (as part of words with a large number of occurrences in a corpus or bigrams that occur in many different words) are typically typed faster than low frequency bigrams; bigrams that are part of words are typed faster than novel bigrams; bigrams within morphological boundaries are typed faster than bigrams that cross morphological boundaries with similar effects for syllable boundaries [@feldman2019lexical; @pinet2016typing; @not05; @sah08;@gen88;@wei04]. 
 
 
-$$
-\tag{1}
+
+In other words, IKIs for participants and bigrams are varying around a common mean. These sources of random-error variance are captured by $u$ for participants and $w$ for keystroke bigrams in equation \ref{eq:lmm}. The population mean after accounting for variance associated with participants and bigrams is captured by the parameter $\beta$.
+
+
+\begin{equation}
 \begin{aligned}
+(\#eq:lmm)
 y_{ij} \sim LogNormal(\mu, \sigma_e^2)\\
 \mu_{ij} = \beta + u_i + w_j
-
 \end{aligned}
-(\#eq:lmm)
-$$
+\end{equation}
 
 Differences associated with participant $i$, expressed as $u_i$, can be assumed to be normally distributed around 0 with a between-participants variance $\sigma_u^2$ with $i = 1, \dots, I$, where $I$ is the number of participants (see \ref{eq:lmm2}). We can assume that this variance of $\sigma_u^2$ is normally distributed, because it is a variance it can not be negative. We therefore assume a normal distribution, cut off at zero, and choose 2.5 as the variance, because the majority of participants should have, by definition, an average IKI close to zero with fewer participants being much faster or slower than the average. A variance of 2.5 is a reasonably informative prior that ensures that the variability across participants is approximately normal. This type of distribution is known as a half-normal [@gelman2006prior].
 
-
-$$
-\tag{2}
+\begin{equation}
 \begin{aligned}
+(\#eq:lmm2)
 u_i \sim Normal(0,\sigma_u^2)\\
 \sigma_u \sim Normal(0,2.5)\\
 \text{constraint: } \sigma_u >0 
 \end{aligned}
-(\#eq:lmm2)
-$$
+\end{equation}
 
 Similar to variability between participants we can model variation between keystroke pairs (i.e. letter bigrams) as random-intercepts term; $w$ in equation \ref{eq:lmm} [@van2019multilingual;@waes2019]. More specifically, this is to assume that each bigram $j$ with $j = 1, \dots, J$, where $J$ is the total number of bigrams, is independent of the other bigrams. Each bigram-intercept difference $w_j$ is distributed around 0 with a between-bigram variance $\sigma_w^2$ (equation \ref{eq:lmm5}).
 
 
-$$
-\tag{3}
+\begin{equation}
 \begin{aligned}
+(\#eq:lmm5)
 w_j \sim Normal(0,\sigma_w^2)\\
 \sigma_w \sim Normal(0,2.5)\\
 \text{constraint: }\sigma_w >0 
 \end{aligned}
-(\#eq:lmm5)
-$$
+\end{equation}
 
 The parameter of interest, the mean $\beta$ in equation \ref{eq:lmm}, is the marginalised value after taking into account random variation between participants and bigrams. In all models we parameterised the mean $\beta$ as non-centered with regulating priors [equation \ref{eq:lmm3}; following @gelman2014;@papaspiliopoulos2007general]. Non-centering parameters can be used to aid sampling efficiency of the model. In other words, a more reliable parameter estimate can be achieved with the same number of iterations. For the mean $\mu_\beta$ of the population mean $\beta$, we proposed a normal distributed prior centered around 5 (i.e. log of $\approx$ 150 msecs).
 
-
-$$
-\tag{4}
+\begin{equation}
 \begin{aligned}
+(\#eq:lmm3)
 \beta = \mu_{\beta} + \sigma_{\beta} \cdot \epsilon\\
 \mu_{\beta} \sim Normal(5,2)\\
 \sigma_{\beta} \sim Normal(0,1)\\
 \epsilon \sim Normal(0,1)\\
 \text{constraint: }\sigma_{\beta}>0 
 \end{aligned}
-(\#eq:lmm3)
-$$
+\end{equation}
 
 For the unexplained residual variance $\sigma_e^2$, we used an uninformative half-Cauchy prior [equation \ref{eq:lmm4}; as mentioned in @gelman2014]. The Cauchy is a heavy tailed distribution; a centre of 0 indicates that the residual variance should be close to 0 but the scale 2.5 allows for larger values.
 
-$$
-\tag{5}
+\begin{equation}
 \begin{aligned}
+(\#eq:lmm4)
 \sigma_e \sim Cauchy(0,2.5)\\
 \text{constraint: }\sigma_e>0 
 \end{aligned}
-(\#eq:lmm4)
-$$
+\end{equation}
 
 
 
-```{r}
-#Further, we can extend this model by assuming that larger variations in typing differences for bigrams depend on the typing speed of each participant. For example, fast participants might show less variation between bigrams than slow participants. This assumption can be modelled by including by-participant slope adjustments for bigrams by introducing a variance-covariance matrix $\Sigma_u$; LKJ prior with $\nu=2.0$ [@lewandowski2009generating; @sorensen2016bayesian]. 
-```
+### Typing as autoregressive process
+
+The previous model captures variation associated with bigrams but assumes that their locations are independent and thus exchangeable. In other words, keystroke intervals depend on the identity of the associated bigram but not on the duration of a preceding keystroke interval. There is however evidence that keystroke intervals tend to be longer at certain locations such as before phrases [@roeser2019advance] and words [@torrance2016adolescent] than within words; keystroke intervals are longer on syllable and morphological boundaries than within syllables and morphemes, respectively [@not05]. IKIs are not necessarily independent of preceding keystroke intervals; an IKI $y_{i}$ might be related to the IKI $y_{i-1}$ preceding it, for example, such that a disfluency impacts on neighbouring keystroke intervals [@conijn2019typo]. The relationship between subsequent keystrokes can be captured by predicting an IKI with the IKI preceding it. This is called an autoregressive process [@eltahir2004dynamic]; in equation \ref{eq:ark} the relationship between subsequent IKIs is captured by the parameter $\phi$. As the degree of autocorrelation might vary with typing skill, we assumed that the autocorrelation varies between participants $\phi_i$ with a centered mean $\mu_{\phi}$ and error variance $\eta^2$. 
 
 
-## Typing as autoregressive process
-
-The previous model captures variation associated with bigrams but assumes that their locations are independent and thus exchangeable. In other words, keystroke intervals depend on the identity of the associated bigram but not on the duration of a preceding keystroke interval. There is however evidence that keystroke intervals tend to be longer at certain locations, before phrases [@roeser2019advance], words [@torrance2016adolescent], and on morphological boundaries [@not05], and keystroke intervals tend to be shorter within words. IKIs are not necessarily independent of preceding keystroke intervals; an IKI $y_{i}$ might be related to the IKI $y_{i-1}$ preceding it, for example, such that a disfluency impacts on neighbouring keystroke intervals [@conijn2019typo]. The relationship between subsequent keystrokes can be captured by predicting an IKI with the IKI preceding it. This is called an autoregressive process [@eltahir2004dynamic]; in equation \ref{eq:ark} the relationship between subsequent IKIs is captured by the parameter $\phi$. As the degree of autocorrelation might vary with typing skill, we assumed that the autocorrelation varies between participants $\phi_i$ with a centered mean $\mu_{\phi}$ and error variance $\eta^2$. 
-
-
-$$
-\tag{6}
+\begin{equation}
 \begin{aligned}
+(\#eq:ark)
 y_{ij} \sim LogNormal(\mu_{ij}, \sigma_e^2)\\
 \mu_{ij} = \beta + \phi_i \cdot log(y_{ij-1}) + u_i + w_j\\
 \text{where}\\
@@ -300,11 +297,10 @@ y_{ij} \sim LogNormal(\mu_{ij}, \sigma_e^2)\\
 \eta \sim Cauchy(0, 1)\\
 \text{constraint: }\eta >0 
 \end{aligned}
-(\#eq:ark)
-$$
+\end{equation}
 
 
-## Typing as mixture process
+### Typing as mixture process
 
 So far we constructed models that account for the keystroke-interval differences associated with different typists, bigrams and that accounts for autocorrelation between subsequent keystroke-intervals. Next we will add a modelling component that allows us to distinguish between fluent and disfluent keystroke intervals using what is called a finite mixture-process model. 
 
@@ -314,63 +310,57 @@ This model can be summarised as in equation \ref{eq:mog}, following @vasishth201
 
 
 
-$$
-\tag{7}
+\begin{equation}
 \begin{aligned}
+(\#eq:mog)
 	y_{ij} \sim \theta_i \cdot LogNormal(\beta + \delta + u_i + w_j, \sigma_{e'}^2) +\\
 		(1 - \theta_i) \cdot LogNormal(\beta + u_i + w_j, \sigma_{e}^2)\\
 		\text{where}\\
 		\delta \sim Normal(0,1)\\
 		\text{constraint: } \delta > 0
 \end{aligned}	
-(\#eq:mog)
-$$
+\end{equation}
 
 To increase sampling efficiency we placed a continuous prior on the logit of the individual mixing proportions $\alpha_i$, which was transformed to range between 0 and 1, using the inverse-logit function, and stored in $\theta_i$. This is shown in equation \ref{eq:mog2}. We used a normal prior for the logit of individual mixing proportions $\alpha_i$ with a mean $\mu_{\alpha}$ that captures the logit of the population disfluency-probability (with an error variance $\tau^2$). The hyper-prior on the population mixing-proportion $\mu_{\alpha}$ was assumed to have a mean of logit 0, corresponding to a probability of 0.5 and a variance of logit 1 (i.e. $\approx$ 0.73 in proportions).
 
 
-
-$$
-\tag{8}
+\begin{equation}
 \begin{aligned}
+(\#eq:mog2)
 		\theta_i = Logit^{-1}(\alpha_i)\\
 		\alpha_i \sim Normal(\mu_{\alpha},\tau^2)\\
 		\mu_{\alpha} \sim Normal(0,1)\\
 		\tau \sim Cauchy(0,1)\\
 		\text{constraint: } \tau > 0
 \end{aligned}	
-(\#eq:mog2)
-$$
+\end{equation}
+
 
 As longer latencies are known to be associated with a larger variances for both response-time data in particular [@wagenmakers2007linear] and human motor behaviour in general [@wing1973response;@schoner2002timing], we constrained the variance $\sigma_{e'}^2$ associated with the distribution of typing disfluencies to be larger than the variance for normal typing $\sigma_e^2$; see equation \ref{eq:mog3} [see @vasishth2017; @vasishth2017feature].
 
-$$
-\tag{9}
+\begin{equation}
 \begin{aligned}
+(\#eq:mog3)
 		\sigma_{e'} = \sigma + \sigma_{\text{diff}}\\
 		\sigma_{e} = \sigma - \sigma_{\text{diff}}\\
 		\sigma_{\text{diff}} \sim Normal(0,1)\\
 		\sigma \sim Cauchy(0,2.5)\\
 		\text{constraint: } \sigma, \sigma_{\text{diff}}, \sigma_{e'}, \sigma_{e} > 0
 \end{aligned}	
-(\#eq:mog3)
-$$
+\end{equation}
 
 
-
-## Typing as autoregressive mixture process
+### Typing as autoregressive mixture process
 
 The mixture model, as well as the LMM, assumes that lags between subsequent letter bigrams are independent of each other; the argument against this was introduced above for autoregressive models. We implemented another mixture model that is largely equivalent to the model presented in the previous section but includes an autoregressor as in equation \ref{eq:ark}; see equation \ref{eq:mogark} for the autoregressive mixture-process model.
 
-
-$$
-\tag{8}
+\begin{equation}
 \begin{aligned}
+(\#eq:mogark)
 	y_{ij} \sim \theta_i \cdot LogNormal(\beta + \delta + \phi_i \cdot log(y_{ij-1}) + u_i + w_j, \sigma_{e'}^2) +\\
 		(1 - \theta_i) \cdot LogNormal(\beta + \phi_i \cdot log(y_{ij-1}) + u_i + w_j, \sigma_{e}^2)\\
 \end{aligned}	
-(\#eq:mogark)
-$$
+\end{equation}
 
 
 ```{r }
@@ -381,7 +371,8 @@ d.age <- d.ppt %>% summarise(M = median(age), min = min(age), max = max(age)) %>
 ```
 
 
-# Method
+
+## Copy-task data
 
 To test which model captures the typing process best, we applied the four models described in the previous section to data from a subset of the Dutch copy-task corpus [@leijten2013keystroke; @waes2019; @van2019multilingual]. An overview of all models can be found in Table \ref{tab:models}.
 
