@@ -1,6 +1,6 @@
 ---
 title: "Walk-through: fitting a mixture model on copy-task data"
-author: "Jens Roeser"
+author: ""
 date: "Compiled `r Sys.Date()`"
 bibliography: ../rmarkdown/ref.bib
 csl: ../rmarkdown/apa.csl
@@ -16,8 +16,6 @@ output:
 ---
 
 ```{r, include=FALSE}
-#library(citr) # ALT + Shift + R for citations
-#library(kableExtra)
 library(rmdformats)
 library(knitr)
 library(tidyverse)
@@ -40,7 +38,9 @@ This is a step-by-step walk-through that describes how to fit a finite mixture m
 
 The model returns population estimates for the average typing speed of fluent keystroke transitions ($\beta$), the slowdown for hesitant transitions ($\delta$) and the frequency of hesitant transitions ($\theta$) for each level of a categorical predictor after taking into account three sources of random error: (1) each participant has an individual fluent typing speed that differs across levels of the categorical predictor; (2) each participant has in individual hesitation frequency that differs across levels of the categorical predictor; (3) keystroke intervals for some bigrams are slower than for others.
 
-We require two packages: (1) `rstan` to use R to interface with Stan for fitting Bayesian models; (2) `tidyverse` for data processing and visualisation.
+This guide shows how to fit a mixture model written in Stan to copy-task data to then calculate the differences between two copy-task components for three parameters of interest and by-participant estimates. This walk-through is largely self-contained. To run the code below, the reader only needs to install the required packages. Data and Stan code can be loaded from the code presented below.
+
+We require two packages: (1) `rstan` to use R to interface with Stan for fitting Bayesian models^[Instructions on how to install `rstan` can be found [here]( https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started).]; (2) `tidyverse` for data processing and visualisation.^[Run `install.packages("tidyverse")` to install `tidyverse` on your computer.]
 
 ```{r eval = F}
 library(rstan)
@@ -51,7 +51,7 @@ library(tidyverse)
 
 ## Preparing the data
 
-First we load the keystroke data used in the manuscript. Data can be downloaded from [OSF](https://osf.io/y3p4d/) using the URL as below and the `read_csv` function. For brevity we use a subset of the sample. Data are from participants that each completed the consonants and LF-bigrams component of the copy task [@van2019multilingual; @waes2019]. 
+First we load the keystroke data used **in the manuscript**. Data can be downloaded from [OSF](https://osf.io/y3p4d/) using the URL as below and the `read_csv` function. For brevity we use a subset of the sample. Data are from participants that each completed the consonants and LF-bigrams component of the copy task [@van2019multilingual; @waes2019]. 
 
 
 
@@ -70,20 +70,20 @@ data
 ```
 
 
-The data must be transformed into a list to feed them into Stan. The information required from the data is determined in the Stan code and has to do with what we need to estimate the model parameters and how the model is implemented. The exert from the Stan code below shows which information is expected as input (e.g. int is integer), how they are named, and what the smallest (i.e. lower) and largest possible value (i.e. upper) are.
+The data must be transformed into a list to feed them into Stan. The information required from the data is determined in the Stan code and has to do with what we need to estimate the model parameters and how the model is implemented. The exert from the Stan code below shows which information is expected as input (e.g. int is integer), how they are named, and what the smallest (i.e. lower) and largest possible value (i.e. upper) are. The full Stan code can be found at the end of this document.
 
 ```{r eval=F, engine='Rcpp'}
 // Do not run
 // Data chunk of Stan code
 data {
   int<lower=1> N;                    // number of observations
-  int<lower=1> nS;                   // number of pptsects
+  int<lower=1> nS;                   // number of ppts
   int<lower=1, upper=nS> ppts[N];    // ppts identifier
-  int<lower=1> nB;                   // max number of bigrams
+  int<lower=1> nB;                   // number of bigrams
   int<lower=1, upper=nB> bigrams[N]; // ppts identifier
-  int<lower=1> K;                    //number of conditions
+  int<lower=1> K;                    // number of conditions
   int condition[N];                  // condition identifiers
-  vector[N] y;                       //outcome
+  vector[N] y;                       // outcome
 }
 ```
 
@@ -93,7 +93,7 @@ Depending on the data we might have different numbers of participants, bigrams, 
 ```{r}
 ppts <- as.numeric(factor(data$ppts))
 bigrams <- as.numeric(factor(data$bigram))
-components <- as.numeric(factor(data$component))
+condition <- as.numeric(factor(data$component))
 ```
 
 In the below code, the names on the left side of the arrow must correspond to the names expected in the Stan code (above); names on the right side do not. We assign the participant, bigram, and component identifiers created above and their maximum values `nS`, `nB`, `K`, respectively. The keystroke data `IKI` are assigned to `y` and the total number of observations (number of participants $\times$ number of bigrams produced by participant) is assigned to `N` (number of rows in the data `nrow(data`).
@@ -104,8 +104,8 @@ data_list <- within( list(), {
   nS <- max(ppts) # max no of ppts
   bigrams <- bigrams 
   nB <- max(bigrams) # max no of bigrams
-  condition <- components 
-  K <- max(components) # no of conditions
+  condition <- condition
+  K <- max(condition) # no of conditions
   y <- data$IKI
   N <- nrow(data)
 } )
@@ -120,7 +120,16 @@ glimpse(data_list)
 
 ## Load model
 
-The Stan code described in the manuscript was extended to fit more than one copy-task component (or generally condition) at once. The code is saved in the file "MoG.stan" (i.e. mixture of Gaussians) and can be loaded for data fitting using the `stan_model` function and assign it to the object `mog`. The "MoG.stan" file needs to available in the current working directory of $R$ or the file path needs to be indicated.
+The Stan code described **in the manuscript** was extended to fit more than one copy-task component (i.e. a categorical predictor with $K$ levels). The code is stored in the file "MoG.stan" (i.e. mixture of Gaussians) and can be downloaded from the "walkthrough" folder on [OSF](https://osf.io/t34jn/). Alternatively, `readLines` and `writeLines` can be used to download the Stan code from OSF so it will be saved in R's current working directory.
+
+```{r eval = F}
+# Download Stan code
+file <- readLines("https://osf.io/t34jn/download")
+# Save Stan code to current working directory
+writeLines(file, "MoG.stan")
+```
+
+The Stan model can be loaded for data fitting using the `stan_model` function and assign it to the object `mog`. The "MoG.stan" file needs to be available in the current working directory of R or the file path needs to be indicated.
 
 
 ```{r eval = F}
@@ -128,7 +137,7 @@ mog <- stan_model(file = "MoG.stan")
 ```
 
 
-This code fits the posterior of a categorical predictor with any number of levels. In other words, the posterior can be used to calculate simple effects, main effects and interactions of a factorial design. We will show below how to calculate a simple effect. The same logic can be used to calculate main effects and interactions. Also, participant estimates are calculated for both mixture components and the mixing proportions by condition. For including more predictors, or removing, e.g., random error terms, or adjusting priors, the user will have to work directly in the Stan code.
+This code fits the posterior of a categorical predictor with any number of levels. In other words, the posterior that model returns can be used to calculate simple effects, main effects and interactions of a factorial design. We demonstrate below how to calculate a simple effect. The same logic can be used to calculate main effects and interactions. Also, participant estimates are calculated for both mixture components and the mixing proportions by condition. For including more predictors, or removing, e.g., random error terms, or adjusting priors, the user will have to work directly in the Stan code.
 
 This Stan code used is largely based on @sorensen2016bayesian and @vasishth2017. @sorensen2016bayesian presents a detailed tutorial on how to fit Stan models [see also @lambert2018student].
 
@@ -146,7 +155,7 @@ n_chains <- n_cores <- 3  # No of chains / cores used (one chain per core)
 ```
 
 
-The model is fitting a number of parameters that are not relevant for our inference. To reduce the size of the posterior we can select the parameters of interest. 
+The model is fitting a number of parameters that are not relevant for our inference. To reduce the size of the R object that containts the posterior we can select the parameters of interest and disregard all paremters that are not relevant for our inference.
 
 ```{r}
 # Parameters to keep in output
@@ -163,7 +172,7 @@ pars <- c("beta",                        # fluent typing
 ```
 
 
-The `sampling` function applies the model to the data using the information specified above (iterations, warmup, chains, cores, parameters `pars` to be saved). `save_warmup` is set to `FALSE` to discard the warmup samples (which are not used for inference anyway) to reduce the size of the posterior. To allow reproducibility (and be cause Bayesian models involves random number generation) we set the seed. The seed can be any number but using the same number ensures the use of the same random number. Lastly, the control argument was specified with higher values for `adapt_delta` and `max_treedepth`: using higher values here mean the model runs slower but supports more careful parameter estimation. The model is assigned to the variable `m`.
+The `sampling` function applies the model to the data using the information specified above (iterations, warmup, chains, cores, parameters `pars` to be saved). `save_warmup` is set to `FALSE` to discard the warmup samples (which are not used for inference anyway) to reduce the size of the posterior. To allow reproducibility (and because Bayesian models involves random number generation) we set the seed. The seed can be any number but using the same number ensures the use of the same random number. Lastly, the control argument was specified with higher values for `adapt_delta` and `max_treedepth`: using higher values here mean the model runs slower but supports more careful parameter estimation. The model is assigned to the variable `m`.
 
 ```{r eval = F}
 # Fit model
@@ -178,6 +187,16 @@ m <- sampling(mog,
               seed = 365, 
               control = list(adapt_delta = .96, # default: .9
                              max_treedepth = 12)) # default: 10
+```
+
+```{r echo =F}
+#sampler_params <- get_sampler_params(m, inc_warmup = FALSE)
+#sampler_params_chain1 <- sampler_params[[3]]#colnames(sampler_params_chain1)
+#sapply(sampler_params, function(x) mean(x[, "accept_stat__"]))
+#sapply(sampler_params, function(x) max(x[, "treedepth__"]))
+#inits <- get_inits(m)
+#inits_chain1 <- inits[[1]]
+#print(inits_chain1)
 ```
 
 Running this model will take a while to complete sampling depending on your hardware specifications. The time it took my machine to complete this job can me viewed using `get_elapsed_time`. Therefore it is worth to not use all cores for this to run or to use a dedicated high performance machine.
@@ -195,7 +214,7 @@ get_elapsed_time(m)/60 # in mins
 
 ## Reusing model output
 
-The output of the model (i.e. the posterior) can be saved, so we don't need to run the model again (which admittedly can take a while). The function requires the name of the fitted model `m`. We prefer to keep the name of the output similar to the name of the Stan code used. The model is stored as compressed .rda file.
+The output of the model (i.e. the posterior) can be saved, so we don't need to run the model again (which admittedly can take a while). The function requires the name of the fitted model `m`. We prefer to keep the name of the output similar to the name of the Stan code used. The model is stored as compressed ".rda" file.
 
 ```{r eval = F}
 saveRDS(m, "MoG.rda", compress = "xz")
@@ -213,13 +232,13 @@ m <- readRDS("MoG.rda")
 
 ## Convergence
 
-Model convergence can be established in two practically simple techniques. First, we can inspect the chains in trace plots which show the parameter estimate across iterations (here after warmup) for each chain. We will look at the population-level parameters (names are determined by the model) corresponding to the Greek symbols used in the manuscript and assign those to `pars`.
+Model convergence can be established in two practically simple techniques. First, we can inspect the chains in trace plots which show the parameter estimate across iterations (here after warmup) for each chain. We will look at the population-level parameters (names are determined by the model) corresponding to the Greek symbols used **in the manuscript** and assign those to `pars`.
 
 ```{r}
 pars <- c("beta", "delta", "theta", "sigma", "sigmap_e", "sigma_e")
 ```
 
-To create trace plots, we can apply the `stan_trace` function to the model `m` and extract the MCMC chains for the parameters in `pars`. The `alpha` argument makes the colours slighly more transparent. If the chains overlap and look like "fat hairy caterpillars", chains have converged on the same target distribution. 
+To create trace plots, we can apply the `stan_trace` function to the model `m` and extract the MCMC chains for the parameters in `pars`. The `alpha` argument makes the colours slightly more transparent. If the chains overlap and look like "fat hairy caterpillars", chains have converged on the same target distribution. 
 
 ```{r}
 # Check convergence
@@ -251,7 +270,7 @@ The model used the posterior parameter values to simulate hypothetical data sets
 
 We can draw predicted data from the model output and compare these to the observed data. A model that makes reasonable predictions should fit the observed data.
 
-Using the `as.matrix` function we extract a matrix of `y_tilde`, the simulated data. This returns a mtrix with the size `total_samples` $\times$ `nrow(data)` (so `r scales::comma(total_samples)` $\times$ `r scales::comma(nrow(data))`). We use the `sample` function to draw `N` randomly sampled hypothetical data sets. The `ppc_dens_oberlay` function from the `bayesplot` package is then mapping the observed data ($y$; thick blue line) to the simulated data ($y_{rep}$; thin lightblue lines).
+Using the `as.matrix` function we extract a matrix of `y_tilde`, the simulated data. This returns a matrix with the size `total_samples` $\times$ `nrow(data)` (so `r scales::comma(total_samples)` $\times$ `r scales::comma(nrow(data))`). We use the `sample` function to draw `N` randomly sampled hypothetical data sets. The `ppc_dens_oberlay` function from the `bayesplot` package is then mapping the observed data ($y$; thick blue line) to the simulated data ($y_{rep}$; thin lightblue lines).
 
 ```{r}
 y_tilde <- as.matrix(m, pars = "y_tilde")          # extract simulated data sets
@@ -268,15 +287,6 @@ ppc_dens_overlay(data_list$y, y_tilde_sample) +
 ```
 
 
-```{r echo =F}
-#sampler_params <- get_sampler_params(m, inc_warmup = FALSE)
-#sampler_params_chain1 <- sampler_params[[3]]#colnames(sampler_params_chain1)
-#sapply(sampler_params, function(x) mean(x[, "accept_stat__"]))
-#sapply(sampler_params, function(x) max(x[, "treedepth__"]))
-#inits <- get_inits(m)
-#inits_chain1 <- inits[[1]]
-#print(inits_chain1)
-```
 
 
 # Posterior probability distribution
@@ -288,9 +298,9 @@ At the core of Bayesian inference is the posterior probability distribution. For
 (total_samples <- (iterations - warmup) * n_chains)
 ```
 
-The distribution of parameter values represents the uncertainty about parameter values given the data. There is a large range of things one can do with a posterior. Below we will focus on summarising parameter estimates, comparing conditions, and extracting by-participant estimates.
+The distribution of parameter values represents the uncertainty about parameter values given the data. There is a large range of things one can do with a posterior. Below we will focus on summarising parameter estimates, comparing conditions, and extracting by-participant estimates. 
 
-The `names` function can be used to remind us of the parameter names used in the model (we reduced the output to the first 15 parameter names). The meaning of the parameters is described in the manuscript and can be obtained from the Stan code. Indices refer to the copy-task component (1 = consonants; 2 = LF bigrams) and to the participant identifier for by-participant parameters (indicated by `_s`).
+The `names` function can be used to remind us of the parameter names used in the model (we reduced the output to the first 15 parameter names). The meaning of the parameters is described **in the manuscript** and can be obtained from the Stan code. Indices refer to the copy-task component (1 = consonants; 2 = LF bigrams) and to the participant identifier for by-participant parameters (indicated by `_s`).
 
 
 ```{r}
@@ -307,7 +317,7 @@ stan_hist(m, pars = pars)
 ```
 
 
-The posterior samples of the parameter values can be summaried using the `print` function. The `probs` argument requires the lower and upper bound of the probability interval that we are interested in. A lower bound of .025 and an upper bound of .975 gives the 95% probability interval (PI), i.e. the range that contains the true parameter value with a 95% probability given the data. 
+The posterior samples of the parameter values can be summarised using the `print` function. The `probs` argument requires the lower and upper bound of the probability interval that we are interested in. A lower bound of .025 and an upper bound of .975 gives the 95% probability interval (PI; also called "credible intervals"), i.e. the range that contains the true parameter value with a 95% probability given the data. 
 
 The output summaries the most probable parameter value as mean with its standard error (`se_mean`) and standard deviation (`sd`), the effective sample size (`n_eff`) indicating sampling efficiency and the convergence metric $\hat{R}$ (`Rhat`) we introduced above. 
 
@@ -365,12 +375,13 @@ pivot_longer(posterior_in_msecs, beta:theta, names_to = "parameter") %>%
   geom_histogram(position = "identity", alpha = .25) +
   facet_wrap(~parameter, scales = "free", labeller = label_parsed) +
   scale_fill_brewer("Copy-task\ncomponents", palette = "Dark2") +
-  scale_color_brewer("Copy-task\ncomponents", palette = "Dark2")
+  scale_color_brewer("Copy-task\ncomponents", palette = "Dark2") +
+  labs(x = "Posterior parameter estimate")
 ```
 
 
 
-## Difference between components 
+## Difference between copy-task components 
 
 We can calculate the differences between the copy-task components for each parameter value. This is giving an indication of whether fluent typing ($\beta$) is influenced by the copy task, maybe the size of the disfluency slowdown ($\delta$) is impacted by the task, or the disfluency probability ($\theta$). 
 
@@ -382,7 +393,8 @@ posterior_by_component <- posterior_in_msecs %>%
   group_by(component) %>% mutate(id = row_number()) %>%
   pivot_wider(names_from = component, values_from = value) %>%
   select(-id) %>% # drop id column
-  mutate(diff = Consonants - `LF bigrams`) # calculate the difference between copy-task components
+  mutate(diff = Consonants - `LF bigrams`,  # calculate the difference between copy-task components
+         parameter = paste0(parameter, "[diff]")) 
 
 posterior_by_component
 ```
@@ -406,22 +418,61 @@ ps <- posterior_by_component %>%
             lower = quantile(diff, .025),
             upper = quantile(diff, .975),
             p = mean(diff < 0)) %>% 
-  mutate(across(where(is.numeric), round, 2)) 
+  mutate(across(where(is.numeric), round, 2),
+         parameter = gsub("\\[diff\\]", "", parameter)) 
 ```
 
-These differences can be viewed in histograms. The vertical line indicates a difference between tasks corresponding to a value of zero. The area of the histogram to the left of this line corresponds to the probability `p` to observe a value smaller than zero as in the output above. We observe difference between copy-task components for all three parameters. Fluent typing is `r round(ps[ps$parameter == "beta",]$mean)` msecs (95% PI: `r round(ps[ps$parameter == "beta",]$lower)`, `r round(ps[ps$parameter == "beta",]$upper)`) slower for the consonants task, and hesitations are `r round(ps[ps$parameter == "delta",]$mean)` msecs (95% PI: `r round(ps[ps$parameter == "delta",]$lower)`, `r round(ps[ps$parameter == "delta",]$upper)`) longer and `r ps[ps$parameter == "theta",]$mean` ($\approx$ `r round(ps[ps$parameter == "theta",]$mean*100)`%; 95% PI: `r ps[ps$parameter == "theta",]$lower`, `r ps[ps$parameter == "theta",]$upper`) times more likely. Interestingly fluent typing (i.e. planning and executing motor plans) is slower in the consonant task even after modelling hesitations as a separate process. 
+These differences can be viewed in histograms. The vertical line indicates a difference between tasks corresponding to a value of zero. The area of the histogram to the left of this line corresponds to the probability `p` to observe a value smaller than zero as in the output above. We observe difference between copy-task components for all three parameters. Fluent typing is `r round(ps[ps$parameter == "beta",]$mean)` msecs (95% PI: `r round(ps[ps$parameter == "beta",]$lower)`, `r round(ps[ps$parameter == "beta",]$upper)`) slower for the consonants task, and hesitations are `r round(ps[ps$parameter == "delta",]$mean)` msecs (95% PI: `r round(ps[ps$parameter == "delta",]$lower)`, `r round(ps[ps$parameter == "delta",]$upper)`) longer and `r ps[ps$parameter == "theta",]$mean` ($\approx$ `r round(ps[ps$parameter == "theta",]$mean*100)`%; 95% PI: `r ps[ps$parameter == "theta",]$lower`, `r ps[ps$parameter == "theta",]$upper`) times more likely. Interestingly fluent typing (i.e. planning and executing motor plans) is slower in the consonant task even after modeling hesitations as a separate process. 
 
 
 ```{r}
 ggplot(posterior_by_component, aes(x = diff)) +
   geom_histogram(alpha = .5) +
   geom_vline(xintercept = 0, colour = "red", linetype = "dashed", size = .5) +
-  facet_wrap(~parameter, scales = "free", labeller = label_parsed) 
+  facet_wrap(~parameter, scales = "free", labeller = label_parsed) +
+  labs(x = "Difference between copy-task components")
+```
+
+
+In practice we rarely believe that only an effect of exactly null is indicating that there is no difference between our groups. Instead there are values that are non-different from null; for example a slowdown of 1 msecs is meaningless in most, if not all,  contexts. To take this into account we can determine the *region of practical equivalence* [ROPE, @kruschke2010believe; @kruschke2011bayesian; @kruschke2014doing]. We can define the ROPE as the range of values that is _a priori_ considered non-different from a null effect. The ROPE value indicates to what extent the posterior can not rule out a negligible effect. A meaningful difference between groups (or effects more generally) should have a small proportion of posterior samples within the ROPE.
+
+To calculate the ROPE for out differences between the two copy-task components we can use the `rope` function from the `bayestestR` package.^[To install `bayestestR` run `install.packages("bayestestR")`.] The `rope` function requires as input a vector with the posterior difference. We can calculate a vector with posterior difference for each of the three parameters, indicated as $\beta_\text{diff}$, $\delta_\text{diff}$, and $\theta_\text{diff}$.
+
+```{r}
+# Fluent typing
+beta_diff <- filter(posterior_by_component, parameter == "beta[diff]") %>% pull(diff)
+
+# Slowdown for hesitant typing
+delta_diff <- filter(posterior_by_component, parameter == "delta[diff]") %>% pull(diff)
+
+# Proportion of hesitations
+theta_diff <- filter(posterior_by_component, parameter == "theta[diff]") %>% pull(diff)
+```
+
+Also, we need to define the `range` argument which specifies the range of values are not considerably different from null. Of course this range will depend on what the parameter represents and researcher intuition. For example, for fluent typing we would consider small differences, of say 10 msecs, more meaningful than for disfluencies. If we consider differences of 10 msecs or smaller equivalent to a null difference, we can define the `range` argument with a lower bound of -10 and the upper bound of 10.
+
+```{r}
+library(bayestestR)
+rope(beta_diff, range = c(-10, 10))
+```
+
+The ROPE for fluent typing speed contains `r round(pull(rope(beta_diff, range = c(-10, 10)))*100,2)`% of the posterior samples. In other words, there is a `r round(pull(rope(beta_diff, range = c(-10, 10)))*100,2)`% probability that the posterior difference $\beta_\text{diff}$ is between -10 and 10 msecs which we considered negligible.
+
+For disfluencies we might want to consider a larger range of values as negligible differences between two tasks (also because the variability in disfluencies is larger than the variability for fluent key transitions). Even if we define a ROPE of -250 through 250 msecs, there are no posterior samples inside the ROPE indicating that the difference in typing hesitations are related to difficulty that arise prior to processing on the motor level.
+
+```{r}
+rope(delta_diff, range = c(-250, 250))
+```
+
+As for the disfluency probably, we need to bear in mind that estimates for $\theta$ are bound between 0 and 1. Hence, the difference $\theta_\text{diff}$ cannot ever exceed -1 and 1. If we consider a difference of 5% or smaller as negligible, we can define the ROPE as ranging from -.05 through .05. We observe that `r round(pull(rope(theta_diff, range = c(-.05, .05)))*100,2)`% of the posterior difference $\theta_\text{diff}$ is within the ROPE. In other words, a large proportion of posterior samples is supporting a meaningful difference between the two copy-task components. We observe that hesitations are largely more frequent in the consonants task.
+
+```{r}
+rope(theta_diff, range = c(-.05, .05))
 ```
 
 
 
-The Stan code can be used to estimate the posterior for two and more conditions: We can calculate the difference between conditions from the posterior as well as main effects and interactions for more complex factorial designs as any factorial design can be reduced to a single variable.^[For example, say we have a 2 $\times$ 2 factorial design with factor 1 having two levels AB and CD and factor 2 having the corresponding levels AC and BD. These two factors render four conditions A, B, C, D. From posterior samples for each level A through D we can calculate main effect 1 as $\text{ME1}=(A+B) - (C+D)$, main effect 2 as $\text{ME2}=(A+C) - (B+D)$, and their interaction as $\text{Interaction}=(A-B) - (C-D)$ (or $\text{Interaction}=(A-C) - (B-D)$) and summary statistics as shown above.]
+The Stan code presented in this walk through can be used to estimate the posterior for two and more conditions: We can calculate the difference between conditions from the posterior as well as main effects and interactions for more complex factorial designs as any factorial design can be reduced to a single variable.^[For example, say we have a 2 $\times$ 2 factorial design with factor 1 having two levels AB and CD and factor 2 having the corresponding levels AC and BD. These two factors render four conditions A, B, C, D. From posterior samples for each level A through D we can calculate main effect 1 as $\text{ME1}=(A+B) - (C+D)$, main effect 2 as $\text{ME2}=(A+C) - (B+D)$, and their interaction as $\text{Interaction}=(A-B) - (C-D)$ (or $\text{Interaction}=(A-C) - (B-D)$) and summary statistics as shown above.]
 
 
 
@@ -439,7 +490,7 @@ posterior_ppts <- as.data.frame(m, pars = pars) %>% as_tibble()
 names(posterior_ppts)[1:10]
 ```
 
-This posterior tibble has the format "$<$parameter name$>$_s[$<$component id$>$, $<$participant id$>$]" where indices indicate the copy-task component and the participant identifier of the parameters. The following code is converting the `beta`s to msecs, creates a long format with columns `parameter` with the names above as levels and a `value` column with their respective values. The `parameter` column is then separated into `parameter` (`beta`, `theta`), `component` (`1`, `2`), and participant (an index for each participant) using "," to separate the three variables. To use "," as separator we replace "_s" with "," in the line before. Copy-task component names were changed as before. A preview is below.
+This posterior tibble has the format "$<\text{parameter name}>\text{_s}[<\text{component id}>, <\text{participant id}>]$" where indices indicate the copy-task component and the participant identifier of the parameters. The following code is converting the `beta`s to msecs, creates a long format with columns `parameter` with the names above as levels and a `value` column with their respective values. The `parameter` column is then separated into `parameter` (levels: `beta`, `theta`), `component` (levels: `1`, `2`), and participant (an index for each participant) using "," to separate the three variables. To use "," as separator we replace "_s" with "," in the line before. Copy-task component names were changed as before. A preview is below.
 
 
 ```{r}
@@ -486,17 +537,57 @@ posterior_ppts_long_summary %>%
   geom_pointrange(position = position_dodge(.75)) +
   facet_wrap(~parameter, scales = "free", labeller = label_parsed) +
   coord_flip() +
-  labs(y = "Participant id", x = "Parameter estimates") +
+  labs(x = "Participant id", y = "Parameter estimates") +
   scale_colour_brewer("Copy-task\ncomponent", palette = "Dark2")
 ```
 
 
+Finally, we can calculate and visualise the by-participant differences. 
+
+```{r}
+posterior_ppts_long_diff_summary <- posterior_ppts_long %>% group_by(component) %>% 
+  mutate(id = row_number()) %>%
+  pivot_wider(names_from = component, 
+              values_from = c(beta, theta)) %>%
+  pivot_longer(-c(participant, id),
+             names_to = c("parameter", ".value"), 
+             names_pattern = "(.*)_(.*)") %>%
+  mutate(diff = Consonants - `LF bigrams`,
+         parameter = paste0(parameter, "[diff]")) %>% 
+  select(participant, parameter, diff) %>%
+  group_by(parameter, participant) %>%
+  summarise(mean = mean(diff),
+            lower = quantile(diff, .025),
+            upper = quantile(diff, .975))
+
+posterior_ppts_long_diff_summary
+```
+
+For simplicity we show the differences for the first 10 participants only. This calculation and visualisation allows researchers to identify participants that do or do not differ in terms of fluent typing speed or hesitation frequency, in our example for tasks that do and do not involve lexical information.
+
+```{r }
+posterior_ppts_long_diff_summary %>%
+  filter(participant %in% 1:10) %>% # only participants 1 through 10
+  ggplot(aes(x = factor(as.numeric(participant)), 
+             y = mean, ymin = lower, ymax = upper)) +
+  geom_hline(yintercept = 0, colour = "red", linetype = "dashed") +
+  geom_pointrange(position = position_dodge(.75)) +
+  facet_wrap(~parameter, scales = "free", labeller = label_parsed) +
+  coord_flip() +
+  labs(x = "Participant id", y = "Difference between copy-task components") +
+  scale_colour_brewer("Copy-task\ncomponent", palette = "Dark2")
+```
 
 
 # References
 
 <div id="refs"></div>
 
+# Stan code
+
+```{r echo = F}
+cat(readLines("MoG.stan"), sep = "\n")
+```
 
 # Session info
 
